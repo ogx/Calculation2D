@@ -244,19 +244,24 @@ mmString mmOperatingSystem::GetUniqueIDString(void)
 	wchar_t v_cS1[256];
 	wchar_t v_cS2[256];
 
-	mmString v_sWinDir = _wgetenv(L"windir");
-	mmString v_sDrive = v_sWinDir.substr(0,3);
-	GetVolumeInformation(v_sDrive.c_str(),v_cS1,256,&v_sSN,&v_sDW1,&v_sDW2,v_cS2,256);
+	wchar_t * v_pcWinDir = NULL;
+	std::size_t v_iWinDirSize = 0;
+	_wdupenv_s(&v_pcWinDir, &v_iWinDirSize, L"windir");
+
+	mmString v_sDrive = mmString(v_pcWinDir).substr(0,3);
+	GetVolumeInformation(v_sDrive.c_str(), v_cS1, 256, &v_sSN, &v_sDW1, &v_sDW2, v_cS2, 256);
+
+	free(v_pcWinDir);
 
 	wchar_t v_cHDD[256];
-	swprintf(v_cHDD,L"%d",v_sSN);
+	swprintf_s(v_cHDD,L"%d",v_sSN);
 	mmString v_sHDD = v_cHDD;
 
 	// Program tick count
 	std::clock_t v_sCurrentClock = v_sCurrentClock = clock();
 
 	wchar_t v_cCLK[256];
-	swprintf(v_cCLK,L"%d",v_sCurrentClock);
+	swprintf_s(v_cCLK,L"%d",v_sCurrentClock);
 	mmString v_sCLK = v_cCLK;
 
 	// date time

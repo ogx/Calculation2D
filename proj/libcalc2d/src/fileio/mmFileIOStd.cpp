@@ -18,22 +18,22 @@
 ////////////////////////////////////////////////////////////////////////////////
 mmInt mmFileIO::GetFilePosition(std::ifstream* p_psFile)
 {
-	return p_psFile->tellg();
+	return static_cast<mmInt>(p_psFile->tellg());
 }
 
 mmInt mmFileIO::GetFilePosition(std::wifstream* p_psFile)
 {
-	return p_psFile->tellg();
+	return static_cast<mmInt>(p_psFile->tellg());
 }
 
 mmInt mmFileIO::GetFilePosition(std::ofstream* p_psFile)
 {
-	return p_psFile->tellp();
+	return static_cast<mmInt>(p_psFile->tellp());
 }
 
 mmInt mmFileIO::GetFilePosition(std::wofstream* p_psFile)
 {
-	return p_psFile->tellp();
+	return static_cast<mmInt>(p_psFile->tellp());
 }
 
 void mmFileIO::SetFilePosition(std::ifstream* p_psFile,mmInt p_iFilePos)
@@ -317,11 +317,12 @@ bool mmFileIO::mmFileUtilsSTD::IsExistingDir(mmString p_sDirName)
 
 mmString mmFileIO::mmFileUtilsSTD::GetTemporaryDir(void)
 {
-	wchar_t* v_pcTemp;
+	SendLogMessage(mmLog::debug, mmString(L"Start GetTemporaryDir"));
 
-	SendLogMessage(mmLog::debug,mmString(L"Start GetTemporaryDir"));
+	wchar_t * v_pcTemp = NULL;
+	std::size_t v_iTempSize = 0;
+	_wdupenv_s(&v_pcTemp, &v_iTempSize, L"TEMP");
 
-	v_pcTemp = _wgetenv(L"TEMP");
 	if(v_pcTemp == NULL)
 	{
 		SendLogMessage(mmLog::critical,mmString(L"GetTemporaryDir No_TEMP_EnvironmentVariable"));
@@ -331,8 +332,9 @@ mmString mmFileIO::mmFileUtilsSTD::GetTemporaryDir(void)
 
 	mmString v_sTempDir = v_pcTemp;
 
-	SendLogMessage(mmLog::debug,mmString(L"End GetTemporaryDir Dir=")+
-															v_sTempDir);
+	SendLogMessage(mmLog::debug, mmString(L"End GetTemporaryDir Dir=") + v_sTempDir);
+
+	free(v_pcTemp);
 
 	return v_sTempDir;
 }
