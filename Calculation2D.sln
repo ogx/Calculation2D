@@ -1,0 +1,44 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Studio 2010
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{414A41D2-9FF0-4282-98E6-72B308485C32}"
+	ProjectSection(SolutionItems) = preProject
+		README.md = README.md
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "calc2d", "proj\calc2d\calc2d.vcxproj", "{51B17ACA-BAC0-408E-8145-B366393F0734}"
+	ProjectSection(ProjectDependencies) = postProject
+		{81764A51-4B0F-4310-ACD1-059BFC9BEDDE} = {81764A51-4B0F-4310-ACD1-059BFC9BEDDE}
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libcalc2d", "proj\libcalc2d\Calculation2D.vcxproj", "{81764A51-4B0F-4310-ACD1-059BFC9BEDDE}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Win32 = Debug|Win32
+		Debug|x64 = Debug|x64
+		Release|Win32 = Release|Win32
+		Release|x64 = Release|x64
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{51B17ACA-BAC0-408E-8145-B366393F0734}.Debug|Win32.ActiveCfg = Debug|Win32
+		{51B17ACA-BAC0-408E-8145-B366393F0734}.Debug|Win32.Build.0 = Debug|Win32
+		{51B17ACA-BAC0-408E-8145-B366393F0734}.Debug|x64.ActiveCfg = Debug|x64
+		{51B17ACA-BAC0-408E-8145-B366393F0734}.Debug|x64.Build.0 = Debug|x64
+		{51B17ACA-BAC0-408E-8145-B366393F0734}.Release|Win32.ActiveCfg = Release|Win32
+		{51B17ACA-BAC0-408E-8145-B366393F0734}.Release|Win32.Build.0 = Release|Win32
+		{51B17ACA-BAC0-408E-8145-B366393F0734}.Release|x64.ActiveCfg = Release|x64
+		{51B17ACA-BAC0-408E-8145-B366393F0734}.Release|x64.Build.0 = Release|x64
+		{81764A51-4B0F-4310-ACD1-059BFC9BEDDE}.Debug|Win32.ActiveCfg = Debug|Win32
+		{81764A51-4B0F-4310-ACD1-059BFC9BEDDE}.Debug|Win32.Build.0 = Debug|Win32
+		{81764A51-4B0F-4310-ACD1-059BFC9BEDDE}.Debug|x64.ActiveCfg = Debug|x64
+		{81764A51-4B0F-4310-ACD1-059BFC9BEDDE}.Debug|x64.Build.0 = Debug|x64
+		{81764A51-4B0F-4310-ACD1-059BFC9BEDDE}.Release|Win32.ActiveCfg = Release|Win32
+		{81764A51-4B0F-4310-ACD1-059BFC9BEDDE}.Release|Win32.Build.0 = Release|Win32
+		{81764A51-4B0F-4310-ACD1-059BFC9BEDDE}.Release|x64.ActiveCfg = Release|x64
+		{81764A51-4B0F-4310-ACD1-059BFC9BEDDE}.Release|x64.Build.0 = Release|x64
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

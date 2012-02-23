@@ -1,0 +1,9 @@
+relre:.*\.(idb|pdb|user|ilk|rar|old)
+relre:.*\.(obj|exe|dll)
+relre:.*\.(suo|ncb)
+relre:.*\.(pch|dep|exp)
+relre:.*\.(tlh|tli|log)
+relre:.*\.(res|aps)
+
+syntax: regexp
+.*\.(tlog)

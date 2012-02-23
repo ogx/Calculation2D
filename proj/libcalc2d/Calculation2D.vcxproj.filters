@@ -1,0 +1,213 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+    <Filter Include="Header Files\Calculation">
+      <UniqueIdentifier>{dc45dcdb-97dd-4abd-8727-5b1b64bade58}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Images">
+      <UniqueIdentifier>{f534c902-48c7-43ec-84dd-588d49756582}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Interfaces">
+      <UniqueIdentifier>{b741e4f8-6938-4dfd-99dd-8be396e0e8e4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Log">
+      <UniqueIdentifier>{5aede797-ab77-4d8d-8b8e-1c8a9b328c9e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\System">
+      <UniqueIdentifier>{621a138a-09d3-4093-9466-ba38ab70d61b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\XML">
+      <UniqueIdentifier>{b0121389-a342-49bb-81bf-9c8296be7655}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx</Extensions>
+    </Filter>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Source Files\Images">
+      <UniqueIdentifier>{d008bc18-972e-4846-b53e-f6f6cccbe2f5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\XML">
+      <UniqueIdentifier>{b393c518-01ad-4742-942d-46bc49eae3ec}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Log">
+      <UniqueIdentifier>{637739e5-1851-4aec-a0f0-a2755940c22d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Calculation">
+      <UniqueIdentifier>{36855bdd-24c0-4f23-bfee-ea4a61063a7a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\System">
+      <UniqueIdentifier>{cd5eadb5-036f-4273-bb12-9d9e71b1f834}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Interfaces">
+      <UniqueIdentifier>{b840c7a4-ea33-45ff-8ad9-73ff4e7d1bad}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="include\images\mmImagesCalculationManagement.h">
+      <Filter>Header Files\Calculation</Filter>
+    </ClInclude>
+    <ClInclude Include="include\images\mmImagesCalculationMethodContainerWindows.h">
+      <Filter>Header Files\Calculation</Filter>
+    </ClInclude>
+    <ClInclude Include="include\images\mmImagesCalculationMethodDLLBroker.h">
+      <Filter>Header Files\Calculation</Filter>
+    </ClInclude>
+    <ClInclude Include="include\images\mmImagesComplexCalculationManagement.h">
+      <Filter>Header Files\Calculation</Filter>
+    </ClInclude>
+    <ClInclude Include="include\images\mmImagesStructure.h">
+      <Filter>Header Files\Images</Filter>
+    </ClInclude>
+    <ClInclude Include="include\log\mmLogFile.h">
+      <Filter>Header Files\Log</Filter>
+    </ClInclude>
+    <ClInclude Include="include\log\mmLogRedirector.h">
+      <Filter>Header Files\Log</Filter>
+    </ClInclude>
+    <ClInclude Include="include\windows\mmDllSupport.h">
+      <Filter>Header Files\System</Filter>
+    </ClInclude>
+    <ClInclude Include="include\fileio\mmFileIOStd.h">
+      <Filter>Header Files\System</Filter>
+    </ClInclude>
+    <ClInclude Include="include\synchronize\mmSynchronizeWindowsImpl.h">
+      <Filter>Header Files\System</Filter>
+    </ClInclude>
+    <ClInclude Include="include\thread\mmThreadWindowsImpl.h">
+      <Filter>Header Files\System</Filter>
+    </ClInclude>
+    <ClInclude Include="include\xml\mmXMLBB.h">
+      <Filter>Header Files\XML</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\interfaces\mmICalcMethod.h">
+      <Filter>Header Files\Interfaces</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\interfaces\mmICalcMethodExt.h">
+      <Filter>Header Files\Interfaces</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\interfaces\mmIFileIO.h">
+      <Filter>Header Files\Interfaces</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\interfaces\mmIHardware.h">
+      <Filter>Header Files\Interfaces</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\interfaces\mmIImages.h">
+      <Filter>Header Files\Interfaces</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\interfaces\mmILog.h">
+      <Filter>Header Files\Interfaces</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\interfaces\mmISynchronize.h">
+      <Filter>Header Files\Interfaces</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\interfaces\mmIThread.h">
+      <Filter>Header Files\Interfaces</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\interfaces\mmIXML.h">
+      <Filter>Header Files\Interfaces</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\interfaces\mmGlobalInterfacesStorage.h">
+      <Filter>Header Files\Interfaces</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\log\mmLogSender.h">
+      <Filter>Header Files\Log</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\mmOperatingSystemCalls.h">
+      <Filter>Header Files\System</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\mmXMLIOUtilities.h">
+      <Filter>Header Files\XML</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\mmStringUtilities.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\mmError.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\mmGlobalDefs.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\math\mmMath.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\mmPixel.h">
+      <Filter>Header Files\Images</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="src\mmError.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\mmStringUtilities.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\images\mmImagesStructure.cpp">
+      <Filter>Source Files\Images</Filter>
+    </ClCompile>
+    <ClCompile Include="src\mmPixel.cpp">
+      <Filter>Source Files\Images</Filter>
+    </ClCompile>
+    <ClCompile Include="src\xml\mmXMLBB.cpp">
+      <Filter>Source Files\XML</Filter>
+    </ClCompile>
+    <ClCompile Include="src\mmXMLIOUtilities.cpp">
+      <Filter>Source Files\XML</Filter>
+    </ClCompile>
+    <ClCompile Include="src\log\mmLogFile.cpp">
+      <Filter>Source Files\Log</Filter>
+    </ClCompile>
+    <ClCompile Include="src\log\mmLogRedirector.cpp">
+      <Filter>Source Files\Log</Filter>
+    </ClCompile>
+    <ClCompile Include="src\log\mmLogSender.cpp">
+      <Filter>Source Files\Log</Filter>
+    </ClCompile>
+    <ClCompile Include="src\images\mmImagesCalculationManagement.cpp">
+      <Filter>Source Files\Calculation</Filter>
+    </ClCompile>
+    <ClCompile Include="src\images\mmImagesCalculationMethodContainerWindows.cpp">
+      <Filter>Source Files\Calculation</Filter>
+    </ClCompile>
+    <ClCompile Include="src\images\mmImagesCalculationMethodDLLBroker.cpp">
+      <Filter>Source Files\Calculation</Filter>
+    </ClCompile>
+    <ClCompile Include="src\images\mmImagesComplexCalculationManagement.cpp">
+      <Filter>Source Files\Calculation</Filter>
+    </ClCompile>
+    <ClCompile Include="src\windows\mmDllSupport.cpp">
+      <Filter>Source Files\System</Filter>
+    </ClCompile>
+    <ClCompile Include="src\fileio\mmFileIOStd.cpp">
+      <Filter>Source Files\System</Filter>
+    </ClCompile>
+    <ClCompile Include="src\mmOperatingSystemCalls.cpp">
+      <Filter>Source Files\System</Filter>
+    </ClCompile>
+    <ClCompile Include="src\synchronize\mmSynchronizeWindowsImpl.cpp">
+      <Filter>Source Files\System</Filter>
+    </ClCompile>
+    <ClCompile Include="src\thread\mmThreadWindowsImpl.cpp">
+      <Filter>Source Files\System</Filter>
+    </ClCompile>
+    <ClCompile Include="src\interfaces\mmGlobalInterfacesStorage.cpp">
+      <Filter>Source Files\Interfaces</Filter>
+    </ClCompile>
+    <ClCompile Include="src\interfaces\mmIHardware.cpp">
+      <Filter>Source Files\Interfaces</Filter>
+    </ClCompile>
+    <ClCompile Include="src\interfaces\mmIImages.cpp">
+      <Filter>Source Files\Interfaces</Filter>
+    </ClCompile>
+    <ClCompile Include="src\mmInterfaceInitializers.cpp">
+      <Filter>Source Files\Interfaces</Filter>
+    </ClCompile>
+  </ItemGroup>
+</Project>
