@@ -34,6 +34,8 @@ mmImages::mmImagesCalculationMethodDLLBroker::~mmImagesCalculationMethodDLLBroke
 {
 	SendLogMessage(mmLog::debug,mmString(L"Start Destructor"));
 
+	delete m_psUtilsFactory;
+
 	// destroy images calculation method
 	m_psDLLImagesCalculationMethod_Destroy(m_psInitializedImagesCalculationMethod);
 

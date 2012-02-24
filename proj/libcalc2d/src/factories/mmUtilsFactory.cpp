@@ -1,6 +1,6 @@
 #include <factories/mmUtilsFactory.h>
 
-#include <mmInterfaceInitializers.h>
+#include <interfaces/mmInterfaceInitializers.h>
 
 mmSynchronize::mmExclusiveLockI* mmFactories::mmUtilsFactory::CreateExclusiveLock(mmLog::mmLogReceiverI *p_psLogReceiver)
 {
@@ -23,7 +23,7 @@ mmLog::mmLogReceiverI* mmFactories::mmUtilsFactory::CreateLogFile(mmString const
 	return mmInterfaceInitializers::CreateLogFile(p_sLogFileName);
 }
 
-mmXML::mmXMLDocI* mmFactories::mmUtilsFactory::CreateXMLDocument(void)
+mmXML::mmXMLDocI* mmFactories::mmUtilsFactory::CreateXMLDocument(mmLog::mmLogReceiverI* p_psLogReceiver)
 {
 	return mmInterfaceInitializers::CreateXMLDocument();
 }
@@ -32,7 +32,7 @@ mmXML::mmXMLNodeI* mmFactories::mmUtilsFactory::CreateXMLNode(mmLog::mmLogReceiv
 {
 	return mmInterfaceInitializers::CreateXMLNode();
 }
-mmThread::mmThreadI* mmFactories::CreateDefaultThread(mmLog::mmLogReceiverI* p_psLogReceiver)
+mmThread::mmThreadI* mmFactories::mmUtilsFactory::CreateDefaultThread(mmLog::mmLogReceiverI* p_psLogReceiver)
 {
 	return mmInterfaceInitializers::CreateDefaultThread(p_psLogReceiver);
 }

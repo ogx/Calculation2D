@@ -186,6 +186,7 @@
     <ClInclude Include="..\..\include\mmPixel.h" />
     <ClInclude Include="..\..\include\mmStringUtilities.h" />
     <ClInclude Include="..\..\include\mmXMLIOUtilities.h" />
+    <ClInclude Include="include\factories\mmUtilsFactory.h" />
     <ClInclude Include="include\images\mmImagesCalculationManagement.h" />
     <ClInclude Include="include\images\mmImagesCalculationMethodContainerWindows.h" />
     <ClInclude Include="include\images\mmImagesCalculationMethodDLLBroker.h" />
@@ -200,6 +201,7 @@
     <ClInclude Include="include\xml\mmXMLBB.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\factories\mmUtilsFactory.cpp" />
     <ClCompile Include="src\images\mmCalcMethod.cpp" />
     <ClCompile Include="src\interfaces\mmInterfaceInitializers.cpp" />
     <ClCompile Include="src\mmError.cpp" />

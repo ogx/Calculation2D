@@ -94,15 +94,16 @@ void mmImages::mmImagesCalculationMethodContainerForWindows::SearchForDLLLibrari
 	sImagesCalculationMethodInDLL v_sDLLDef;
 
 	mmString v_sAppDir = v_psFileUtils->GetApplicationDir();
-	std::vector<mmFileIO::mmFileUtilsI::sDirElement> v_vApplicationDirElements = v_psFileUtils->GetDirElements(v_sAppDir,L"*.dll");
+	std::vector<mmFileIO::mmFileUtilsI::sDirElement> v_vApplicationDirElements;
+	try {
+		v_vApplicationDirElements = v_psFileUtils->GetDirElements(v_sAppDir,L"*.dll");
+	} catch(mmError &) {}
 
 	mmInt v_iTemp;
 	mmInt v_iDirElementsCount = v_vApplicationDirElements.size();
 	for(v_iTemp=0;v_iTemp<v_iDirElementsCount;v_iTemp++)
 	{
-		v_sDLLDef.sDLLName = v_sAppDir +
-												 mmString(L"\\") +
-												 v_vApplicationDirElements[v_iTemp].sName;
+		v_sDLLDef.sDLLName = v_sAppDir + mmString(L"\\") + v_vApplicationDirElements[v_iTemp].sName;
 		m_vAvailableDLLs.push_back(v_sDLLDef);
 	};
 
