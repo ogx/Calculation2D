@@ -2,7 +2,7 @@
 //
 
 #include "stdafx.h"
-#include <mmInterfaceInitializers.h>
+#include <interfaces\mmInterfaceInitializers.h>
 #include <images\mmImagesCalculationManagement.h>
 #include <images\mmImagesCalculationMethodContainerWindows.h>
 #include <memory>

@@ -1,6 +1,6 @@
 #include <log\mmLogFile.h>
 
-#include <mmInterfaceInitializers.h>
+#include <interfaces\mmInterfaceInitializers.h>
 
 mmLog::mmLogFile::mmLogFile(mmString p_sLogFileName)
 {

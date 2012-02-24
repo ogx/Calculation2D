@@ -14,7 +14,7 @@
 #include <mmGlobalDefs.h>
 #include <mmError.h>
 #include <log\mmLogSender.h>
-#include <mmInterfaceInitializers.h>
+#include <interfaces\mmInterfaceInitializers.h>
 
 namespace mmImages
 {

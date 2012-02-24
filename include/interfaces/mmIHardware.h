@@ -15,7 +15,7 @@
 #include <mmGlobalDefs.h>
 #include <mmError.h>
 #include <math\mmMath.h>
-#include <interfaces\mmGlobalInterfacesStorage.h>
+#include <mmExecutionContext.h>
 #include <windows.h>
 
 namespace mmImageProcessing

@@ -8,7 +8,7 @@
 
 #include <mmStringUtilities.h>
 #include <mmOperatingSystemCalls.h>
-#include <mmInterfaceInitializers.h>
+#include <interfaces\mmInterfaceInitializers.h>
 
 #undef min
 #undef max
