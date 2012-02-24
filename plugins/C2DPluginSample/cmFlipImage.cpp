@@ -1,10 +1,5 @@
 #include "cmFlipImage.h"
 
-#include <mmStringUtilities.h>
-#include <mmInterfaceInitializers.h>
-#include <mmOperatingSystemCalls.h>
-#include <mmGlobalDefs.h>
-
 static mmImages::mmImagesCalculationMethodI::sCalculationMethodParams cmFlipImageParams =
 {
 	L"Sample: Flip Image",

@@ -5,7 +5,7 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "C2DPluginSample", "plugins\
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "plugins", "plugins", "{95366B9C-E0F5-4A44-AD0C-20A2BD3D071A}"
 	ProjectSection(SolutionItems) = preProject
-		plugin\C2DPlugin.props = plugin\C2DPlugin.props
+		plugins\C2DPlugin.props = plugins\C2DPlugin.props
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "utils", "utils", "{846C7FFF-68CA-4638-AE82-54BEE872BD1C}"

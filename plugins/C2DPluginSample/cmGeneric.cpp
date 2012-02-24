@@ -1,9 +1,5 @@
 #include "cmGeneric.h"
 
-#include <mmStringUtilities.h>
-#include <mmInterfaceInitializers.h>
-#include <mmOperatingSystemCalls.h>
-
 static mmImages::mmImagesCalculationMethodI::sCalculationMethodParams cmGenericParams =
 {
 	L"Sample: Generic",

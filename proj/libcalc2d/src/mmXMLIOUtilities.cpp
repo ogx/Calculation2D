@@ -173,38 +173,36 @@ mmXML::mmXMLNodePosition mmXML::AddParam( mmXML::mmXMLPositionedNode * _p_xPosit
 
 void mmXML::UpdateOutputParam( mmXML::mmXMLDocI * _p_xDoc, mmImages::mmImagesCalculationMethodI::sCalculationAutomationParams * _p_sAutomationParams, mmXML::mmXMLNodePosition p_xNodePosition, void * _p_OutputValue ) {
 	mmXML::mmXMLNodeI * _v_xRootNode;
-	mmXML::mmXMLDocI * _v_xDoc;
 	mmString v_tOutputValue;
 
 	_p_xDoc->ParseXMLBuffer( _p_sAutomationParams->sOutParams );
-	_v_xRootNode = _v_xDoc->GetXMLRootNode();
+	_v_xRootNode = _p_xDoc->GetXMLRootNode();
 	v_tOutputValue = mmXML::ConvertToString( mmXML::GetTypeTransition( _v_xRootNode->GetChild( p_xNodePosition.iLeafIndex )->FindChild( mmImages::g_pAutoCalcXML_Params_ParamType_Node )->GetText() ), _p_OutputValue );
 	_v_xRootNode->GetChild( p_xNodePosition.iLeafIndex )->FindChild( mmImages::g_pAutoCalcXML_Params_ParamValue_Node )->SetText( v_tOutputValue );
-	CopyOutputParams( _v_xDoc, _p_sAutomationParams );
+	CopyOutputParams( _p_xDoc, _p_sAutomationParams );
 }
 //----------------------------------------------------------------------------------
 
 void mmXML::UpdateOutputParam( mmXML::mmXMLDocI * _p_xDoc, mmImages::mmImagesCalculationMethodI::sCalculationAutomationParams * _p_sAutomationParams, mmXML::mmXMLNodePosition p_xNodePosition, mmString p_tOutputValue ) {
 	mmXML::mmXMLNodeI * _v_xRootNode;
-	mmXML::mmXMLDocI * _v_xDoc;
 
 	_p_xDoc->ParseXMLBuffer( _p_sAutomationParams->sOutParams );
-	_v_xRootNode = _v_xDoc->GetXMLRootNode();
+	_v_xRootNode = _p_xDoc->GetXMLRootNode();
 	_v_xRootNode->GetChild( p_xNodePosition.iLeafIndex )->FindChild( mmImages::g_pAutoCalcXML_Params_ParamValue_Node )->SetText( p_tOutputValue );
-	CopyOutputParams( _v_xDoc, _p_sAutomationParams );
+	CopyOutputParams( _p_xDoc, _p_sAutomationParams );
 }
 //----------------------------------------------------------------------------------
 
 void mmXML::CopyInputParams( mmXML::mmXMLDocI * _p_xDoc, mmImages::mmImagesCalculationMethodI::sCalculationAutomationParams * _p_sAutomationParams ) {
 	mmString v_tInParams = _p_xDoc->SaveToXMLBuffer();
-	mmInt v_iStrSize = v_tInParams.copy( _p_sAutomationParams->sInParams, INOUT_PARAMS_SIZE, 0 );
+	mmInt v_iStrSize = v_tInParams._Copy_s( _p_sAutomationParams->sInParams, INOUT_PARAMS_SIZE, INOUT_PARAMS_SIZE, 0 );
 	_p_sAutomationParams->sInParams[ v_iStrSize ] = 0;
 }
 //----------------------------------------------------------------------------------
 
 void mmXML::CopyOutputParams( mmXML::mmXMLDocI * _p_xDoc, mmImages::mmImagesCalculationMethodI::sCalculationAutomationParams * _p_sAutomationParams ) {
 	mmString v_tOutParams = _p_xDoc->SaveToXMLBuffer();
-	mmInt v_iStrSize = v_tOutParams.copy( _p_sAutomationParams->sOutParams, INOUT_PARAMS_SIZE, 0 );
+	mmInt v_iStrSize = v_tOutParams._Copy_s( _p_sAutomationParams->sOutParams, INOUT_PARAMS_SIZE, INOUT_PARAMS_SIZE, 0 );
 	_p_sAutomationParams->sOutParams[ v_iStrSize ] = 0;
 }
 //----------------------------------------------------------------------------------

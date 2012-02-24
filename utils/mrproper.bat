@@ -28,16 +28,18 @@ date /T >> %logfile%
 time /T >> %logfile% 
 ECHO ---------------------- >> %logfile%
 
-del /S *.obj >> %logfile%  2>&1
+REM targets
 REM del /S *.exe >> %logfile%  2>&1
 REM del /S *.dll >> %logfile%  2>&1
+REM del /S *.lib >> %logfile%  2>&1
+
+del /S *.obj >> %logfile%  2>&1
 del /S *.pch >> %logfile%  2>&1
 del /S *.exp >> %logfile%  2>&1
 del /S *.res >> %logfile%  2>&1
 del /S *.bin >> %logfile%  2>&1
 del /S *.idb >> %logfile%  2>&1
 del /S *.pdb >> %logfile%  2>&1
-REM del /S *.lib >> %logfile%  2>&1
 del /S *.suo >> %logfile%  2>&1
 del /S *.ncb >> %logfile%  2>&1
 del /S *.ilk >> %logfile%  2>&1
@@ -47,6 +49,9 @@ del /S *.embed.manifest >> %logfile%  2>&1
 del /S *.embed.manifest.res >> %logfile%  2>&1
 del /S *.intermediate.manifest >> %logfile%  2>&1
 del /S *.dep >> %logfile%  2>&1
+del /S *.sdf >> %logfile%  2>&1
+del /S *.tlog >> %logfile%  2>&1
+
 del /S BuildLog.htm >> %logfile%  2>&1
 
 

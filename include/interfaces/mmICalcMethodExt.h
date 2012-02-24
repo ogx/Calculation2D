@@ -1,6 +1,6 @@
 #pragma once
 
-#include <mmExecutionContext.h>
+#include <interfaces/mmICalcMethod.h>
 #include <interfaces/mmIImages.h>
 #include <mmXMLIOUtilities.h>
 
