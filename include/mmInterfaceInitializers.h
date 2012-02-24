@@ -52,42 +52,6 @@ namespace mmInterfaceInitializers
 	mmFileIO::mmFileUtilsI* CreateFileUtils(mmLog::mmLogReceiverI* p_psLogReceiver = NULL);
 
 	////////////////////////////////////////////////////////////////////////////////
-	/// Initializes interface mmFileIO::mmTextFileReadI. In case of
-	/// bad alloc error throws mmError(mmeBadAlloc).
-	///
-	/// @param[in] p_psLogReceiver pointer to log object
-	/// @return pointer to initialized object
-	////////////////////////////////////////////////////////////////////////////////
-	mmFileIO::mmTextFileReadI* CreateTextFileForRead(mmLog::mmLogReceiverI* p_psLogReceiver = NULL);
-
-	////////////////////////////////////////////////////////////////////////////////
-	/// Initializes interface mmFileIO::mmBinaryFileReadI. In case of
-	/// bad alloc error throws mmError(mmeBadAlloc).
-	///
-	/// @param[in] p_psLogReceiver pointer to log object
-	/// @return pointer to initialized object
-	////////////////////////////////////////////////////////////////////////////////
-	mmFileIO::mmBinaryFileReadI* CreateBinaryFileForRead(mmLog::mmLogReceiverI* p_psLogReceiver = NULL);
-
-	////////////////////////////////////////////////////////////////////////////////
-	/// Initializes interface mmFileIO::mmTextFileWriteI. In case of
-	/// bad alloc error throws mmError(mmeBadAlloc).
-	///
-	/// @param[in] p_psLogReceiver pointer to log object
-	/// @return pointer to initialized object
-	////////////////////////////////////////////////////////////////////////////////
-	mmFileIO::mmTextFileWriteI* CreateTextFileForWrite(mmLog::mmLogReceiverI* p_psLogReceiver = NULL);
-
-	////////////////////////////////////////////////////////////////////////////////
-	/// Initializes interface mmFileIO::mmBinaryFileWriteI. In case of
-	/// bad alloc error throws mmError(mmeBadAlloc).
-	///
-	/// @param[in] p_psLogReceiver pointer to log object
-	/// @return pointer to initialized object
-	////////////////////////////////////////////////////////////////////////////////
-	mmFileIO::mmBinaryFileWriteI* CreateBinaryFileForWrite(mmLog::mmLogReceiverI* p_psLogReceiver = NULL);
-
-	////////////////////////////////////////////////////////////////////////////////
 	/// Initializes interface mmLog::mmLogReceiverI. In case of
 	/// bad alloc error throws mmError(mmeBadAlloc).
 	///

@@ -60,9 +60,6 @@
     <ClInclude Include="include\images\mmImagesCalculationMethodDLLBroker.h">
       <Filter>Header Files\Calculation</Filter>
     </ClInclude>
-    <ClInclude Include="include\images\mmImagesComplexCalculationManagement.h">
-      <Filter>Header Files\Calculation</Filter>
-    </ClInclude>
     <ClInclude Include="include\images\mmImagesStructure.h">
       <Filter>Header Files\Images</Filter>
     </ClInclude>
@@ -177,9 +174,6 @@
       <Filter>Source Files\Calculation</Filter>
     </ClCompile>
     <ClCompile Include="src\images\mmImagesCalculationMethodDLLBroker.cpp">
-      <Filter>Source Files\Calculation</Filter>
-    </ClCompile>
-    <ClCompile Include="src\images\mmImagesComplexCalculationManagement.cpp">
       <Filter>Source Files\Calculation</Filter>
     </ClCompile>
     <ClCompile Include="src\windows\mmDllSupport.cpp">

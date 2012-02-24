@@ -59,8 +59,8 @@ namespace mmLog
 			/// @param[in] p_ePriority - priority of log message, one of eLogMessagePriority
 			///													 value
 			/// @param[in] p_psString - pointer to string with message
-      ////////////////////////////////////////////////////////////////////////////////
-      virtual void SendLogMessage(eLogMessagePriority p_ePriority,mmString* p_psString) = 0;
+			////////////////////////////////////////////////////////////////////////////////
+			virtual void SendLogMessage(eLogMessagePriority p_ePriority, mmString* p_psString) = 0;
   };
 };
 

@@ -45,55 +45,6 @@ mmFileIO::mmFileUtilsI* mmInterfaceInitializers::CreateFileUtils(mmLog::mmLogRec
 	};
 }
 
-mmFileIO::mmTextFileReadI* mmInterfaceInitializers::CreateTextFileForRead(mmLog::mmLogReceiverI* p_psLogReceiver)
-{
-	try
-	{
-		return (new mmFileIO::mmTextFileReadSTD(p_psLogReceiver));
-	}
-	catch(std::bad_alloc)
-	{
-		throw mmError(mmeBadAlloc);
-	};
-}
-
-mmFileIO::mmBinaryFileReadI* mmInterfaceInitializers::CreateBinaryFileForRead(mmLog::mmLogReceiverI* p_psLogReceiver)
-{
-	try
-	{
-		return (new mmFileIO::mmBinaryFileReadSTD(p_psLogReceiver));
-	}
-	catch(std::bad_alloc)
-	{
-		throw mmError(mmeBadAlloc);
-	};
-}
-
-mmFileIO::mmTextFileWriteI* mmInterfaceInitializers::CreateTextFileForWrite(mmLog::mmLogReceiverI* p_psLogReceiver)
-{
-	try
-	{
-		return (new mmFileIO::mmTextFileWriteSTD(p_psLogReceiver));
-	}
-	catch(std::bad_alloc)
-	{
-		throw mmError(mmeBadAlloc);
-	};
-}
-
-mmFileIO::mmBinaryFileWriteI* mmInterfaceInitializers::CreateBinaryFileForWrite(mmLog::mmLogReceiverI* p_psLogReceiver)
-{
-	try
-	{
-		return (new mmFileIO::mmBinaryFileWriteSTD(p_psLogReceiver));
-	}
-	catch(std::bad_alloc)
-	{
-		throw mmError(mmeBadAlloc);
-	};
-}
-
-
 mmLog::mmLogReceiverI* mmInterfaceInitializers::CreateLogFile(mmString p_sLogFileName)
 {
 	try
@@ -110,7 +61,7 @@ mmXML::mmXMLDocI* mmInterfaceInitializers::CreateXMLDocument(mmLog::mmLogReceive
 {
 	try
 	{
-		return (new mmXML::mmXMLDocBB(p_psLogReceiver));
+		return (new mmXML::mmXMLDocBB);
 	}
 	catch(std::bad_alloc)
 	{
@@ -122,7 +73,7 @@ mmXML::mmXMLNodeI* mmInterfaceInitializers::CreateXMLNode(mmLog::mmLogReceiverI*
 {
 	try
 	{
-		return (new mmXML::mmXMLNodeBB(p_psLogReceiver));
+		return (new mmXML::mmXMLNodeBB);
 	}
 	catch(std::bad_alloc)
 	{

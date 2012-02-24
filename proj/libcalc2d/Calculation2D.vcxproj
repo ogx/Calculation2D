@@ -188,7 +188,6 @@
     <ClInclude Include="include\images\mmImagesCalculationManagement.h" />
     <ClInclude Include="include\images\mmImagesCalculationMethodContainerWindows.h" />
     <ClInclude Include="include\images\mmImagesCalculationMethodDLLBroker.h" />
-    <ClInclude Include="include\images\mmImagesComplexCalculationManagement.h" />
     <ClInclude Include="include\images\mmImagesStructure.h" />
     <ClInclude Include="include\log\mmLogFile.h" />
     <ClInclude Include="include\log\mmLogRedirector.h" />
@@ -211,7 +210,6 @@
     <ClCompile Include="src\images\mmImagesCalculationManagement.cpp" />
     <ClCompile Include="src\images\mmImagesCalculationMethodContainerWindows.cpp" />
     <ClCompile Include="src\images\mmImagesCalculationMethodDLLBroker.cpp" />
-    <ClCompile Include="src\images\mmImagesComplexCalculationManagement.cpp" />
     <ClCompile Include="src\windows\mmDllSupport.cpp" />
     <ClCompile Include="src\fileio\mmFileIOStd.cpp" />
     <ClCompile Include="src\mmOperatingSystemCalls.cpp" />
