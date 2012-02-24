@@ -1,6 +1,6 @@
 #include <images\mmImagesCalculationMethodContainerWindows.h>
 
-#include <mmInterfaceInitializers.h>
+#include <interfaces\mmInterfaceInitializers.h>
 #include <images\mmImagesCalculationMethodDLLBroker.h>
 #include <windows\mmDllSupport.h>
 #include <mmStringUtilities.h>

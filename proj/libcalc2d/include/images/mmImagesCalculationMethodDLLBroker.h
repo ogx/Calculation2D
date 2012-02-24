@@ -17,7 +17,7 @@
 #include <interfaces\mmIImages.h>
 #include <log\mmLogSender.h>
 
-#include <interfaces\mmGlobalInterfacesStorage.h>
+#include <mmExecutionContext.h>
 
 #include <windows.h>
 
@@ -25,7 +25,7 @@
 /// Definition of function type returning initialised specified images
 /// calculation method.
 ////////////////////////////////////////////////////////////////////////////////
-typedef mmImages::mmImagesCalculationMethodI* (__stdcall *mmDLLImagesCalculationMethod_Create)(mmInterfacesStorage::mmGlobalInterfacesStorage*,const wchar_t*);
+typedef mmImages::mmImagesCalculationMethodI* (__stdcall *mmDLLImagesCalculationMethod_Create)(mmExecutionContext*,const wchar_t*);
 
 ////////////////////////////////////////////////////////////////////////////////
 /// Definition of function type freeing images calculation method object.
@@ -38,10 +38,11 @@ namespace mmImages
 	/// Implementation of mmImages::mmImagesCalculationMethodI interface for
 	/// DLL broker.
 	////////////////////////////////////////////////////////////////////////////////
-	class mmImagesCalculationMethodDLLBroker: public mmImagesCalculationMethodI,
-																									 public mmLog::mmLogSender
+	class mmImagesCalculationMethodDLLBroker: public mmImagesCalculationMethodI, public mmLog::mmLogSender
 	{
 		private:		// fields
+			mmFactories::mmUtilsFactoryI * m_psUtilsFactory;
+
 			HINSTANCE m_hDLLHandle;
 			mmImages::mmImagesCalculationMethodI* m_psInitializedImagesCalculationMethod;
 
@@ -58,21 +59,17 @@ namespace mmImages
 			///						 calculation method to initialize
 			/// @param[in] p_psLogReceiver pointer to log object
 			////////////////////////////////////////////////////////////////////////////////
-			mmImagesCalculationMethodDLLBroker(mmString p_sDLLName, mmString p_sImagesCalculationMethodName,
-                        	mmLog::mmLogReceiverI *p_psLogReceiver = NULL);
-
+			mmImagesCalculationMethodDLLBroker(mmString const & p_sDLLName, mmString const & p_sImagesCalculationMethodName, mmLog::mmLogReceiverI *p_psLogReceiver = NULL);
 			////////////////////////////////////////////////////////////////////////////////
 			/// Destructor.
 			////////////////////////////////////////////////////////////////////////////////
 			~mmImagesCalculationMethodDLLBroker();
 
 			mmImages::mmImagesCalculationMethodI::sCalculationMethodParams GetCalculationMethodInfo(void);
-			void SetCalculationMethodParameters(mmImages::mmImageStructureI* p_psImageStructure,
-																					mmImages::mmImagesCalculationMethodI::sCalculationAutomationParams* p_psAutomationParams = NULL);
+			void SetCalculationMethodParameters(mmImages::mmImageStructureI* p_psImageStructure, mmImages::mmImagesCalculationMethodI::sCalculationAutomationParams* p_psAutomationParams = NULL);
 
 			void UserAction(mmString p_sXMLParams);
-			void UserAction(wchar_t* p_pcXMLParamsBuffer,
-											mmInt p_iXMLParamsBufferSize);
+			void UserAction(wchar_t* p_pcXMLParamsBuffer, mmInt p_iXMLParamsBufferSize);
 
 			bool Execute(void);
 			void StopExecution(void);

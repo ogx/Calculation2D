@@ -4,7 +4,7 @@
 #define mmXMLIOUtilitiesH
 //---------------------------------------------------------------------------
 #include <mmStringUtilities.h>
-#include <mmInterfaceInitializers.h>
+#include <interfaces\mmInterfaceInitializers.h>
 #include <mmOperatingSystemCalls.h>
 #include <list>
 #include <algorithm>

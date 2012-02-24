@@ -1,35 +1,31 @@
 #include <images\mmImagesCalculationMethodDLLBroker.h>
 
-#include <interfaces\mmGlobalInterfacesStorage.h>
+#include <mmExecutionContext.h>
 #include <windows\mmDllSupport.h>
 #include <mmStringUtilities.h>
 
-mmImages::mmImagesCalculationMethodDLLBroker::mmImagesCalculationMethodDLLBroker(mmString p_sDLLName,
-																																															 mmString p_sImagesCalculationMethodName,
+#include <interfaces\mmInterfaceInitializers.h>
 
-																																															 mmLog::mmLogReceiverI *p_psLogReceiver):
-																																															 mmLog::mmLogSender(L"mmImages::mmImagesCalculationMethodDLLBroker",p_psLogReceiver)
+mmImages::mmImagesCalculationMethodDLLBroker::mmImagesCalculationMethodDLLBroker(mmString const & p_sDLLName, mmString const & p_sImagesCalculationMethodName, mmLog::mmLogReceiverI *p_psLogReceiver) :
+	mmLog::mmLogSender(L"mmImages::mmImagesCalculationMethodDLLBroker", p_psLogReceiver)
 {
 	SendLogMessage(mmLog::debug,mmString(L"Start Constructor"));
 
 	// restoring functions symbols from DLL
-	mmString v_sDLLSymbol_mmDLLImagesCalculationMethod_Create = mmDLLSupport::FindSymbolInDLLExportTable(p_sDLLName,
-																																																							L"mmDLLCreateImagesCalculationMethod");
-	mmString v_sDLLSymbol_mmDLLImagesCalculationMethod_Destroy = mmDLLSupport::FindSymbolInDLLExportTable(p_sDLLName,
-																																																							 L"mmDLLDestroyImagesCalculationMethod");
+	mmString v_sDLLSymbol_mmDLLImagesCalculationMethod_Create = mmDLLSupport::FindSymbolInDLLExportTable(p_sDLLName, L"mmDLLCreateImagesCalculationMethod");
+	mmString v_sDLLSymbol_mmDLLImagesCalculationMethod_Destroy = mmDLLSupport::FindSymbolInDLLExportTable(p_sDLLName, L"mmDLLDestroyImagesCalculationMethod");
 
 	// loading images calculation method dll
 	m_hDLLHandle = LoadLibrary(p_sDLLName.c_str());
 
 	// storing pointer to images calculation method functions
-	m_psDLLImagesCalculationMethod_Create = (mmDLLImagesCalculationMethod_Create)GetProcAddress(m_hDLLHandle,
-																																																						mmStringUtilities::MMStringToCharString(v_sDLLSymbol_mmDLLImagesCalculationMethod_Create).c_str());
-	m_psDLLImagesCalculationMethod_Destroy = (mmDLLImagesCalculationMethod_Destroy)GetProcAddress(m_hDLLHandle,
-																																																							mmStringUtilities::MMStringToCharString(v_sDLLSymbol_mmDLLImagesCalculationMethod_Destroy).c_str());
+	m_psDLLImagesCalculationMethod_Create = (mmDLLImagesCalculationMethod_Create) GetProcAddress(m_hDLLHandle, mmStringUtilities::MMStringToCharString(v_sDLLSymbol_mmDLLImagesCalculationMethod_Create).c_str());
+	m_psDLLImagesCalculationMethod_Destroy = (mmDLLImagesCalculationMethod_Destroy) GetProcAddress(m_hDLLHandle, mmStringUtilities::MMStringToCharString(v_sDLLSymbol_mmDLLImagesCalculationMethod_Destroy).c_str());
 
 	// initialize images calculation method
-	mmInterfacesStorage::mmGlobalInterfacesStorage v_sInterfacesStorage(p_psLogReceiver );
-	m_psInitializedImagesCalculationMethod = m_psDLLImagesCalculationMethod_Create(&v_sInterfacesStorage,p_sImagesCalculationMethodName.c_str());
+	m_psUtilsFactory = mmInterfaceInitializers::CreateUtilsFactory();
+	mmExecutionContext v_sExecutionContext(m_psUtilsFactory, p_psLogReceiver);
+	m_psInitializedImagesCalculationMethod = m_psDLLImagesCalculationMethod_Create(&v_sExecutionContext, p_sImagesCalculationMethodName.c_str());
 
 	SendLogMessage(mmLog::debug,mmString(L"End Constructor"));
 }

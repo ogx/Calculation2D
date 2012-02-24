@@ -2,7 +2,7 @@
 
 #include <vector>
 
-#include <mmInterfaceInitializers.h>
+#include <interfaces\mmInterfaceInitializers.h>
 #include <mmStringUtilities.h>
 #include <mmOperatingSystemCalls.h>
 

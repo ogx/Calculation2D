@@ -1,21 +1,20 @@
 
 #pragma once
 
-#include <mmInterfaceInitializers.h>
+#include <interfaces/mmInterfaceInitializers.h>
 #include <mmOperatingSystemCalls.h>
 #include <mmStringUtilities.h>
 #include <mmCalcMethod.h>
 #include <interfaces/mmICalcMethod.h>
 
-mmImages::mmCalcMethod::mmCalcMethod(mmLog::mmLogReceiverI *p_psLogReceiver,
-																		 mmString p_sClassName):
-																		 mmLog::mmLogSender(p_sClassName,p_psLogReceiver)
+mmImages::mmCalcMethod::mmCalcMethod(mmLog::mmLogReceiverI *p_psLogReceiver, mmString p_sClassName) :
+	mmLog::mmLogSender(p_sClassName,p_psLogReceiver)
 {
 	SendLogMessage(mmLog::debug,mmString(L"Start Constructor"));
 
-	swprintf(m_sCMParams.sShortName, L"Generic calculation method");
-	swprintf(m_sCMParams.sIDName, L"{C13390E5-EBA6-404d-8706-B07FFE01C52F}");
-	swprintf(m_sCMParams.sDescription,L"Generic calculation method");
+	swprintf_s(m_sCMParams.sShortName, L"Generic calculation method");
+	swprintf_s(m_sCMParams.sIDName, L"{C13390E5-EBA6-404d-8706-B07FFE01C52F}");
+	swprintf_s(m_sCMParams.sDescription,L"Generic calculation method");
 	m_sCMParams.bIsMultithreaded = true;
 
 	m_psThreadSynchEL.reset(mmInterfaceInitializers::CreateExclusiveLock(NULL));
@@ -47,8 +46,7 @@ mmImages::mmImagesCalculationMethodI::sCalculationMethodParams mmImages::mmCalcM
 	return m_sCMParams;
 }
 //---------------------------------------------------------------------------
-void mmImages::mmCalcMethod::SetCalculationMethodParameters(mmImages::mmImageStructureI* p_psImageStructure,
-																														mmImages::mmImagesCalculationMethodI::sCalculationAutomationParams* p_psAutomationParams)
+void mmImages::mmCalcMethod::SetCalculationMethodParameters(mmImages::mmImageStructureI* p_psImageStructure, mmImages::mmImagesCalculationMethodI::sCalculationAutomationParams* p_psAutomationParams)
 {
 	SendLogMessage(mmLog::debug,mmString(L"Start SetCalculationMethodParameters"));
 

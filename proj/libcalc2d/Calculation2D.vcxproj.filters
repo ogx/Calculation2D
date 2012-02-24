@@ -111,9 +111,6 @@
     <ClInclude Include="..\..\include\interfaces\mmIXML.h">
       <Filter>Header Files\Interfaces</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\include\interfaces\mmGlobalInterfacesStorage.h">
-      <Filter>Header Files\Interfaces</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\include\log\mmLogSender.h">
       <Filter>Header Files\Log</Filter>
     </ClInclude>
@@ -137,6 +134,15 @@
     </ClInclude>
     <ClInclude Include="..\..\include\mmPixel.h">
       <Filter>Header Files\Images</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\interfaces\mmIUtilsFactory.h">
+      <Filter>Header Files\Interfaces</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\mmExecutionContext.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\interfaces\mmInterfaceInitializers.h">
+      <Filter>Header Files\Interfaces</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -191,17 +197,20 @@
     <ClCompile Include="src\thread\mmThreadWindowsImpl.cpp">
       <Filter>Source Files\System</Filter>
     </ClCompile>
-    <ClCompile Include="src\interfaces\mmGlobalInterfacesStorage.cpp">
-      <Filter>Source Files\Interfaces</Filter>
-    </ClCompile>
     <ClCompile Include="src\interfaces\mmIHardware.cpp">
       <Filter>Source Files\Interfaces</Filter>
     </ClCompile>
     <ClCompile Include="src\interfaces\mmIImages.cpp">
       <Filter>Source Files\Interfaces</Filter>
     </ClCompile>
-    <ClCompile Include="src\mmInterfaceInitializers.cpp">
+    <ClCompile Include="src\mmExecutionContext.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\interfaces\mmInterfaceInitializers.cpp">
       <Filter>Source Files\Interfaces</Filter>
+    </ClCompile>
+    <ClCompile Include="src\images\mmCalcMethod.cpp">
+      <Filter>Source Files\Images</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

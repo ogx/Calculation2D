@@ -1,6 +1,6 @@
 #include <log\mmLogRedirector.h>
 
-#include <mmInterfaceInitializers.h>
+#include <interfaces\mmInterfaceInitializers.h>
 
 mmLog::mmLogRedirector::mmLogRedirector()
 {
