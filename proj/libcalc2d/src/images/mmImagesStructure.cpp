@@ -8,7 +8,7 @@
 
 #include <mmStringUtilities.h>
 #include <mmOperatingSystemCalls.h>
-#include <mmInterfaceInitializers.h>
+#include <interfaces\mmInterfaceInitializers.h>
 
 #undef min
 #undef max
@@ -586,7 +586,7 @@ mmUInt mmImages::mmImage::GetLayerCount(void) const {
 mmImages::mmLayerI * mmImages::mmImage::GetLayer(mmUInt const p_iIndex) const {
 	if(p_iIndex < m_sLayers.size()) {
 		std::list<mmLayer*>::const_iterator v_sLayer = m_sLayers.begin();
-		std::advance(m_sLayers.begin(), p_iIndex);
+		std::advance(v_sLayer, p_iIndex);
 		return *v_sLayer;
 	} else
 		return NULL;
@@ -668,7 +668,7 @@ mmUInt mmImages::mmImageStructure::GetImageCount(void) const {
 mmImages::mmImageI * mmImages::mmImageStructure::GetImage(mmUInt const p_iIndex) const {
 	if(p_iIndex < m_sImages.size()) {
 		std::list<mmImage*>::const_iterator v_sImage = m_sImages.begin();
-		std::advance(m_sImages.begin(), p_iIndex);
+		std::advance(v_sImage, p_iIndex);
 		return *v_sImage;
 	} else
 		return NULL;

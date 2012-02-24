@@ -171,46 +171,38 @@ mmXML::mmXMLNodePosition mmXML::AddParam( mmXML::mmXMLPositionedNode * _p_xPosit
 }
 //----------------------------------------------------------------------------------
 
-void mmXML::UpdateOutputParam( mmImages::mmImagesCalculationMethodI::sCalculationAutomationParams * _p_sAutomationParams, mmXML::mmXMLNodePosition p_xNodePosition, void * _p_OutputValue ) {
+void mmXML::UpdateOutputParam( mmXML::mmXMLDocI * _p_xDoc, mmImages::mmImagesCalculationMethodI::sCalculationAutomationParams * _p_sAutomationParams, mmXML::mmXMLNodePosition p_xNodePosition, void * _p_OutputValue ) {
 	mmXML::mmXMLNodeI * _v_xRootNode;
-	mmXML::mmXMLDocI * _v_xDoc;
 	mmString v_tOutputValue;
 
-	_v_xDoc = mmInterfaceInitializers::CreateXMLDocument( NULL );
-	_v_xDoc->ParseXMLBuffer( _p_sAutomationParams->sOutParams );
-	_v_xRootNode = _v_xDoc->GetXMLRootNode();
+	_p_xDoc->ParseXMLBuffer( _p_sAutomationParams->sOutParams );
+	_v_xRootNode = _p_xDoc->GetXMLRootNode();
 	v_tOutputValue = mmXML::ConvertToString( mmXML::GetTypeTransition( _v_xRootNode->GetChild( p_xNodePosition.iLeafIndex )->FindChild( mmImages::g_pAutoCalcXML_Params_ParamType_Node )->GetText() ), _p_OutputValue );
 	_v_xRootNode->GetChild( p_xNodePosition.iLeafIndex )->FindChild( mmImages::g_pAutoCalcXML_Params_ParamValue_Node )->SetText( v_tOutputValue );
-	CopyOutputParams( _v_xDoc, _p_sAutomationParams );
-
-	delete _v_xDoc;
+	CopyOutputParams( _p_xDoc, _p_sAutomationParams );
 }
 //----------------------------------------------------------------------------------
 
-void mmXML::UpdateOutputParam( mmImages::mmImagesCalculationMethodI::sCalculationAutomationParams * _p_sAutomationParams, mmXML::mmXMLNodePosition p_xNodePosition, mmString p_tOutputValue ) {
+void mmXML::UpdateOutputParam( mmXML::mmXMLDocI * _p_xDoc, mmImages::mmImagesCalculationMethodI::sCalculationAutomationParams * _p_sAutomationParams, mmXML::mmXMLNodePosition p_xNodePosition, mmString p_tOutputValue ) {
 	mmXML::mmXMLNodeI * _v_xRootNode;
-	mmXML::mmXMLDocI * _v_xDoc;
 
-	_v_xDoc = mmInterfaceInitializers::CreateXMLDocument( NULL );
-	_v_xDoc->ParseXMLBuffer( _p_sAutomationParams->sOutParams );
-	_v_xRootNode = _v_xDoc->GetXMLRootNode();
+	_p_xDoc->ParseXMLBuffer( _p_sAutomationParams->sOutParams );
+	_v_xRootNode = _p_xDoc->GetXMLRootNode();
 	_v_xRootNode->GetChild( p_xNodePosition.iLeafIndex )->FindChild( mmImages::g_pAutoCalcXML_Params_ParamValue_Node )->SetText( p_tOutputValue );
-	CopyOutputParams( _v_xDoc, _p_sAutomationParams );
-
-	delete _v_xDoc;
+	CopyOutputParams( _p_xDoc, _p_sAutomationParams );
 }
 //----------------------------------------------------------------------------------
 
 void mmXML::CopyInputParams( mmXML::mmXMLDocI * _p_xDoc, mmImages::mmImagesCalculationMethodI::sCalculationAutomationParams * _p_sAutomationParams ) {
 	mmString v_tInParams = _p_xDoc->SaveToXMLBuffer();
-	mmInt v_iStrSize = v_tInParams.copy( _p_sAutomationParams->sInParams, INOUT_PARAMS_SIZE, 0 );
+	mmInt v_iStrSize = v_tInParams._Copy_s( _p_sAutomationParams->sInParams, INOUT_PARAMS_SIZE, INOUT_PARAMS_SIZE, 0 );
 	_p_sAutomationParams->sInParams[ v_iStrSize ] = 0;
 }
 //----------------------------------------------------------------------------------
 
 void mmXML::CopyOutputParams( mmXML::mmXMLDocI * _p_xDoc, mmImages::mmImagesCalculationMethodI::sCalculationAutomationParams * _p_sAutomationParams ) {
 	mmString v_tOutParams = _p_xDoc->SaveToXMLBuffer();
-	mmInt v_iStrSize = v_tOutParams.copy( _p_sAutomationParams->sOutParams, INOUT_PARAMS_SIZE, 0 );
+	mmInt v_iStrSize = v_tOutParams._Copy_s( _p_sAutomationParams->sOutParams, INOUT_PARAMS_SIZE, INOUT_PARAMS_SIZE, 0 );
 	_p_sAutomationParams->sOutParams[ v_iStrSize ] = 0;
 }
 //----------------------------------------------------------------------------------
@@ -227,7 +219,7 @@ bool mmXML::SetValueByName( mmXML::mmXMLDocI * _p_xDoc, mmString p_tParamName, v
 	v_tValueNodeName = mmImages::g_pAutoCalcXML_Params_ParamValue_Node;
 	v_tNameNodeName = mmImages::g_pAutoCalcXML_Params_ParamName_Node;
 
-	std::vector<mmXML::mmXMLNodeI*> v_vcChildNodes = _v_xGroupNode->GetChilds();
+	std::vector<mmXML::mmXMLNodeI*> v_vcChildNodes = _v_xGroupNode->GetChildren();
 	for( std::vector<mmXML::mmXMLNodeI*>::iterator v_vciI = v_vcChildNodes.begin(); v_vciI != v_vcChildNodes.end(); ++v_vciI ) {
 		if( (*v_vciI)->FindChild( v_tNameNodeName )->GetText() == p_tParamName ) {
 			_v_sValueNode = (*v_vciI)->FindChild( v_tValueNodeName );
@@ -278,7 +270,7 @@ bool mmXML::GetValueByName( mmXML::mmXMLDocI * _p_xDoc, mmString p_tParamName, v
 	v_tValueNodeName = mmImages::g_pAutoCalcXML_Params_ParamValue_Node;
 	v_tNameNodeName = mmImages::g_pAutoCalcXML_Params_ParamName_Node;
 
-	std::vector<mmXML::mmXMLNodeI*> v_vcChildNodes = _v_xGroupNode->GetChilds();
+	std::vector<mmXML::mmXMLNodeI*> v_vcChildNodes = _v_xGroupNode->GetChildren();
 	for( std::vector<mmXML::mmXMLNodeI*>::iterator v_vciI = v_vcChildNodes.begin(); v_vciI != v_vcChildNodes.end(); ++v_vciI ) {
 		if( ( _v_sNode = (*v_vciI)->FindChild( v_tNameNodeName ) ) != NULL && _v_sNode->GetText() == p_tParamName ) {
 			v_tValue = (*v_vciI)->FindChild( v_tValueNodeName )->GetText();

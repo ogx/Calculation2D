@@ -49,14 +49,12 @@ namespace mmImages {
 	};
 
 	class mmCalcMethod: public mmImagesCalculationMethodI, 
-											public mmCalcMethodExtI,
-											public mmLog::mmLogSender
+	                    public mmCalcMethodExtI,
+	                    public mmLog::mmLogSender
 	{
 		protected:	// methods
-			virtual bool Calculate() = 0;
-			virtual void ExecBeforeSingleImageCalc(mmImageI* p_psCurrentImage) = 0;
-			virtual void ExecAfterSingleImageCalc(mmImageI* p_psCurrentImage) = 0;
-			virtual void RetrieveParameters() = 0;
+			virtual void ExecBeforeSingleImageCalc(mmInt p_iCurrentImageID) {}
+			virtual void ExecAfterSingleImageCalc(mmInt p_iCurrentImageID) {}
 
 			virtual void ForEachImage(mmCalcKernelI* p_psKernel);
 			virtual void SetParam(mmString p_sName, mmXML::mmXMLDataType p_eType, void* p_psValue, bool p_bIsOutput = false);

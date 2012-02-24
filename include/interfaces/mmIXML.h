@@ -62,7 +62,7 @@ namespace mmXML
 			///
 			/// @param[in] p_sName new name of XML node.
 			////////////////////////////////////////////////////////////////////////////////
-			virtual void SetName(mmString p_sName) = 0;
+			virtual void SetName(mmString const & p_sName) = 0;
 
 			////////////////////////////////////////////////////////////////////////////////
 			/// Method returns information is this node is leaf of not.
@@ -84,8 +84,7 @@ namespace mmXML
 			/// @param[in] p_sAttrName name of attribute
 			/// @param[in] p_sAttrValue value of attribute.
 			////////////////////////////////////////////////////////////////////////////////
-			virtual void AddAttribute(mmString p_sAttrName,
-																mmString p_sAttrValue) = 0;
+			virtual void AddAttribute(mmString const & p_sAttrName, mmString const & p_sAttrValue) = 0;
 
 			////////////////////////////////////////////////////////////////////////////////
 			/// Method removes attribute(s) with given name. In case of lack attribute
@@ -93,7 +92,7 @@ namespace mmXML
 			///
 			/// @param[in] p_sAttrName name of attribute.
 			////////////////////////////////////////////////////////////////////////////////
-			virtual void RemoveAttribute(mmString p_sAttrName) = 0;
+			virtual bool RemoveAttribute(mmString const & p_sAttrName) = 0;
 
 			////////////////////////////////////////////////////////////////////////////////
 			/// Method removes all attributes.
@@ -106,7 +105,7 @@ namespace mmXML
 			/// @param[in] p_sAttrName name of attribute.
 			/// @return TRUE if it exists, FALSE otherwise.
 			////////////////////////////////////////////////////////////////////////////////
-			virtual bool IsAttribute(mmString p_sAttrName) = 0;
+			virtual bool IsAttribute(mmString const & p_sAttrName) = 0;
 
 			////////////////////////////////////////////////////////////////////////////////
 			/// Methods returns attribute value. In case of lack attribute
@@ -115,7 +114,7 @@ namespace mmXML
 			/// @param[in] p_sAttrName name of attribute
 			/// @return value of attribute.
 			////////////////////////////////////////////////////////////////////////////////
-			virtual mmString GetAttributeValue(mmString p_sAttrName) = 0;
+			virtual mmString GetAttributeValue(mmString const & p_sAttrName) = 0;
 
 			////////////////////////////////////////////////////////////////////////////////
 			/// Methods sets attribute value. In case of lack attribute
@@ -124,8 +123,7 @@ namespace mmXML
 			/// @param[in] p_sAttrName name of attribute
 			/// @param[in] p_sAttrValue new value of attribute.
 			////////////////////////////////////////////////////////////////////////////////
-			virtual void SetAttributeValue(mmString p_sAttrName,
-																		 mmString p_sAttrValue) = 0;
+			virtual void SetAttributeValue(mmString const & p_sAttrName, mmString const & p_sAttrValue) = 0;
 
 			////////////////////////////////////////////////////////////////////////////////
 			/// Method returns text of node.
@@ -139,14 +137,14 @@ namespace mmXML
 			///
 			/// @param[in] p_sText text of node.
 			////////////////////////////////////////////////////////////////////////////////
-			virtual void SetText(mmString p_sText) = 0;
+			virtual void SetText(mmString const & p_sText) = 0;
 
 			////////////////////////////////////////////////////////////////////////////////
 			/// Method returns vector with child nodes.
 			///
 			/// @return vector with pointers to elements.
 			////////////////////////////////////////////////////////////////////////////////
-			virtual std::vector<mmXML::mmXMLNodeI*> GetChilds(void) = 0;
+			virtual std::vector<mmXML::mmXMLNodeI*> GetChildren(void) = 0;
 
 			////////////////////////////////////////////////////////////////////////////////
 			/// Method adds child node. If node has not empty text element it clears it.
@@ -154,7 +152,7 @@ namespace mmXML
 			/// @param[in] p_sChildName name of new child element
 			/// @return pointer to created node
 			////////////////////////////////////////////////////////////////////////////////
-			virtual mmXML::mmXMLNodeI* AddChild(mmString p_sChildName) = 0;
+			virtual mmXML::mmXMLNodeI* AddChild(mmString const & p_sChildName) = 0;
 
 			////////////////////////////////////////////////////////////////////////////////
 			/// Method copies child node and its structure.
@@ -169,7 +167,7 @@ namespace mmXML
 			/// @param[in] p_sChildName name of new child element
 			/// @return pointer to found node
 			////////////////////////////////////////////////////////////////////////////////
-			virtual mmXML::mmXMLNodeI* FindChild(mmString p_sChildName) = 0;
+			virtual mmXML::mmXMLNodeI* FindChild(mmString const & p_sChildName) = 0;
 
 			////////////////////////////////////////////////////////////////////////////////
 			/// Method returns pointer to child node. In case of lack node with given index
@@ -186,7 +184,7 @@ namespace mmXML
 			///
 			/// @param[in] p_sChildName child node name
 			////////////////////////////////////////////////////////////////////////////////
-			virtual void RemoveChild(mmString p_sChildName) = 0;
+			virtual bool RemoveChild(mmString const & p_sChildName) = 0;
 
 			////////////////////////////////////////////////////////////////////////////////
 			/// Method removes child node. In case of lack node with given name it throws
@@ -194,12 +192,12 @@ namespace mmXML
 			///
 			/// @param[in] p_iChildIndex index of selected child node.
 			////////////////////////////////////////////////////////////////////////////////
-			virtual void RemoveChild(mmInt p_iChildIndex) = 0;
+			virtual bool RemoveChild(mmInt p_iChildIndex) = 0;
 
 			////////////////////////////////////////////////////////////////////////////////
 			/// Method removes all child nodes.
 			////////////////////////////////////////////////////////////////////////////////
-			virtual void RemoveAllChilds(void) = 0;
+			virtual void RemoveAllChildren(void) = 0;
 			////////////////////////////////////////////////////////////////////////////////
 			/// Method finds parent node of current node.
 			///
@@ -236,7 +234,7 @@ namespace mmXML
 			///
 			/// @param[in] p_sXMLFileName name of file to parse.
 			////////////////////////////////////////////////////////////////////////////////
-			virtual void ParseXMLFile(mmString p_sXMLFileName) = 0;
+			virtual bool ParseXMLFile(mmString const & p_sXMLFileName) = 0;
 
 			////////////////////////////////////////////////////////////////////////////////
 			/// Method parses text buffer with XML document. In case of error it throws
@@ -244,7 +242,7 @@ namespace mmXML
 			///
 			/// @param[in] p_sXMLBuffer text buffer to parse.
 			////////////////////////////////////////////////////////////////////////////////
-			virtual void ParseXMLBuffer(mmString p_sXMLBuffer) = 0;
+			virtual bool ParseXMLBuffer(mmString const & p_sXMLBuffer) = 0;
 
 			////////////////////////////////////////////////////////////////////////////////
 			/// Method saves mmXMLDocI structure as XML file. In case of error it throws
@@ -252,7 +250,7 @@ namespace mmXML
 			///
 			/// @param[in] p_sXMLFileName file name to store XML structure.
 			////////////////////////////////////////////////////////////////////////////////
-			virtual void SaveToXMLFile(mmString p_sXMLFileName) = 0;
+			virtual bool SaveToXMLFile(mmString const & p_sXMLFileName) = 0;
 
 			////////////////////////////////////////////////////////////////////////////////
 			/// Method saves mmXMLDocI structure as XML buffer. In case of error it throws
@@ -283,7 +281,7 @@ namespace mmXML
 			///
 			/// @param[in] p_sRootNodeName new root node name.
 			////////////////////////////////////////////////////////////////////////////////
-			virtual void CreateXMLRootNode(mmString p_sRootNodeName) = 0;
+			virtual void CreateXMLRootNode(mmString const & p_sRootNodeName) = 0;
 
 			////////////////////////////////////////////////////////////////////////////////
 			/// Method creates new root node. It deletes whole existing XML structure. New

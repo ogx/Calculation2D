@@ -21,14 +21,14 @@ mmString mmStringUtilities::MMIntToString(mmInt p_iInput,
 
 	if(p_iLength == 0)
 	{
-		swprintf(v_tcTemp,L"%d",p_iInput);
+		swprintf_s(v_tcTemp,L"%d",p_iInput);
 	}
 	else
 	{
 		wchar_t v_tcTempFormat[16];
 
-		swprintf(v_tcTempFormat,L"%s0%dd",L"%",p_iLength);
-		swprintf(v_tcTemp,v_tcTempFormat,p_iInput);
+		swprintf_s(v_tcTempFormat,L"%s0%dd",L"%",p_iLength);
+		swprintf_s(v_tcTemp,v_tcTempFormat,p_iInput);
 	};
 
 	return mmString(v_tcTemp);
@@ -41,14 +41,14 @@ mmString mmStringUtilities::MMRealToString(mmReal p_rInput,mmInt p_iPrecision)
 
 	if(p_iPrecision >= 0)
 	{
-		swprintf(v_tcTempFormat,L"%s.%df",L"%",p_iPrecision);
+		swprintf_s(v_tcTempFormat,L"%s.%df",L"%",p_iPrecision);
 	}
 	else
 	{
-		swprintf(v_tcTempFormat,L"%sf",L"%");
+		swprintf_s(v_tcTempFormat,L"%sf",L"%");
 	};
 
-	swprintf(v_tcTemp,v_tcTempFormat,p_rInput);
+	swprintf_s(v_tcTemp,v_tcTempFormat,p_rInput);
 
 	return mmString(v_tcTemp);
 }
@@ -57,7 +57,7 @@ mmString mmStringUtilities::PointerToString(void* p_pInput)
 {
 	wchar_t v_tcTemp[256];
 
-	swprintf(v_tcTemp,L"%p",p_pInput);
+	swprintf_s(v_tcTemp,L"%p",p_pInput);
 
 	return mmString(v_tcTemp);
 }
@@ -66,7 +66,7 @@ mmInt mmStringUtilities::StringToMMInt(mmString p_sStr)
 {
 	int v_iTemp;
 
-	swscanf(p_sStr.c_str(),L"%d",&v_iTemp);
+	swscanf_s(p_sStr.c_str(),L"%d",&v_iTemp);
 
 	return v_iTemp;
 }
@@ -75,7 +75,7 @@ mmReal mmStringUtilities::StringToMMReal(mmString p_sStr)
 {
 	double v_rTemp;
 
-	swscanf(p_sStr.c_str(),L"%lf",&v_rTemp);
+	swscanf_s(p_sStr.c_str(),L"%lf",&v_rTemp);
 
 	return v_rTemp;
 }
@@ -177,19 +177,18 @@ void mmStringUtilities::StringToUnsignedCharTable(std::string* p_psStr,unsigned 
 
 mmString mmStringUtilities::GetCurrentDateTimeString(void)
 {
-	std::time_t v_sCurrentDateTime;
-	std::tm* v_psDateTimeStruc;
+	std::tm v_sDateTimeStruc;
 	wchar_t v_tcTemp[64];
 
-	v_sCurrentDateTime = std::time(NULL);
-	v_psDateTimeStruc = std::localtime(&v_sCurrentDateTime);
+	std::time_t const v_sCurrentDateTime = std::time(NULL);
+	::localtime_s(&v_sDateTimeStruc, &v_sCurrentDateTime);
 
-	swprintf(v_tcTemp,L"%04d%02d%02d_%02d%02d%02d",v_psDateTimeStruc->tm_year+1900,
-																								 v_psDateTimeStruc->tm_mon+1,
-																								 v_psDateTimeStruc->tm_mday,
-																								 v_psDateTimeStruc->tm_hour,
-																								 v_psDateTimeStruc->tm_min,
-																								 v_psDateTimeStruc->tm_sec);
+	swprintf_s(v_tcTemp,L"%04d%02d%02d_%02d%02d%02d",v_sDateTimeStruc.tm_year+1900,
+																								 v_sDateTimeStruc.tm_mon+1,
+																								 v_sDateTimeStruc.tm_mday,
+																								 v_sDateTimeStruc.tm_hour,
+																								 v_sDateTimeStruc.tm_min,
+																								 v_sDateTimeStruc.tm_sec);
 
 	return mmString(v_tcTemp);
 }
@@ -234,7 +233,7 @@ std::string mmStringUtilities::MMStringToCharString(const mmString p_sInputStrin
 	mmInt v_iCSize = p_sInputString.size();
 	for(mmInt v_iC=0;v_iC<v_iCSize;v_iC++)
 	{
-		v_sStream << v_sCtfacet.narrow(p_sInputString[v_iC],0);
+		v_sStream << v_sCtfacet.narrow(static_cast<std::ctype<char>::_Elem>(p_sInputString[v_iC]),0);
 	};
 
 	return v_sStream.str();
@@ -269,7 +268,7 @@ std::vector<mmInt> mmStringUtilities::MMStringToVectorOfInt(const mmString p_sIn
 		{
 			mmString v_sTempInt = p_sInputString.substr(v_iStart,v_iStop-v_iStart);
 
-			swscanf(v_sTempInt.c_str(),L"%d",&v_iInt);
+			swscanf_s(v_sTempInt.c_str(),L"%d",&v_iInt);
 			v_vOutVector.push_back(v_iInt);
 		};
 	};

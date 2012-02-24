@@ -20,7 +20,7 @@ mmImages::mmImagesCalculationManagement::mmImagesCalculationManagement(mmInt p_i
 	m_iCalculationThreadCount = p_iCalcThreadCount;
 
 	m_iThreadExecutionSleepTime = 10;
-	//m_psControlThread = mmInterfaceInitializers::CreateDefaultThread(GetLogReceiver());
+
 	m_psControlThread = mmInterfaceInitializers::CreateDefaultThread(NULL);
 	m_psControlThread->RegisterThreadExecutionClass(this);
 	m_psControlThread->Run();

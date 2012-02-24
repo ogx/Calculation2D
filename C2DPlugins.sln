@@ -1,0 +1,47 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Studio 2010
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "C2DPluginSample", "plugins\C2DPluginSample\C2DPluginSample.vcxproj", "{0A32DE24-BE34-4761-B964-B91C941558E5}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "plugins", "plugins", "{95366B9C-E0F5-4A44-AD0C-20A2BD3D071A}"
+	ProjectSection(SolutionItems) = preProject
+		plugins\C2DPlugin.props = plugins\C2DPlugin.props
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "utils", "utils", "{846C7FFF-68CA-4638-AE82-54BEE872BD1C}"
+	ProjectSection(SolutionItems) = preProject
+		utils\C2DPluginWizardSetup.vbs = utils\C2DPluginWizardSetup.vbs
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "C2DPluginWizard", "C2DPluginWizard", "{0646526D-BE22-459A-AC78-29D1BB2EBE81}"
+	ProjectSection(SolutionItems) = preProject
+		utils\C2DPluginWizard\C2DPluginWiz.ico = utils\C2DPluginWizard\C2DPluginWiz.ico
+		utils\C2DPluginWizard\C2DPluginWiz.vsdir = utils\C2DPluginWizard\C2DPluginWiz.vsdir
+		utils\C2DPluginWizard\C2DPluginWiz.vsz = utils\C2DPluginWizard\C2DPluginWiz.vsz
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Win32 = Debug|Win32
+		Debug|x64 = Debug|x64
+		Release|Win32 = Release|Win32
+		Release|x64 = Release|x64
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{0A32DE24-BE34-4761-B964-B91C941558E5}.Debug|Win32.ActiveCfg = Debug|Win32
+		{0A32DE24-BE34-4761-B964-B91C941558E5}.Debug|Win32.Build.0 = Debug|Win32
+		{0A32DE24-BE34-4761-B964-B91C941558E5}.Debug|x64.ActiveCfg = Debug|x64
+		{0A32DE24-BE34-4761-B964-B91C941558E5}.Debug|x64.Build.0 = Debug|x64
+		{0A32DE24-BE34-4761-B964-B91C941558E5}.Release|Win32.ActiveCfg = Release|Win32
+		{0A32DE24-BE34-4761-B964-B91C941558E5}.Release|Win32.Build.0 = Release|Win32
+		{0A32DE24-BE34-4761-B964-B91C941558E5}.Release|x64.ActiveCfg = Release|x64
+		{0A32DE24-BE34-4761-B964-B91C941558E5}.Release|x64.Build.0 = Release|x64
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{0A32DE24-BE34-4761-B964-B91C941558E5} = {95366B9C-E0F5-4A44-AD0C-20A2BD3D071A}
+		{0646526D-BE22-459A-AC78-29D1BB2EBE81} = {846C7FFF-68CA-4638-AE82-54BEE872BD1C}
+	EndGlobalSection
+EndGlobal

@@ -1,12 +1,8 @@
 
 
-//#include <StdAfx.h>
-//#endif
-// uwaga - StdAfx jest specyficzny dla visuala. Po jego za³¹czeniu nie mo¿na daæ #endif zamykaj¹cego #ifndef MADMAC
-
-// uwaga2 - zdefiniowanie MADMAC odblokowuje logowanie i rzucanie wyjatkow
-#define MADMAC
 #include <xml\mmXMLBB.h>
+
+#include <mmStringUtilities.h>
 
 #ifndef RELEASE_PTR
 #define RELEASE_PTR(x)	\
@@ -18,11 +14,6 @@
 #endif
 
 
-
-#ifdef MADMAC
-#include <mmStringUtilities.h>
-#include <mmInterfaceInitializers.h>
-#endif
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 ////  mmXML::mmXMLNodeBB
@@ -50,114 +41,53 @@ int Is_MSXML_Node(MSXML2::IXMLDOMNodePtr pChild)
 		return v_i;
 }
 
-#ifdef MADMAC
-mmXML::mmXMLNodeBB::mmXMLNodeBB(								mmLog::mmLogReceiverI* p_psLogReceiver):
-mmLog::mmLogSender(L"mmXML::mmXMLNodeBB",p_psLogReceiver)
-{
-	SendLogMessage(mmLog::debug,mmString(L"Start Constructor"));
-
-	SendLogMessage(mmLog::debug,mmString(L"End Constructor"));
-}
-#else
 mmXML::mmXMLNodeBB::mmXMLNodeBB( )
 {
 	
 }
-#endif
-
 mmXML::mmXMLNodeBB::~mmXMLNodeBB()
 {
-	//SendLogMessage(mmLog::debug,mmString(L"Start Destructor"));
-
-	RemoveAllChilds();
-	
-	//SendLogMessage(mmLog::debug,mmString(L"End Destructor"));
+	RemoveAllChildren();
 }
 
 mmString mmXML::mmXMLNodeBB::GetName(void)
 {
-#ifdef MADMAC
-	SendLogMessage(mmLog::debug,mmString(L"Start GetName"));
-
-	SendLogMessage(mmLog::debug,mmString(L"End GetName Name=") +
-															m_sNodeName);
-#endif
 	return m_sNodeName;
 }
 
-void mmXML::mmXMLNodeBB::SetName(mmString p_sName)
+void mmXML::mmXMLNodeBB::SetName(mmString const & p_sName)
 {
-#ifdef MADMAC
-	SendLogMessage(mmLog::debug,mmString(L"Start SetName") +
-															m_sNodeName);
-#endif
 	m_sNodeName = p_sName;
-#ifdef MADMAC
-	SendLogMessage(mmLog::debug,mmString(L"End SetName"));
-#endif
 }
 
 bool mmXML::mmXMLNodeBB::IsLeaf(void)
 {
 	bool v_bIsLeaf = true;
-#ifdef MADMAC
-	SendLogMessage(mmLog::debug,mmString(L"Start IsLeaf"));
-#endif
-	if(m_sChilds.size() != 0)
+	if(m_sChildren.size() != 0)
 	{
 		v_bIsLeaf = false;
 	};
-
-#ifdef MADMAC
-	SendLogMessage(mmLog::debug,mmString(L"End IsLeaf Result=") +
-															mmStringUtilities::BoolToString(v_bIsLeaf));
-#endif
 
 	return v_bIsLeaf;
 }
 
 std::vector<mmXML::sXMLAttribute> mmXML::mmXMLNodeBB::GetAttributes(void)
 {
-#ifdef MADMAC
-	SendLogMessage(mmLog::debug,mmString(L"Start GetAttributes"));
-
-	SendLogMessage(mmLog::debug,mmString(L"End GetAttributes"));
-#endif
 	return m_sAttributes;
 }
 
-void mmXML::mmXMLNodeBB::AddAttribute(mmString p_sAttrName,
-																			mmString p_sAttrValue)
+void mmXML::mmXMLNodeBB::AddAttribute(mmString const & p_sAttrName, mmString const & p_sAttrValue)
 {
-#ifdef MADMAC
-	SendLogMessage(mmLog::debug,mmString(L"Start AddAttribute Name=") +
-															p_sAttrName +
-															mmString(L" Value=") +
-															p_sAttrValue);
-#endif
 	mmXML::sXMLAttribute v_sAttr;
 
 	v_sAttr.sName = p_sAttrName;
 	v_sAttr.sValue = p_sAttrValue;
 
 	m_sAttributes.push_back(v_sAttr);
-
-#ifdef MADMAC
-	SendLogMessage(mmLog::debug,mmString(L"End AddAttribute"));
-#endif
 }
 
-#ifdef MADMAC
-void mmXML::mmXMLNodeBB::RemoveAttribute(mmString p_sAttrName)
-#else
-bool mmXML::mmXMLNodeBB::RemoveAttribute(mmString p_sAttrName)
-#endif
+bool mmXML::mmXMLNodeBB::RemoveAttribute(mmString const & p_sAttrName)
 {
-#ifdef MADMAC
-	SendLogMessage(mmLog::debug,mmString(L"Start RemoveAttribute Name=") +
-															p_sAttrName);
-#endif;
-
 	mmInt v_i,v_iAttrCount,v_iRemovedCount;
 	std::vector<sXMLAttribute> v_sNewAttributes;
 
@@ -165,11 +95,7 @@ bool mmXML::mmXMLNodeBB::RemoveAttribute(mmString p_sAttrName)
 	v_iAttrCount = static_cast<mmInt>(m_sAttributes.size());
 	for(v_i=0;v_i<v_iAttrCount;v_i++)
 	{
-#ifdef MADMAC
 		if(m_sAttributes[v_i].sName.compare(p_sAttrName) == 0)
-#else
-		if(m_sAttributes[v_i].sName.compare(p_sAttrName) == 0)
-#endif
 		{
 			v_iRemovedCount++;
 		}
@@ -183,85 +109,44 @@ bool mmXML::mmXMLNodeBB::RemoveAttribute(mmString p_sAttrName)
 
 	if(v_iRemovedCount == 0)
 	{
-		#ifdef MADMAC
-			SendLogMessage(mmLog::critical,mmString(L"RemoveAttribute NoSuchAttribute"));
-
-			throw mmError(mmeXMLNoSuchAttribute);
-		#else
-			return false;
-		#endif
-
+		return false;
 	};
-#ifdef MADMAC
-	SendLogMessage(mmLog::debug,mmString(L"End RemoveAttribute"));
-#else
+
 	return true;
-#endif
 }
 
 void mmXML::mmXMLNodeBB::RemoveAllAttributes(void)
 {
-#ifdef MADMAC
-	SendLogMessage(mmLog::debug,mmString(L"Start RemoveAllAttributes"));
-#endif
 	m_sAttributes.clear();
-#ifdef MADMAC
-	SendLogMessage(mmLog::debug,mmString(L"End RemoveAllAttributes"));
-#endif
 }
 
-bool mmXML::mmXMLNodeBB::IsAttribute(mmString p_sAttrName)
+bool mmXML::mmXMLNodeBB::IsAttribute(mmString const & p_sAttrName)
 {
-#ifdef MADMAC
-	SendLogMessage(mmLog::debug,mmString(L"Start IsAttribute Name=") +
-															p_sAttrName);
-#endif
-
 	mmInt v_i,v_iAttrCount;
 	bool v_bIsAttr = false;
 
 	v_iAttrCount = static_cast<mmInt>(m_sAttributes.size());
 	for(v_i=0;v_i<v_iAttrCount;v_i++)
 	{
-#ifdef MADMAC
 		if(m_sAttributes[v_i].sName.compare(p_sAttrName) == 0)
-#else
-		if(m_sAttributes[v_i].sName.compare(p_sAttrName) == 0)
-#endif
 		{
 			v_bIsAttr = true;
 			break;
 		};
 	};
-#ifdef MADMAC
-	SendLogMessage(mmLog::debug,mmString(L"End IsAttribute Result=") +
-															mmStringUtilities::BoolToString(v_bIsAttr));
-#endif
+
 	return v_bIsAttr;
 }
 
-#ifdef MADMAC
-mmString mmXML::mmXMLNodeBB::GetAttributeValue(mmString p_sAttrName)
-#else
-mmString mmXML::mmXMLNodeBB::GetAttributeValue(mmString p_sAttrName)
-#endif
+mmString mmXML::mmXMLNodeBB::GetAttributeValue(mmString const & p_sAttrName)
 {
-#ifdef MADMAC
-	SendLogMessage(mmLog::debug,mmString(L"Start GetAttributeValue Name=") +
-															p_sAttrName);
-#endif
-
 	mmInt v_i,v_iAttrCount,v_iAttrIndex;
 
 	v_iAttrIndex = -1;
 	v_iAttrCount = static_cast<mmInt>(m_sAttributes.size());
 	for(v_i=0;v_i<v_iAttrCount;v_i++)
 	{
-#ifdef MADMAC
 		if(m_sAttributes[v_i].sName.compare(p_sAttrName) == 0)
-#else
-		if(m_sAttributes[v_i].sName.compare(p_sAttrName) == 0)
-#endif
 		{
 			v_iAttrIndex = v_i;
 			break;
@@ -270,45 +155,23 @@ mmString mmXML::mmXMLNodeBB::GetAttributeValue(mmString p_sAttrName)
 
 	if(v_iAttrIndex == -1)
 	{
-#ifdef MADMAC
-		SendLogMessage(mmLog::critical,mmString(L"GetAttributeValue NoSuchAttribute"));
-
-		throw mmError(mmeXMLNoSuchAttribute);
-#else
 		mmString v_sEmptyString;
-		v_sEmptyString = "";
+		v_sEmptyString = L"";
 		return v_sEmptyString;
-#endif
 	};
-
-#ifdef MADMAC
-	SendLogMessage(mmLog::debug,mmString(L"End GetAttributeValue Value=") +
-															m_sAttributes[v_iAttrIndex].sValue);
-#endif
 
 	return m_sAttributes[v_iAttrIndex].sValue;
 }
 
-void mmXML::mmXMLNodeBB::SetAttributeValue(mmString p_sAttrName,mmString p_sAttrValue)
+void mmXML::mmXMLNodeBB::SetAttributeValue(mmString const & p_sAttrName, mmString const & p_sAttrValue)
 {
-
-#ifdef MADMAC
-	SendLogMessage(mmLog::debug,mmString(L"Start SetAttributeValue Name=") +
-															p_sAttrName +
-															mmString(L" Value=") +
-															p_sAttrValue);
-#endif
 	mmInt v_i,v_iAttrCount,v_iAttrIndex;
 
 	v_iAttrIndex = -1;
 	v_iAttrCount = static_cast<mmInt>(m_sAttributes.size());
 	for(v_i=0;v_i<v_iAttrCount;v_i++)
 	{
-#ifdef MADMAC
 		if(m_sAttributes[v_i].sName.compare(p_sAttrName) == 0)
-#else
-		if(m_sAttributes[v_i].sName.compare(p_sAttrName) == 0)
-#endif
 		{
 			v_iAttrIndex = v_i;
 			break;
@@ -328,331 +191,168 @@ void mmXML::mmXMLNodeBB::SetAttributeValue(mmString p_sAttrName,mmString p_sAttr
 	{
 		m_sAttributes[v_iAttrIndex].sValue = p_sAttrValue;
 	};
-
-#ifdef MADMAC
-	SendLogMessage(mmLog::debug,mmString(L"End SetAttributeValue"));
-#endif
 }
 
 mmString mmXML::mmXMLNodeBB::GetText(void)
 {
-#ifdef MADMAC
-	SendLogMessage(mmLog::debug,mmString(L"Start GetText"));
-
-	SendLogMessage(mmLog::debug,mmString(L"End GetText"));
-#endif
 	return m_sNodeValue;
 }
 
-void mmXML::mmXMLNodeBB::SetText(mmString p_sText)
+void mmXML::mmXMLNodeBB::SetText(mmString const & p_sText)
 {
-#ifdef MADMAC
-	SendLogMessage(mmLog::debug,mmString(L"Start SetText"));
-#endif
 	m_sNodeValue = p_sText;
-#ifdef MADMAC
-	SendLogMessage(mmLog::debug,mmString(L"End SetText"));
-#endif
 }
 
-std::vector<mmXML::mmXMLNodeI*> mmXML::mmXMLNodeBB::GetChilds(void)
+std::vector<mmXML::mmXMLNodeI*> mmXML::mmXMLNodeBB::GetChildren(void)
 {
-#ifdef MADMAC
-	SendLogMessage(mmLog::debug,mmString(L"Start GetChilds"));
-
-	SendLogMessage(mmLog::debug,mmString(L"End GetChilds"));
-#endif
-	return m_sChilds;
+	return m_sChildren;
 }
 
-mmXML::mmXMLNodeI* mmXML::mmXMLNodeBB::AddChild(mmString p_sChildName)
+mmXML::mmXMLNodeI* mmXML::mmXMLNodeBB::AddChild(mmString const & p_sChildName)
 {
-#ifdef MADMAC
-	SendLogMessage(mmLog::debug,mmString(L"Start AddChild Name=") +
-															p_sChildName);
-	
-	mmXMLNodeBB* v_psNode = new mmXML::mmXMLNodeBB(GetLogReceiver());
-#else
 	mmXMLNodeBB* v_psNode = new mmXML::mmXMLNodeBB();
-#endif
 
 	v_psNode->m_sNodeName = p_sChildName;
 	v_psNode->m_psParent = this;
-	m_sChilds.push_back(v_psNode);
+	m_sChildren.push_back(v_psNode);
 
-#ifdef MADMAC
-	SendLogMessage(mmLog::debug,mmString(L"End AddChild"));
-#endif
 	return v_psNode;
 }
 
 void mmXML::mmXMLNodeBB::AddChildWithStructure(mmXMLNodeI* p_psChildNode)
 {
-#ifdef MADMAC
-	SendLogMessage(mmLog::debug,mmString(L"Start AddChildWithStructure"));
-	mmXMLNodeBB* v_psNode = new mmXML::mmXMLNodeBB(GetLogReceiver());
-#else
 	mmXMLNodeBB* v_psNode = new mmXML::mmXMLNodeBB();
-#endif
 
 	v_psNode->m_psParent = p_psChildNode->GetParent();
 	v_psNode->m_sNodeName = p_psChildNode->GetName();
 	v_psNode->m_sNodeValue = p_psChildNode->GetText();
 	v_psNode->m_sAttributes = p_psChildNode->GetAttributes();
 
-	std::vector<mmXML::mmXMLNodeI*> v_vChilds = p_psChildNode->GetChilds();
-	mmInt v_iChildsCount = v_vChilds.size();
-	for(mmInt v_iC=0;v_iC<v_iChildsCount;v_iC++)
+	std::vector<mmXML::mmXMLNodeI*> v_vChildren = p_psChildNode->GetChildren();
+	mmInt v_iChildrenCount = v_vChildren.size();
+	for(mmInt v_iC=0;v_iC<v_iChildrenCount;v_iC++)
 	{
-		v_psNode->AddChildWithStructure(v_vChilds[v_iC]);
+		v_psNode->AddChildWithStructure(v_vChildren[v_iC]);
 	};
 
-	m_sChilds.push_back(v_psNode);
-#ifdef MADMAC
-	SendLogMessage(mmLog::debug,mmString(L"End AddChildWithStructure"));
-#endif
+	m_sChildren.push_back(v_psNode);
 }
 
-mmXML::mmXMLNodeI* mmXML::mmXMLNodeBB::FindChild(mmString p_sChildName)
+mmXML::mmXMLNodeI* mmXML::mmXMLNodeBB::FindChild(mmString const & p_sChildName)
 {
-#ifdef MADMAC
-	SendLogMessage(mmLog::debug,mmString(L"Start FindChild Name=")+
-															p_sChildName);
-#endif
-
 	mmInt v_i,v_iChildCount;
 	mmXML::mmXMLNodeI* v_psFoundNode = NULL;
 
-	v_iChildCount = static_cast<mmInt>(m_sChilds.size());
+	v_iChildCount = static_cast<mmInt>(m_sChildren.size());
 	for(v_i=0;v_i<v_iChildCount;v_i++)
 	{
-#ifdef MADMAC
-		if(m_sChilds[v_i]->GetName().compare(p_sChildName) == 0)
-#else
-		if(m_sChilds[v_i]->GetName().compare(p_sChildName) == 0)
-#endif
+		if(m_sChildren[v_i]->GetName().compare(p_sChildName) == 0)
 		{
-			v_psFoundNode = m_sChilds[v_i];
+			v_psFoundNode = m_sChildren[v_i];
 			break;
 		};
 	};
-#ifdef MADMAC
-	SendLogMessage(mmLog::debug,mmString(L"End FindChild"));
-#endif
 	return v_psFoundNode;
 }
 
-mmXML::mmXMLNodeI* mmXML::mmXMLNodeBB::FindNextChild(mmXML::mmXMLNodeI* p_psCurrentChild, mmString p_sChildName)
+mmXML::mmXMLNodeI* mmXML::mmXMLNodeBB::GetChild(mmInt p_iChildIndex)
 {
-#ifdef MADMAC
-	SendLogMessage(mmLog::debug,mmString(L"Start FindChild Name=")+
-															p_sChildName);
-#endif
-
 	mmInt v_i,v_iChildCount;
 	mmXML::mmXMLNodeI* v_psFoundNode = NULL;
 
-	v_iChildCount = static_cast<mmInt>(m_sChilds.size());
-	bool v_bCurrentNodeFound = false;
-
-	for(v_i=0;v_i<v_iChildCount;v_i++)
-	{
-#ifdef MADMAC
-		if(m_sChilds[v_i]->GetName().compare(p_sChildName) == 0)
-#else
-		if(m_sChilds[v_i]->GetName().compare(p_sChildName) == 0)
-#endif
-		{
-			if (( v_bCurrentNodeFound == true) )
-			{
-				v_psFoundNode = m_sChilds[v_i];
-				break;
-			}
-			if ( (p_psCurrentChild == m_sChilds[ v_i ] ) && ( v_bCurrentNodeFound == false) )
-				v_bCurrentNodeFound = true;
-		
-		};
-	};
-#ifdef MADMAC
-	SendLogMessage(mmLog::debug,mmString(L"End FindChild"));
-#endif
-	return v_psFoundNode;
-}
-
-#ifdef MADMAC
-mmXML::mmXMLNodeI* mmXML::mmXMLNodeBB::GetChild(mmInt p_iChildIndex)
-#else
-mmXML::mmXMLNodeI* mmXML::mmXMLNodeBB::GetChild(mmInt p_iChildIndex)
-#endif
-{
-#ifdef MADMAC
-	SendLogMessage(mmLog::debug,mmString(L"Start GetChild"));
-#endif
-
-	mmInt v_i,v_iChildCount;
-	mmXML::mmXMLNodeI* v_psFoundNode = NULL;
-
-	v_iChildCount = static_cast<mmInt>(m_sChilds.size());
+	v_iChildCount = static_cast<mmInt>(m_sChildren.size());
 	for(v_i=0;v_i<v_iChildCount;v_i++)
 	{
 		if(v_i == p_iChildIndex)
 		{
-			v_psFoundNode = m_sChilds[v_i];
+			v_psFoundNode = m_sChildren[v_i];
 		};
 	};
-#ifdef MADMAC
-	if(v_psFoundNode == NULL)
-	{
-		SendLogMessage(mmLog::critical,mmString(L"GetChild NoSuchChild"));
-
-		throw mmError(mmeXMLNoSuchNode);
-	};
-
-
-	SendLogMessage(mmLog::debug,mmString(L"End GetChild"));
-#endif
 
 	return v_psFoundNode;
 }
 
-#ifdef MADMAC
-void mmXML::mmXMLNodeBB::RemoveChild(mmString p_sChildName)
-#else
-bool mmXML::mmXMLNodeBB::RemoveChild(mmString p_sChildName)
-#endif
+bool mmXML::mmXMLNodeBB::RemoveChild(mmString const & p_sChildName)
 {
-#ifdef MADMAC
-	SendLogMessage(mmLog::debug,mmString(L"Start RemoveChild Name=")+
-															p_sChildName);
-#endif
 	mmInt v_i,v_iChildCount,v_iRemovedCount;
-	std::vector<mmXML::mmXMLNodeI*> v_sNewChilds;
+	std::vector<mmXML::mmXMLNodeI*> v_sNewChildren;
 
 	v_iRemovedCount = 0;
-	v_iChildCount = static_cast<mmInt>(m_sChilds.size());
+	v_iChildCount = static_cast<mmInt>(m_sChildren.size());
 	for(v_i=0;v_i<v_iChildCount;v_i++)
 	{
-#ifdef MADMAC		
-		if(m_sChilds[v_i]->GetName().compare(p_sChildName) == 0)
-#else
-		if(m_sChilds[v_i]->GetName().compare(p_sChildName) == 0)
-#endif
+		if(m_sChildren[v_i]->GetName().compare(p_sChildName) == 0)
 		{
 			v_iRemovedCount++;
 
-			delete m_sChilds[v_i];
+			delete m_sChildren[v_i];
 		}
 		else
 		{
-			v_sNewChilds.push_back(m_sChilds[v_i]);
+			v_sNewChildren.push_back(m_sChildren[v_i]);
 		};
 	};
 
-	m_sChilds = v_sNewChilds;
+	m_sChildren = v_sNewChildren;
 
 	if(v_iRemovedCount == 0)
 	{
-#ifdef MADMAC
-		SendLogMessage(mmLog::critical,mmString(L"RemoveChild NoSuchChild"));
-
-		throw mmError(mmeXMLNoSuchNode);
-#else
 		return false;
-#endif
 	};
 
-#ifdef MADMAC
-	SendLogMessage(mmLog::debug,mmString(L"End RemoveChild RemovedCount=") +
-															mmStringUtilities::MMIntToString(v_iRemovedCount));
-#else
 	return true;
-#endif
 }
 
-#ifdef MADMAC
-void mmXML::mmXMLNodeBB::RemoveChild(mmInt p_iChildIndex)
-#else
 bool mmXML::mmXMLNodeBB::RemoveChild(mmInt p_iChildIndex)
-#endif
 {
-#ifdef MADMAC
-	SendLogMessage(mmLog::debug,mmString(L"Start RemoveChild"));
-#endif
 	mmInt v_i,v_iChildCount;
 	bool v_bIsRemoved = false;
-	std::vector<mmXML::mmXMLNodeI*> v_sNewChilds;
+	std::vector<mmXML::mmXMLNodeI*> v_sNewChildren;
 
-	v_iChildCount = static_cast<mmInt>(m_sChilds.size());
+	v_iChildCount = static_cast<mmInt>(m_sChildren.size());
 	for(v_i=0;v_i<v_iChildCount;v_i++)
 	{
 		if(v_i == p_iChildIndex)
 		{
 			v_bIsRemoved = true;
-			delete m_sChilds[v_i];
+			delete m_sChildren[v_i];
 		}
 		else
 		{
-			v_sNewChilds.push_back(m_sChilds[v_i]);
+			v_sNewChildren.push_back(m_sChildren[v_i]);
 		};
 	};
 
-	m_sChilds = v_sNewChilds;
+	m_sChildren = v_sNewChildren;
 
 	if(!v_bIsRemoved)
 	{
-		#ifdef MADMAC
-			SendLogMessage(mmLog::critical,mmString(L"RemoveChild NoSuchChild"));
-
-			throw mmError(mmeXMLNoSuchNode);
-		#else
-			return false;
-		#endif
+		return false;
 	};
 
-#ifdef MADMAC
-	SendLogMessage(mmLog::debug,mmString(L"End RemoveChild"));
-#else
 	return true;
-#endif
 }
 
-void mmXML::mmXMLNodeBB::RemoveAllChilds(void)
+void mmXML::mmXMLNodeBB::RemoveAllChildren(void)
 {
-
-#ifdef MADMAC
-	SendLogMessage(mmLog::debug,mmString(L"Start RemoveAllChilds"));
-#endif
-
 	mmInt v_i,v_iChildCount;
 
-	v_iChildCount = static_cast<mmInt>(m_sChilds.size());
+	v_iChildCount = static_cast<mmInt>(m_sChildren.size());
 	for(v_i=0;v_i<v_iChildCount;v_i++)
 	{
-		delete m_sChilds[v_i];
+		delete m_sChildren[v_i];
 	};
-	m_sChilds.clear();
-
-#ifdef MADMAC
-	SendLogMessage(mmLog::debug,mmString(L"End RemoveAllChilds"));
-#endif
-
+	m_sChildren.clear();
 }
 
 mmXML::mmXMLNodeI* mmXML::mmXMLNodeBB::GetParent( void ) {
-#ifdef MADMAC
-	SendLogMessage(mmLog::debug,mmString(L"Start GetParent"));
-	SendLogMessage(mmLog::debug,mmString(L"End GetParent"));
-#endif
 	return m_psParent;
 }
 
 mmXML::mmXMLNodeI* mmXML::mmXMLNodeBB::GetNextSibling( void ) {
-#ifdef MADMAC
-	SendLogMessage(mmLog::debug,mmString(L"End GetNextSibling"));
-#endif
 	if( m_psParent == NULL )
     	return NULL;
-	std::vector<mmXML::mmXMLNodeI*> v_sChildNodes = m_psParent->GetChilds();
+	std::vector<mmXML::mmXMLNodeI*> v_sChildNodes = m_psParent->GetChildren();
 	mmXML::mmXMLNodeI* v_psNode = NULL;
 	for( std::vector<mmXML::mmXMLNodeI*>::iterator v_sI = v_sChildNodes.begin(); v_sI != v_sChildNodes.end()-1; ++v_sI ) {
 		if( *v_sI == static_cast<mmXML::mmXMLNodeI*>(this) ) {
@@ -660,19 +360,13 @@ mmXML::mmXMLNodeI* mmXML::mmXMLNodeBB::GetNextSibling( void ) {
 			break;
 		}
 	}
-#ifdef MADMAC
-	SendLogMessage(mmLog::debug,mmString(L"End GetNextSibling"));
-#endif
 	return v_psNode;
 }
 
 mmXML::mmXMLNodeI* mmXML::mmXMLNodeBB::GetPrevSibling( void ) {
-#ifdef MADMAC
-	SendLogMessage(mmLog::debug,mmString(L"End GetPrevSibling"));
-#endif	
 	if( m_psParent == NULL )
     	return NULL;
-	std::vector<mmXML::mmXMLNodeI*> v_sChildNodes = m_psParent->GetChilds();
+	std::vector<mmXML::mmXMLNodeI*> v_sChildNodes = m_psParent->GetChildren();
 	mmXML::mmXMLNodeI* v_psNode = NULL;
 	for( std::vector<mmXML::mmXMLNodeI*>::iterator v_sI = v_sChildNodes.begin()+1; v_sI != v_sChildNodes.end(); ++v_sI ) {
 		if( *v_sI == static_cast<mmXML::mmXMLNodeI*>(this) ) {
@@ -680,9 +374,6 @@ mmXML::mmXMLNodeI* mmXML::mmXMLNodeBB::GetPrevSibling( void ) {
 			break;
 		}
 	}
-#ifdef MADMAC
-	SendLogMessage(mmLog::debug,mmString(L"End GetPrevSibling"));
-#endif
 	return v_psNode;
 }
 
@@ -691,91 +382,40 @@ mmXML::mmXMLNodeI* mmXML::mmXMLNodeBB::GetPrevSibling( void ) {
 ////  mmXML::mmXMLDocBB
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
-#ifdef MADMAC
-mmXML::mmXMLDocBB::mmXMLDocBB(mmLog::mmLogReceiverI *p_psLogReceiver):
-mmLog::mmLogSender(L"mmXML::mmXMLBB",p_psLogReceiver)
-#else
 mmXML::mmXMLDocBB::mmXMLDocBB()
-#endif
 {
-#ifdef MADMAC
-	SendLogMessage(mmLog::debug,mmString(L"Start Constructor"));
-#endif
 	//CoInitializeEx(NULL,COINIT_APARTMENTTHREADED);
 	m_bOLEInitialized = false;
 	InitializeXML();
-#ifdef MADMAC
-	SendLogMessage(mmLog::debug,mmString(L"End Constructor"));
-#endif
 }
 
 mmXML::mmXMLDocBB::~mmXMLDocBB()
 {
-#ifdef MADMAC
-	SendLogMessage(mmLog::debug,mmString(L"Start Destructor"));
-#endif
-	
 	this->Reset_XML_Document();
 	m_psXMLBBDoc.Release();
 	CoUninitialize();
-#ifdef MADMAC
-	
-
-	SendLogMessage(mmLog::debug,mmString(L"End Destructor"));
-#endif
 }
 
-#ifdef MADMAC
-void mmXML::mmXMLDocBB::ParseXMLFile(mmString p_sXMLFileName)
-#else
-bool mmXML::mmXMLDocBB::ParseXMLFile(mmString p_sXMLFileName)
-#endif
+bool mmXML::mmXMLDocBB::ParseXMLFile(mmString const & p_sXMLFileName)
 {
-#ifdef MADMAC
-	SendLogMessage(mmLog::debug,mmString(L"Start ParseXMLFile File=") +
-															p_sXMLFileName);
-#endif
 	// delete XML structure
-	m_sRootNode.RemoveAllChilds();
+	m_sRootNode.RemoveAllChildren();
 	m_sRootNode.RemoveAllAttributes();
 
 	// load XMLDocument
 
 	if (Load_XML_Document(p_sXMLFileName) == false)
-	
-#ifdef MADMAC
-	{
-
-		SendLogMessage(mmLog::critical,mmString(L"ParseXMLFile Error") );
-
-		throw mmError(mmeXMLParseError);
-
-	};
-#else
-
-
 		return false;
-#endif
 
 	// refresh XML structure from XMLDocument
 	LoadNodeStructureFromXMLDocument();
-#ifdef MADMAC
-	SendLogMessage(mmLog::debug,mmString(L"End ParseXMLFile"));
-#else
+
 	return true;
-#endif
 }
-#ifdef MADMAC
-void mmXML::mmXMLDocBB::ParseXMLBuffer(mmString p_sXMLBuffer)
-#else
-bool mmXML::mmXMLDocBB::ParseXMLBuffer(mmString p_sXMLBuffer)
-#endif
+bool mmXML::mmXMLDocBB::ParseXMLBuffer(mmString const & p_sXMLBuffer)
 {
-#ifdef MADMAC
-	SendLogMessage(mmLog::debug,mmString(L"Start ParseXMLBuffer"));
-#endif
 	// delete XML structure
-	m_sRootNode.RemoveAllChilds();
+	m_sRootNode.RemoveAllChildren();
 	m_sRootNode.RemoveAllAttributes();
 
 	// load XMLDocument
@@ -783,15 +423,6 @@ bool mmXML::mmXMLDocBB::ParseXMLBuffer(mmString p_sXMLBuffer)
 	{
 		this->Load_XML_From_Buffer(p_sXMLBuffer);
 	}
-#ifdef MADMAC
-	catch(...)
-	{
-		SendLogMessage(mmLog::critical,mmString(L"ParseXMLFile Error"));
-
-		throw mmError(mmeXMLParseError);
-
-	}
-#else
 	catch(...)
 	{
 
@@ -799,28 +430,14 @@ bool mmXML::mmXMLDocBB::ParseXMLBuffer(mmString p_sXMLBuffer)
 
 
 	};
-#endif
 	// refresh XML structure from XMLDocument
 	LoadNodeStructureFromXMLDocument();
-#ifdef MADMAC
-	SendLogMessage(mmLog::debug,mmString(L"End ParseXMLBuffer"));
-#else
+
 	return true;
-#endif
 }
 
-#ifdef MADMAC
-void mmXML::mmXMLDocBB::SaveToXMLFile(mmString p_sXMLFileName)
-#else
-bool mmXML::mmXMLDocBB::SaveToXMLFile(mmString p_sXMLFileName)
-#endif
+bool mmXML::mmXMLDocBB::SaveToXMLFile(mmString const & p_sXMLFileName)
 {
-
-#ifdef MADMAC
-	SendLogMessage(mmLog::debug,mmString(L"Start SaveToXMLFile File=") +
-															p_sXMLFileName);
-#endif
-
 	// save XML structure into XMLDocument
 	SaveNodeStructureIntoXMLDocument();
 
@@ -828,86 +445,45 @@ bool mmXML::mmXMLDocBB::SaveToXMLFile(mmString p_sXMLFileName)
 	mmString v_sOutString = GetXMLFormattedString();
 	
 	// opening TXT file
-#ifdef MADMAC
-	mmFileIO::mmTextFileWriteI* v_psTxtFile = mmInterfaceInitializers::CreateTextFileForWrite(this->GetLogReceiver());
-	v_psTxtFile->Open(p_sXMLFileName,mmFileIO::trunc_for_write);
-	v_psTxtFile->WriteLine(v_sOutString);
-	delete v_psTxtFile;
-#else
 	m_psXMLBBDoc->save( _bstr_t( p_sXMLFileName.c_str() ) );
-#endif
-#ifdef MADMAC
-	SendLogMessage(mmLog::debug,mmString(L"End SaveToXMLFile"));
-#else
+
 	return true;
-#endif
 }
 
 mmString mmXML::mmXMLDocBB::SaveToXMLBuffer(void)
 {
-#ifdef MADMAC
-	SendLogMessage(mmLog::debug,mmString(L"Start SaveToXMLBuffer"));
-#endif
 	// save XML structure into XMLDocument
 	SaveNodeStructureIntoXMLDocument();
 
 	// using XMLDocument API
 	mmString v_sOutString = GetXMLFormattedString();
-#ifdef MADMAC
-	SendLogMessage(mmLog::debug,mmString(L"End SaveToXMLBuffer"));
-#endif
+
 	return v_sOutString;
 }
 
 bool mmXML::mmXMLDocBB::IsXMLStructureValid(void)
 {
-#ifdef MADMAC
-	SendLogMessage(mmLog::debug,mmString(L"Start IsXMLStructureValid"));
-#endif
 	bool v_bIsValid = true;
 	// TODO: validate XML structure
 
-#ifdef MADMAC
-	SendLogMessage(mmLog::debug,mmString(L"End IsXMLStructureValid"));
-#endif
 	return v_bIsValid;
 }
 
-#ifdef MADMAC
-mmXML::mmXMLNodeI* mmXML::mmXMLDocBB::GetXMLRootNode(void)
-#else
 mmXML::mmXMLNodeI* mmXML::mmXMLDocBB::GetXMLRootNode( void )
-#endif
 {
-#ifdef MADMAC
-	SendLogMessage(mmLog::debug,mmString(L"Start GetXMLRootNode"));
-
-	SendLogMessage(mmLog::debug,mmString(L"End GetXMLRootNode"));
-#endif;
 	return &m_sRootNode;
 }
 
-void mmXML::mmXMLDocBB::CreateXMLRootNode(mmString p_sRootNodeName)
+void mmXML::mmXMLDocBB::CreateXMLRootNode(mmString const & p_sRootNodeName)
 {
-#ifdef MADMAC
-	SendLogMessage(mmLog::debug,mmString(L"Start CreateXMLRootNode NodeName=") +
-															p_sRootNodeName);
-#endif
-	m_sRootNode.RemoveAllChilds();
+	m_sRootNode.RemoveAllChildren();
 	m_sRootNode.RemoveAllAttributes();
 	m_sRootNode.SetName(p_sRootNodeName);
 	m_sRootNode.SetText(mmString(L""));
-
-#ifdef MADMAC
-	SendLogMessage(mmLog::debug,mmString(L"End CreateXMLRootNode"));
-#endif
 }
 
 void mmXML::mmXMLDocBB::CopyXMLRootNodeStructure(mmXMLNodeI* p_psNode)
 {
-#ifdef MADMAC
-	SendLogMessage(mmLog::debug,mmString(L"Start CopyXMLRootNodeStructure"));
-#endif
 	CreateXMLRootNode(p_psNode->GetName());
 
 	std::vector<mmXML::sXMLAttribute> v_vRootAttributes = p_psNode->GetAttributes();
@@ -918,27 +494,18 @@ void mmXML::mmXMLDocBB::CopyXMLRootNodeStructure(mmXMLNodeI* p_psNode)
 														 v_vRootAttributes[v_iA].sValue);
 	};
 
-	std::vector<mmXML::mmXMLNodeI*> v_vChilds = p_psNode->GetChilds();
-	mmInt v_iChildsCount = v_vChilds.size();
-	for(mmInt v_iC=0;v_iC<v_iChildsCount;v_iC++)
+	std::vector<mmXML::mmXMLNodeI*> v_vChildren = p_psNode->GetChildren();
+	mmInt v_iChildrenCount = v_vChildren.size();
+	for(mmInt v_iC=0;v_iC<v_iChildrenCount;v_iC++)
 	{
-		m_sRootNode.AddChildWithStructure(v_vChilds[v_iC]);
+		m_sRootNode.AddChildWithStructure(v_vChildren[v_iC]);
 	};
-#ifdef MADMAC
-	SendLogMessage(mmLog::debug,mmString(L"End CopyXMLRootNodeStructure"));
-#endif
 }
 
 
 
 void mmXML::mmXMLDocBB::FillXMLNodeIntoXMLDocument(MSXML2::IXMLDOMNodePtr p_sBBNode,mmXMLNodeI* p_psMMNode)
 {
-
-
-#ifdef MADMAC
-	SendLogMessage(mmLog::debug,mmString(L"Start FillXMLNodeIntoXMLDocument"));
-#endif
-
 	// adding attributes
 	mmInt v_i,v_iCount;
 
@@ -963,18 +530,18 @@ void mmXML::mmXMLDocBB::FillXMLNodeIntoXMLDocument(MSXML2::IXMLDOMNodePtr p_sBBN
 
 
 	// adding child nodes or text values for leaves
-	std::vector<mmXML::mmXMLNodeI*> v_sChilds = p_psMMNode->GetChilds();
-	v_iCount = v_sChilds.size();
+	std::vector<mmXML::mmXMLNodeI*> v_sChildren = p_psMMNode->GetChildren();
+	v_iCount = v_sChildren.size();
 	if(v_iCount > 0)
 	{
-		// childs
+		// Children
 		for(v_i=0;v_i<v_iCount;v_i++)
 		{
-			MSXML2::IXMLDOMNodePtr v_sNewNode =  m_psXMLBBDoc->createNode(MSXML2::NODE_ELEMENT, _bstr_t(v_sChilds[v_i]->GetName().c_str()), "");
+			MSXML2::IXMLDOMNodePtr v_sNewNode =  m_psXMLBBDoc->createNode(MSXML2::NODE_ELEMENT, _bstr_t(v_sChildren[v_i]->GetName().c_str()), "");
 
 
 			v_sNewNode = p_sBBNode->appendChild(v_sNewNode);
-			FillXMLNodeIntoXMLDocument(v_sNewNode,v_sChilds[v_i]);
+			FillXMLNodeIntoXMLDocument(v_sNewNode,v_sChildren[v_i]);
 		};
 	}
 	else
@@ -982,17 +549,11 @@ void mmXML::mmXMLDocBB::FillXMLNodeIntoXMLDocument(MSXML2::IXMLDOMNodePtr p_sBBN
 		// text
 		p_sBBNode->put_text(_bstr_t(p_psMMNode->GetText().c_str()));
 	};
-#ifdef MADMAC
-	SendLogMessage(mmLog::debug,mmString(L"End FillXMLNodeIntoXMLDocument"));
-#endif
 }
 
 
 void mmXML::mmXMLDocBB::SaveNodeStructureIntoXMLDocument(void)
 {
-#ifdef MADMAC
-	SendLogMessage(mmLog::debug,mmString(L"Start SaveNodeStructureIntoXMLDocument"));
-#endif
 	// delete existing XMLDocument
 	m_psXMLBBDoc.Release();
 
@@ -1009,17 +570,10 @@ void mmXML::mmXMLDocBB::SaveNodeStructureIntoXMLDocument(void)
 	 
 	FillXMLNodeIntoXMLDocument(m_psDocRoot,&m_sRootNode);
 	m_psXMLBBDoc->documentElement = m_psDocRoot;
-
-#ifdef MADMAC
-	SendLogMessage(mmLog::debug,mmString(L"End SaveNodeStructureIntoXMLDocument"));
-#endif
 }
 
 mmString mmXML::mmXMLDocBB::GetXMLFormattedString(void)
 {
-#ifdef MADMAC
-	SendLogMessage(mmLog::debug,mmString(L"Start GetXMLFormattedString"));
-#endif
 	mmString v_sOutString(L"");
 
 	// formatowanie
@@ -1125,58 +679,48 @@ mmString mmXML::mmXMLDocBB::GetXMLFormattedString(void)
 			}
 			
 	// zapisz do stringa
-		HRESULT hr = S_OK;
-		LPVOID pOutput = NULL;
-		HGLOBAL hGlobal = NULL;
+	HRESULT hr = S_OK;
+	LPVOID pOutput = NULL;
+	HGLOBAL hGlobal = NULL;
 
-		hr = ::GetHGlobalFromStream( pOutStream, &hGlobal);
-		if( FAILED(hr) ) 
-		{ 
-			return v_sOutString; 
-		}
-		::GlobalUnlock(hGlobal);
-		LARGE_INTEGER llStart = {0, 0};
-		ULARGE_INTEGER ullSize = {0, 0};
-		pOutStream->Seek( llStart, STREAM_SEEK_CUR, &ullSize);
-		pOutput = ::GlobalLock(hGlobal);
+	hr = ::GetHGlobalFromStream( pOutStream, &hGlobal);
+	if( FAILED(hr) ) 
+	{ 
+		return v_sOutString; 
+	}
+	::GlobalUnlock(hGlobal);
+	LARGE_INTEGER llStart = {0, 0};
+	ULARGE_INTEGER ullSize = {0, 0};
+	pOutStream->Seek( llStart, STREAM_SEEK_CUR, &ullSize);
+	pOutput = ::GlobalLock(hGlobal);
 
 
-		char * v_pcText = new char[ int(ullSize.QuadPart) + 1 ];
-		ZeroMemory( v_pcText, int(ullSize.QuadPart) + 1 );
-		memcpy( v_pcText, (const char * ) pOutput, int(ullSize.QuadPart) );
+	char * v_pcText = new char[ int(ullSize.QuadPart) + 1 ];
+	ZeroMemory( v_pcText, int(ullSize.QuadPart) + 1 );
+	memcpy( v_pcText, (const char * ) pOutput, int(ullSize.QuadPart) );
 
-		v_sOutString.clear();
-		v_sOutString.append( (mmStringUtilities::MMCharStringToMMString(v_pcText)).c_str());
+	v_sOutString.clear();
+	v_sOutString.append( (mmStringUtilities::MMCharStringToMMString(v_pcText)).c_str());
+
+	::GlobalUnlock(hGlobal);
+	delete [] v_pcText;
 		
-
-
-		::GlobalUnlock(hGlobal);
-		delete [] v_pcText;
-		
-		}
-		catch ( _com_error e )
-		{
-//			TRACE( _T("CXml::SaveWithFormatted( %s ) failed:%s\n"), lpszFilePath, e.ErrorMessage());
-			hr = e.Error();
-		}
-		RELEASE_PTR(pISAXDTDHandler);
-		RELEASE_PTR(pISAXErrorHandler);
-		RELEASE_PTR(pISAXContentHandler);
-		RELEASE_PTR(pSAXReader);
-		RELEASE_PTR(pMXWriter);
-	
-#ifdef MADMAC
-	SendLogMessage(mmLog::debug,mmString(L"End GetXMLFormattedString"));
-#endif
+	}
+	catch ( _com_error e )
+	{
+		hr = e.Error();
+	}
+	RELEASE_PTR(pISAXDTDHandler);
+	RELEASE_PTR(pISAXErrorHandler);
+	RELEASE_PTR(pISAXContentHandler);
+	RELEASE_PTR(pSAXReader);
+	RELEASE_PTR(pMXWriter);
 	
 	return v_sOutString;
 }
 
 void mmXML::mmXMLDocBB::FillXMLNodeFromXMLDocument(MSXML2::IXMLDOMNodePtr p_sBBNode, mmXMLNodeI* p_psMMNode)
 {
-#ifdef MADMAC
-	SendLogMessage(mmLog::debug,mmString(L"Start FillXMLNodeFromXMLDocument"));
-#endif
 	// adding attributes
 	mmInt v_i,v_iCount;
 	sXMLAttribute v_sXMLAttr;
@@ -1204,7 +748,7 @@ void mmXML::mmXMLDocBB::FillXMLNodeFromXMLDocument(MSXML2::IXMLDOMNodePtr p_sBBN
 		}
 		else
 		{
-			// childs
+			// Children
 			for(v_i=0;v_i<v_iCount;v_i++)
 			{
 				mmXMLNodeI* v_psChildNode = p_psMMNode->AddChild((mmString)(const wchar_t *)(p_sBBNode->GetchildNodes()->Getitem(v_i)->GetnodeName()));
@@ -1213,24 +757,14 @@ void mmXML::mmXMLDocBB::FillXMLNodeFromXMLDocument(MSXML2::IXMLDOMNodePtr p_sBBN
 			};
 		};
 	};
-#ifdef MADMAC
-	SendLogMessage(mmLog::debug,mmString(L"End FillXMLNodeFromXMLDocument"));
-#endif
 }
 
 void mmXML::mmXMLDocBB::LoadNodeStructureFromXMLDocument(void)
 {
-#ifdef MADMAC
-	SendLogMessage(mmLog::debug,mmString(L"Start LoadNodeStructureFromXMLDocument"));
-#endif
 	MSXML2::IXMLDOMElementPtr v_sRootNode = m_psXMLBBDoc->documentElement;
 	m_sRootNode.SetName((mmStringUtilities::MMCharStringToMMString((const char *) v_sRootNode->GetnodeName())));
 //	m_sRootNode.SetName((mmString((const wchar_t *) v_sRootNode->GetnodeName())));
 	FillXMLNodeFromXMLDocument(v_sRootNode,&m_sRootNode);
-
-#ifdef MADMAC
-	SendLogMessage(mmLog::debug,mmString(L"End LoadNodeStructureFromXMLDocument"));
-#endif
 }
 
 
@@ -1272,7 +806,7 @@ void mmXML::mmXMLDocBB::Reset_XML_Document()
         
 
 }
-bool mmXML::mmXMLDocBB::Load_XML_Document(mmString strFileName)
+bool mmXML::mmXMLDocBB::Load_XML_Document(mmString const & strFileName)
 {       
 		m_sLastError = L"ok";
 
@@ -1309,7 +843,7 @@ bool mmXML::mmXMLDocBB::Load_XML_Document(mmString strFileName)
         }
 }
 
-void mmXML::mmXMLDocBB::Load_XML_From_Buffer(mmString source)
+void mmXML::mmXMLDocBB::Load_XML_From_Buffer(mmString const & source)
 {
         // Reset the document
         //
