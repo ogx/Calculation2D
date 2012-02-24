@@ -377,11 +377,9 @@ std::vector<mmFileIO::mmFileUtilsI::sDirElement> mmFileIO::mmFileUtilsSTD::GetDi
 			};
 			break;
 		};
-
-		throw v_sErr;
 	};
 
- SendLogMessage(mmLog::debug,mmString(L"End GetDirElements"));
+	SendLogMessage(mmLog::debug,mmString(L"End GetDirElements"));
 
 	return v_sDirElements;
 }

@@ -1,0 +1,142 @@
+	<fieldset>
+		<legend>Input image</legend>
+
+		<div>
+			<img id='input_preview' class='preview preview-small preview-fixed' alt='Double-click to open file'/>
+		</div>
+		
+		<div>
+			<input type='file' id='input_path'/>
+		</div>
+	</fieldset>
+
+	<fieldset>
+		<legend>Run calculation</legend>
+
+		<div>
+			<label for='available_methods'>Available calculation methods</label>
+			<select id='available_methods'></select>
+		</div>
+
+		<div class='buttons'>
+			<button id='get_methods'>Get methods</button>
+			<button id='run_method'>Run method</button>
+			<button id='get_status'>Get status</button>
+			<button id='test' style='margin-left: 20px'>Test</button>
+		</div>
+	</fieldset>
+
+<script language='javascript'>
+	var c2d_server = {
+		test: function(image_base64) {
+			$.ajax({
+				url: '/test',
+				type: 'post',
+				data: {image: image_base64},
+				accepts: 'json',
+				success: function(response, statusText, xhr) {
+					console.log(response.result);
+				}
+			});
+		},
+		
+		getCalculationMethods: function(callback) {
+			$.ajax({
+				url: '/getmethods',
+				type: 'get',
+				data: {},
+				accepts: 'json',
+				success: function(response, statusText, xhr) {
+					callback(response);
+				}
+			});
+		},
+		runCalculationMethod: function(method, callback) {
+			$.ajax({
+				url: '/run',
+				type: 'post',
+				data: {
+					method: method,
+					images: []
+				},
+				accepts: 'json',
+				success: function(response, statusText, xhr) {
+					callback(response);
+				}
+			});
+		},
+		getStatus: function(callback) {
+			$.ajax({
+				url: '/getstatus',
+				type: 'get',
+				data: {},
+				accepts: 'json',
+				success: function(response, statusText, xhr) {
+					callback(response);
+				}
+			});
+		}
+	};
+	
+	$(document).ready(function() {
+		// init appearances
+		$('button').button();
+		$('legend,label').addClass('header');
+		$('#input_path').css({opacity: 0, height: 0});
+		
+		
+		// input image handling
+		$('#input_path').change(function() {
+			// extract file 
+			var file = $('#input_path').get(0).files[0];
+			
+			// check for being an image
+			if(!/image\/.*/.test(file.type))
+				alert('Wrong file type (\''+file.type+'\').\nNeeds to be an image.');
+			
+			// load the file to <img>
+			var fr = new FileReader();
+			fr.onloadend = function(e) {
+				var ip = $('#input_preview');
+				ip.removeClass('preview-fixed');
+				ip.get(0).src = e.target.result;
+			};
+			fr.readAsDataURL(file);
+		});
+		$('#input_preview').dblclick(function() {
+			$('#input_path').trigger('click');
+		});
+		
+		
+		// plug in server's API
+		$('#get_methods').click(function() {
+			c2d_server.getCalculationMethods(function(methods){
+				console.log(methods);
+				var combo = $('#available_methods');
+				combo.empty();
+				methods.forEach(function(method) {
+					var option = $(document.createElement('option')),
+						method_text = method.author + ': ' + method.name + ' (' + method.description + ')';
+					option.text(method_text);
+					option.attr('method_id', method.id);
+					combo.append(option);
+				});
+			});
+		});
+		$('#run_method').click(function() {
+			c2d_server.runCalculationMethod('blur', function(res){
+				console.log(res)
+			});
+		});
+		$('#get_status').click(function() {
+			c2d_server.getStatus(function(res){
+				console.log(res);
+			});
+		});
+		$('#test').click(function() {
+			var image_base64 = $('#input_preview').get(0).src;
+			if(image_base64 && /image\//.test(image_base64))
+				c2d_server.test(image_base64);
+		});
+	});
+</script>
