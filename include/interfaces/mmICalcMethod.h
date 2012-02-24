@@ -1,6 +1,6 @@
 #pragma once
 
-#include <mmCalcMethod.h>
+#include <mmGlobalDefs.h>
 
 //******************************************************************************
 //******************************************************************************
@@ -18,44 +18,11 @@
 
 namespace mmImages {
 	////////////////////////////////////////////////////////////////////////////////
-	/// Interface representing function object for operation on single data block
-	////////////////////////////////////////////////////////////////////////////////
-	class mmCalcKernelI
-	{
-		public:
-			////////////////////////////////////////////////////////////////////////////////
-			/// Virtual destructor
-			////////////////////////////////////////////////////////////////////////////////
-			virtual ~mmCalcKernelI() { }
-
-			////////////////////////////////////////////////////////////////////////////////
-			/// Method executes for every data block in the structure. Internal loop over
-			/// pixels should be placed here.
-			///
-			/// @param[in] p_psImageStructure pointer to images structure,
-			/// @param[in] p_iCurrentImageID ID number of the current processed image
-			/// @param[in] p_iFirstRow index of the first row of pixels scheduled for calculation
-			/// @param[in] p_iRowsCount number of rows scheduled for calculation
-			////////////////////////////////////////////////////////////////////////////////
-			virtual void operator()(mmImageI* p_psCurrentImage,
-															mmInt p_iFirstRow,
-															mmInt p_iRowsCount) = 0;
-	};
-
-	////////////////////////////////////////////////////////////////////////////////
 	/// Interface representing calculation method
 	////////////////////////////////////////////////////////////////////////////////
-	class mmCalcMethodI: public mmCalcMethod
+	class mmCalcMethodI
 	{
 		public:
-			////////////////////////////////////////////////////////////////////////////////
-			/// Constructor. It invokes the mmCalcMethod class constructor which hides 
-			/// implementation details
-			////////////////////////////////////////////////////////////////////////////////
-			mmCalcMethodI(mmLog::mmLogReceiverI *p_psLogReceiver = NULL,
-										mmString p_sClassName = L"")
-										:mmCalcMethod(p_psLogReceiver, 
-																	p_sClassName) { }
 
 			////////////////////////////////////////////////////////////////////////////////
 			/// Virtual destructor

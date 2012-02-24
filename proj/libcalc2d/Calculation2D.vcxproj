@@ -198,6 +198,7 @@
     <ClInclude Include="include\xml\mmXMLBB.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\images\mmCalcMethod.cpp" />
     <ClCompile Include="src\mmError.cpp" />
     <ClCompile Include="src\mmStringUtilities.cpp" />
     <ClCompile Include="src\images\mmImagesStructure.cpp" />
