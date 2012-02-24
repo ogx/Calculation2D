@@ -48,8 +48,8 @@ namespace mmXML {
 	mmXMLNodePosition AddParam( mmXMLPositionedNode * _p_xPositionedRootNode, mmString p_tName, mmXMLDataType p_eType, mmString p_tDefaultValue );
 	void CopyInputParams( mmXMLDocI * _p_xDoc, mmImages::mmImagesCalculationMethodI::sCalculationAutomationParams * _p_sAutomationParams );
 	void CopyOutputParams( mmXMLDocI * _p_xDoc, mmImages::mmImagesCalculationMethodI::sCalculationAutomationParams * _p_sAutomationParams );
-	void UpdateOutputParam( mmImages::mmImagesCalculationMethodI::sCalculationAutomationParams * _p_sAutomationParams, mmXMLNodePosition p_xNodePosition, void * _p_OutputValue );
-	void UpdateOutputParam( mmImages::mmImagesCalculationMethodI::sCalculationAutomationParams * _p_sAutomationParams, mmXMLNodePosition p_xNodePosition, mmString p_tOutputValue );
+	void UpdateOutputParam( mmXML::mmXMLDocI * _p_xDoc, mmImages::mmImagesCalculationMethodI::sCalculationAutomationParams * _p_sAutomationParams, mmXMLNodePosition p_xNodePosition, void * _p_OutputValue );
+	void UpdateOutputParam( mmXML::mmXMLDocI * _p_xDoc, mmImages::mmImagesCalculationMethodI::sCalculationAutomationParams * _p_sAutomationParams, mmXMLNodePosition p_xNodePosition, mmString p_tOutputValue );
 	bool GetValueByName( mmXML::mmXMLDocI * _p_xDoc, mmString p_tParamName, void * _p_OutputPointer );
 	bool GetValue( mmXMLDocI * _p_xDoc, mmXMLNodePosition p_xNodePosition, void * _p_OutputPointer );
 	bool SetValueByName( mmXML::mmXMLDocI * _p_xDoc, mmString p_tParamName, void * _p_InputPointer );
