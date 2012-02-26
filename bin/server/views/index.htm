@@ -1,8 +1,14 @@
 	<fieldset>
 		<legend>Input image</legend>
 
-		<div>
-			<img id='input_preview' class='preview preview-small preview-fixed' alt='Double-click to open file'/>
+		<div style='display:inline-block;'>
+			<div>
+				<div style='display:inline-block;float:right;'>
+					<a href='#'><img id='load_btn' class='image_btn' src='img/famfamfam/icons/picture_add.png'/></a>
+					<a href='#'><img id='save_btn' class='image_btn not-implemented' src='img/famfamfam/icons/picture_save.png'/></a>
+				</div>
+			</div>
+			<canvas id='input_preview_canvas' width='480' height='320'/>
 		</div>
 		
 		<div>
@@ -35,159 +41,3 @@
 			<button id='test' style='margin-left: 20px'>Test</button>
 		</div>
 	</fieldset>
-
-<script language='javascript'>
-	// server object provides a server API
-	var c2d_server = {
-		test: function(image_base64) {
-			$.ajax({
-				url: '/test',
-				type: 'post',
-				data: {image: image_base64},
-				accepts: 'json',
-				success: function(response, statusText, xhr) {
-					console.log(response.result);
-				}
-			});
-		},
-		
-		getCalculationMethods: function(callback) {
-			$.ajax({
-				url: '/getmethods',
-				type: 'get',
-				data: {},
-				accepts: 'json',
-				success: function(response, statusText, xhr) {
-					callback(response);
-				}
-			});
-		},
-		runCalculationMethod: function(method, callback) {
-			$.ajax({
-				url: '/run',
-				type: 'post',
-				data: {
-					method: method,
-					images: []
-				},
-				accepts: 'json',
-				success: function(response, statusText, xhr) {
-					callback(response);
-				}
-			});
-		},
-		getStatus: function(callback) {
-			$.ajax({
-				url: '/getstatus',
-				type: 'get',
-				data: {},
-				accepts: 'json',
-				success: function(response, statusText, xhr) {
-					callback(response);
-				}
-			});
-		}
-	};
-	
-	// client object contains client-side stored data 
-	// and client data management functions
-	var c2d_client = {
-		methods: [],
-		setMethods: function(new_methods) {
-			methods = new_methods.map(function(elem) {
-				return elem;
-			});
-		}
-	};
-	
-	$(document).ready(function() {
-		// init appearances
-		$('button').button();
-		$('legend,label').addClass('header');
-		$('#input_path').css({opacity: 0, height: 0});
-		
-		
-		// input image handling
-		$('#input_path').change(function() {
-			// extract file 
-			var file = $('#input_path')[0].files[0];
-			
-			// check for being an image
-			if(!/image\/.*/.test(file.type))
-				alert('Wrong file type (\''+file.type+'\').\nNeeds to be an image.');
-			
-			// load the file to <img>
-			var fr = new FileReader();
-			fr.onloadend = function(e) {
-				var ip = $('#input_preview');
-				ip.removeClass('preview-fixed');
-				ip[0].src = e.target.result;
-			};
-			fr.readAsDataURL(file);
-		});
-		$('#input_preview').dblclick(function() {
-			$('#input_path').trigger('click');
-		});
-		
-		
-		// plug in server's API
-		$('#get_methods').click(function() {
-			c2d_server.getCalculationMethods(function(methods){
-				c2d_client.setMethods(methods);
-				
-				// populate combo
-				methods_lookup = {};
-				var combo = $('#available_methods');
-				combo.empty();
-				methods.forEach(function(method) {
-					var option = $(document.createElement('option')),
-						method_text = method.author + ': ' + method.name;
-					option.text(method_text);
-					option.attr('method_id', method.id);
-					methods_lookup[method.id] = method;
-					combo.append(option);
-				});
-				
-				// handle detailed view
-				combo.change(function() {
-					var option = $('#available_methods option:selected'),
-						method_id = option.attr('method_id'),
-						method = methods_lookup[method_id];
-					if(!method) {
-						$('#method_details').hide();
-						throw new Exception('Selected method not found!');
-					}
-					var max_params_length = 150;
-					$('#method_details #name').text(method.name);
-					$('#method_details #author').text(method.author);
-					$('#method_details #description').text(method.description);
-					$('#method_details #input_parameters').text(
-						method.params.in.length > max_params_length ? 
-						method.params.in.slice(0, max_params_length)+'...' : 
-						method.params.in);
-					$('#method_details #output_parameters').text(
-						method.params.out.length > max_params_length ? 
-						method.params.out.slice(0, max_params_length)+'...' : 
-						method.params.out);
-					$('#method_details').show();
-				});
-				combo.trigger('change');
-			});
-		});
-		$('#run_method').click(function() {
-			c2d_server.runCalculationMethod('blur', function(res){
-				console.log(res)
-			});
-		});
-		$('#get_status').click(function() {
-			c2d_server.getStatus(function(res){
-				console.log(res);
-			});
-		});
-		$('#test').click(function() {
-			var image_base64 = $('#input_preview').get(0).src;
-			if(image_base64 && /image\//.test(image_base64))
-				c2d_server.test(image_base64);
-		});
-	});
-</script>
