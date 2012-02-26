@@ -2,7 +2,7 @@
 
 static mmImages::mmImagesCalculationMethodI::sCalculationMethodParams cmFlipImageParams =
 {
-	L"Sample: Flip Image",
+	L"Flip Image (example)",
 	L"{BA728F54-6D6B-4478-AFAC-C4367BDB494F}",
 	L"flips selected image horizontally and/or vertically to a new image",
 	false,

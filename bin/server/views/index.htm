@@ -18,6 +18,16 @@
 			<select id='available_methods'></select>
 		</div>
 
+		<div>
+			<table id='method_details'>
+				<tr><td class='label'>Name</td><td id='name' class='value'></td></tr>
+				<tr><td class='label'>Author</td><td id='author' class='value'></td></tr>
+				<tr><td class='label'>Description</td><td id='description' class='value'></td></tr>
+				<tr><td class='label'>Input</td><td id='input_parameters' class='value'></td></tr>
+				<tr><td class='label'>Output</td><td id='output_parameters' class='value'></td></tr>
+			</table>
+		</div>
+
 		<div class='buttons'>
 			<button id='get_methods'>Get methods</button>
 			<button id='run_method'>Run method</button>
@@ -27,6 +37,7 @@
 	</fieldset>
 
 <script language='javascript'>
+	// server object provides a server API
 	var c2d_server = {
 		test: function(image_base64) {
 			$.ajax({
@@ -78,6 +89,17 @@
 		}
 	};
 	
+	// client object contains client-side stored data 
+	// and client data management functions
+	var c2d_client = {
+		methods: [],
+		setMethods: function(new_methods) {
+			methods = new_methods.map(function(elem) {
+				return elem;
+			});
+		}
+	};
+	
 	$(document).ready(function() {
 		// init appearances
 		$('button').button();
@@ -88,7 +110,7 @@
 		// input image handling
 		$('#input_path').change(function() {
 			// extract file 
-			var file = $('#input_path').get(0).files[0];
+			var file = $('#input_path')[0].files[0];
 			
 			// check for being an image
 			if(!/image\/.*/.test(file.type))
@@ -99,7 +121,7 @@
 			fr.onloadend = function(e) {
 				var ip = $('#input_preview');
 				ip.removeClass('preview-fixed');
-				ip.get(0).src = e.target.result;
+				ip[0].src = e.target.result;
 			};
 			fr.readAsDataURL(file);
 		});
@@ -111,16 +133,38 @@
 		// plug in server's API
 		$('#get_methods').click(function() {
 			c2d_server.getCalculationMethods(function(methods){
-				console.log(methods);
+				c2d_client.setMethods(methods);
+				
+				// populate combo
+				methods_lookup = {};
 				var combo = $('#available_methods');
 				combo.empty();
 				methods.forEach(function(method) {
 					var option = $(document.createElement('option')),
-						method_text = method.author + ': ' + method.name + ' (' + method.description + ')';
+						method_text = method.author + ': ' + method.name;
 					option.text(method_text);
 					option.attr('method_id', method.id);
+					methods_lookup[method.id] = method;
 					combo.append(option);
 				});
+				
+				// handle detailed view
+				combo.change(function() {
+					var option = $('#available_methods option:selected'),
+						method_id = option.attr('method_id'),
+						method = methods_lookup[method_id];
+					if(!method) {
+						$('#method_details').hide();
+						throw new Exception('Selected method not found!');
+					}
+					$('#method_details #name').text(method.name);
+					$('#method_details #author').text(method.author);
+					$('#method_details #description').text(method.description);
+					$('#method_details #input_parameters').text(method.params.in.slice(0, 150)+'...');
+					$('#method_details #output_parameters').text(method.params.out.slice(0, 150)+'...');
+					$('#method_details').show();
+				});
+				combo.trigger('change');
 			});
 		});
 		$('#run_method').click(function() {

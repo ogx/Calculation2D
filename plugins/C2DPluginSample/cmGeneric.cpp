@@ -2,7 +2,7 @@
 
 static mmImages::mmImagesCalculationMethodI::sCalculationMethodParams cmGenericParams =
 {
-	L"Sample: Generic",
+	L"Generic (example)",
 	L"{TODO: insert GUID here}",
 	L"Sample: Generic",
 	false,

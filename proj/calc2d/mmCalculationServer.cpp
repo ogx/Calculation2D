@@ -1,7 +1,5 @@
 #include "mmCalculationServer.h"
 #include <interfaces\mmInterfaceInitializers.h>
-#include <images\mmImagesCalculationManagement.h>
-#include <images\mmImagesCalculationMethodContainerWindows.h>
 #include <memory>
 #include "json\json.h"
 #include <iostream>
@@ -10,7 +8,9 @@
 using namespace mmImages;
 
 
-mmCalculationServer::mmCalculationServer(void)
+mmCalculationServer::mmCalculationServer(void) :
+	calc_mgr(3, NULL),
+	methods_mgr(NULL)
 {
 }
 
@@ -21,8 +21,6 @@ mmCalculationServer::~mmCalculationServer(void)
 
 int mmCalculationServer::Serve()
 {
-	mmImagesCalculationManagement calc_mgr(3, NULL);
-	mmImagesCalculationMethodContainerForWindows methods_mgr(NULL);
 	std::auto_ptr<mmImageStructureI> image(mmInterfaceInitializers::CreateDefaultImageStructure(NULL, NULL));
 
 	std::istream& is = std::cin;
@@ -49,22 +47,34 @@ int mmCalculationServer::Serve()
 		os << fwriter.write(obj_out);
 	}
 
-	//methods_mgr.GetAvailableImagesCalculationMethods();
-
 	return 0;
 }
 
 Json::Value mmCalculationServer::GetMethods()
 {
+	typedef std::vector<mmImages::mmImagesCalculationMethodI::sCalculationMethodParams> method_infos_t;
+
 	Json::Value res(Json::arrayValue), method_info;
-	char buf[32];
-	for(Json::ArrayIndex i=0; i<3; ++i)
+	const size_t buf_size = INOUT_PARAMS_SIZE;
+	size_t converted= 0;
+	char buf[buf_size];
+
+	method_infos_t method_infos = methods_mgr.GetAvailableImagesCalculationMethods();
+	for(Json::ArrayIndex i=0, n=method_infos.size(); i<n; ++i)
 	{
 		method_info = Json::Value(Json::objectValue);
-		method_info["name"] = std::string("dummy method ") + itoa(i+1, buf, 10);
-		method_info["id"] = i+1;
-		method_info["description"] = "just a dummy for interface testing";
-		method_info["author"] = "Janusz";
+		wcstombs_s(&converted, buf, method_infos[i].sShortName, buf_size);
+		method_info["name"] = buf;
+		wcstombs_s(&converted, buf, method_infos[i].sIDName, buf_size);
+		method_info["id"] = buf;
+		wcstombs_s(&converted, buf, method_infos[i].sDescription, buf_size);
+		method_info["description"] = buf;
+		method_info["author"] = "Anonymous"; // TODO: support for author in plugin info
+		method_info["params"] = Json::Value(Json::objectValue); // TODO: either translate params to JSON or switch to JSON in plugins
+		wcstombs_s(&converted, buf, method_infos[i].sAutoParams.sInParams, buf_size);
+		method_info["params"]["in"] = buf;
+		wcstombs_s(&converted, buf, method_infos[i].sAutoParams.sOutParams, buf_size);
+		method_info["params"]["out"] = buf;
 		res[i] = method_info;
 	}
 	return res;
