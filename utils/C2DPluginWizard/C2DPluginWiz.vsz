@@ -1,6 +1,8 @@
 VSWIZARD 7.0
 Wizard=VsWizard.VsWizardEngine.10.0
-Param="WIZARD_NAME = C2DPlugin"
-Param="RELATIVE_PATH = VCWizards\AppWiz\Generic"
-Param="CONSOLE_TYPE_ONLY = false"
-Param="WIZARD_ID = 502795"
+
+Param="WIZARD_NAME = C2DPluginWiz"
+Param="RELATIVE_PATH = VCWizards\C2D"
+Param="FALLBACK_LCID = 1033"
+Param="PLUGIN_BASE_NAME = C2DPlugin"
+Param="PLUGINS_DIR = plugins"
