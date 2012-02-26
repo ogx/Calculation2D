@@ -157,11 +157,18 @@
 						$('#method_details').hide();
 						throw new Exception('Selected method not found!');
 					}
+					var max_params_length = 150;
 					$('#method_details #name').text(method.name);
 					$('#method_details #author').text(method.author);
 					$('#method_details #description').text(method.description);
-					$('#method_details #input_parameters').text(method.params.in.slice(0, 150)+'...');
-					$('#method_details #output_parameters').text(method.params.out.slice(0, 150)+'...');
+					$('#method_details #input_parameters').text(
+						method.params.in.length > max_params_length ? 
+						method.params.in.slice(0, max_params_length)+'...' : 
+						method.params.in);
+					$('#method_details #output_parameters').text(
+						method.params.out.length > max_params_length ? 
+						method.params.out.slice(0, max_params_length)+'...' : 
+						method.params.out);
 					$('#method_details').show();
 				});
 				combo.trigger('change');
