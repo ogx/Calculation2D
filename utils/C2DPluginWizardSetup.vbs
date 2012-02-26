@@ -19,116 +19,91 @@ Set fso = CreateObject("Scripting.FileSystemObject")
 Set sh = CreateObject("Shell.Application")
 Set WsShell = Wscript.CreateObject("Wscript.Shell")
 
-WizardLinkName = "C2D"
-WizardFolderName = "C2DPluginWizard"
 
 ' setup default paths
+WizardLinkName = "C2D"
+WizardFolderName = "C2DPluginWizard"
+WizardInstallerName = "C2DPluginWizardSetup"
+
 UtilsPath = fso.GetParentFolderName(WScript.ScriptFullName)
-C2DWizardPath = UtilsPath & "\" & WizardFolderName
+WizardPath = UtilsPath & "\" & WizardFolderName
 
-' check if 'utils\C2DPluginWizard' exists
-If fso.FolderExists(C2DWizardPath) Then
-    Wscript.Echo "Found " & C2DWizardPath
+
+' check if 'SolutionDir\utils\C2DPluginWizard' exists
+If fso.FolderExists(WizardPath) Then
+    'Wscript.Echo "Found " & WizardPath
 Else
-    Wscript.Echo "ERROR. Missing " & C2DWizardPath
+    Wscript.Echo "ERROR. Missing " & WizardPath
     Wscript.Quit
 End If
 
-Documents = WsShell.SpecialFolders("MyDocuments")
-VSUserPath = Documents + "\Visual Studio 2010"
+VCPaths = Array( _
+"C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC", _
+"C:\Program Files (x86)\Microsoft Visual Studio 9.0\VC", _
+"C:\Program Files\Microsoft Visual Studio 10.0\VC", _
+"C:\Program Files\Microsoft Visual Studio 9.0\VC")
 
-' check if 'C:\Users\student\Visual Studio 2010' exists
-If fso.FolderExists(VSUserPath) Then
-    Wscript.Echo "Found " & VSUserPath
-Else
-    Wscript.Echo "ERROR. Missing " & VSUserPath
+Dim VisualStudioPath
+
+' find visual studio
+For Each VCPath In VCPaths
+    'Wscript.Echo VCPath
+    If fso.FolderExists(VCPath) Then 
+        VisualStudioPath = VCPath
+        Exit For
+    End If
+Next
+
+If IsEmpty(VisualStudioPath) Then
+    Wscript.Echo "ERROR. Missing " & VisualStudioPath
     Wscript.Quit
 End If
 
-VSWizardsPath = VSUserPath & "\Wizards"
+' projects path
+Call InstallerFlipFlop(VisualStudioPath & "\VCProjects\" & WizardLinkName, WizardPath)
+
+' wizards (templates) path
+Call InstallerFlipFlop(VisualStudioPath & "\VCWizards\" & WizardLinkName, WizardPath)
 
 
-If fso.FolderExists(VSWizardsPath) Then
-    ' found wizards folder
-    LinkTarget = VSWizardsPath & "\" & WizardLinkName
-    IsSymbolic = (fso.GetFolder(LinkTarget).Attributes And FA_REPARSE_POINT) = FA_REPARSE_POINT
+' hic sunt dracones
 
-    If IsSymbolic Then LinkOrFolder = "symbolic link" Else LinkOrFolder = "folder"
+Sub InstallerFlipFlop(Location, Target)
 
-    ' confirm removal
-    If Msgbox("The " & LinkOrFolder & " already exists: " & LinkTarget & ". Uninstall?",VBYesNo,"Remove confirmation") = vbYes Then
-        sh.ShellExecute "cmd", "/c rmdir " & LinkTarget, "", "", 0
+    Uninstall = fso.FolderExists(Location)
+
+    If Uninstall Then
+        IsSymbolic = (fso.GetFolder(Location).Attributes And FA_REPARSE_POINT) = FA_REPARSE_POINT
+        If IsSymbolic Then LinkOrFolder = "symbolic link" Else LinkOrFolder = "folder"
+        Operation = "- found " & LinkOrFolder & ". Uninstall?"
+    Else
+        Operation = "- not Found. Install? " 
     End If
 
-    WScript.Quit
-Else
+    Question = "Wizard installation " & Location & Chr(13) & Operation
+    If Not Msgbox(Question, vbYesNo, WizardInstallerName) = vbYes Then Exit Sub
+
+    ' create or remove link
+    Call SymbolicDirLink(Location, Target, Uninstall)
+End Sub
+
+Sub SymbolicDirLink(Location, Target, Remove)
+
+    If Remove Then
+        Command = "/c rmdir """ & Location & """"
+    Else
+        Command = " /c mklink /D """ & Location & """ """ & Target & """"
+    End If
+
+    ' run command with UAC
+    'WScript.Echo Command
+    sh.ShellExecute "cmd", Command, "", "runas", 0
     
-End If
+    ' windows have a Kit Kat
+    WScript.Sleep(1000)
 
-'If Msgbox("WARN. The " & LinkOrFolder & " already exists: " & LinkTarget & ". Remove?",VBYesNo,"Remove confirmation") = vbYes Then
-        
-'End If
+    If Remove Then Operation = "Removing " Else Operation = "Creating "
+    If fso.FolderExists(Location) Xor Remove Then  Result = "SUCCEEDED!" Else  Result = "FAILED!"
 
-
-
-
-'If fso.FileExists(CalPath & "\ogxCalibration.sln") Then
-'    WScript.Echo "OK. ogxCalibration.sln file found."
-'Else
-'    Set Folder = sh.BrowseForFolder(0, "Select destination folder (OGXCalibration)", 0, "")
-'    
-'    If Folder Is Nothing Then
-'        WScript.Quit
-'    End If
-'    
-'    CalPath = Folder.Self.Path
-'    
-'    If fso.FileExists(CalPath & "\ogxCalibration.sln") Then
-'        WScript.Echo "OK. ogxCalibration.sln file found."
-'    Else
-'        WScript.Echo "WARN. ogxCalibration.sln file not found."    
-'    End If
-'    
-'End If
-
-'' link target full path
-'LinkTarget = CalPath & "\" & MadmacLinkName
-
-'' check if already exists
-'If fso.FolderExists(LinkTarget) Then
-'    IsSymbolic = (fso.GetFolder(LinkTarget).Attributes And FA_REPARSE_POINT) = FA_REPARSE_POINT
-'    If IsSymbolic Then LinkOrFolder = "symbolic link" Else LinkOrFolder = "folder"
-'    If Msgbox("WARN. The " & LinkOrFolder & " already exists: " & LinkTarget & ". Remove?",VBYesNo,"Remove confirmation") = vbYes Then
-'        sh.ShellExecute "cmd", "/c rmdir " & LinkTarget, "", "", 0
-'    Else
-'        WScript.Quit
-'    End If
-'End If
-
-'' find link destination
-'Set Folder = sh.BrowseForFolder(0, "Select 3dmadmac_core folder", 0, "")
-'If Folder Is Nothing Then
-'    WScript.Quit
-'End If
-
-'MadmacPath = Folder.Self.Path
-
-'If fso.FileExists(MadmacPath & "\3dmadmac.sln") Then
-'    WScript.Echo "OK. 3dmadmac.sln file found."
-'Else
-'    WScript.Echo "WARN. 3dmadmac.sln file not found."    
-'End If
-'    
-''create link with UAC
-'Command = " /c mklink /D """ & LinkTarget & """ """ & MadmacPath & """"
-''WScript.Echo Command
-'sh.ShellExecute "cmd",  Command, "", "runas", 0
-
-'' windows have a Kit Kat
-'WScript.Sleep(1000)
-
-'If fso.FolderExists(LinkTarget) Then
-'    WScript.Echo "SUCCESS! " & LinkTarget & " created."
-'Else
-'    WScript.Echo "FAIL! " & LinkTarget & " not created."
-'End If
+    WScript.Echo Operation & Location & Chr(13) & Result
+End Sub

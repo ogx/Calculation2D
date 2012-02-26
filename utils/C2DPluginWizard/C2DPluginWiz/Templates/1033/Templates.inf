@@ -1,0 +1,5 @@
+[!if CALCMETHOD_CREATE]
+method.cpp
+method.h
+[!endif]
+root.cpp
