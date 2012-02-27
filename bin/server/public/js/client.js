@@ -23,13 +23,13 @@ var c2d_server = {
 			}
 		});
 	},
-	runCalculationMethod: function(method, callback) {
+	runCalculationMethod: function(method, image_structure, callback) {
 		$.ajax({
 			url: '/run',
 			type: 'post',
 			data: {
 				method: method,
-				images: []
+				image_structure: image_structure
 			},
 			accepts: 'json',
 			success: function(response, statusText, xhr) {
@@ -61,7 +61,9 @@ var c2d_client = {
 	},
 	
 	image_structure: [],
+	selected_image: -1,
 	newImage: function(image_data) {
+		this.selected_image = this.image_structure.length;
 		this.image_structure.push({
 			image: this.extractImage(image_data),
 			data_layers: []
@@ -99,6 +101,9 @@ var c2d_client = {
 		}
 		return image_data;
 	},
+	getImage: function(index, ctx) {
+		return flattenImage(this.image_structure[index].image, ctx);
+	},
 };
 
 $(document).ready(function() {
@@ -133,7 +138,7 @@ $(document).ready(function() {
 				
 				c2d_client.newImage(
 					ctx.getImageData(0, 0, canvas.clientWidth, canvas.clientHeight)
-					);
+				);
 			}
 			img.src = data;
 		};
@@ -189,9 +194,20 @@ $(document).ready(function() {
 		});
 	});
 	$('#run_method').click(function() {
-		c2d_server.runCalculationMethod('blur', function(res){
-			console.log(res)
-		});
+		var option = $('#available_methods option:selected'),
+			method_id = option.attr('method_id'),
+			image_structure = [
+				c2d_client.image_structure[c2d_client.selected_image]
+			];
+		
+		console.log('Launching method', method_id, 'on structure', image_structure, '...');	
+		c2d_server.runCalculationMethod(
+			method_id, 
+			image_structure,
+			function(res){
+				console.log(res)
+			}
+		);
 	});
 	$('#get_status').click(function() {
 		c2d_server.getStatus(function(res){
@@ -199,7 +215,7 @@ $(document).ready(function() {
 		});
 	});
 	$('#test').click(function() {
-		var image = c2d_client.image_structure[c2d_client.image_structure.length-1].image,
+		var image = c2d_client.image_structure[c2d_client.selected_image].image,
 			ch = image.blue;
 		for(var i=0; i<ch.length; i++)
 			ch[i] /= 2;

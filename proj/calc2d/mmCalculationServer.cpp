@@ -3,6 +3,7 @@
 #include <memory>
 #include "json\json.h"
 #include <iostream>
+#include <sstream>
 #include <stdlib.h>
 
 using namespace mmImages;
@@ -87,5 +88,9 @@ Json::Value mmCalculationServer::GetStatus()
 
 Json::Value mmCalculationServer::RunCalculationMethod( Json::Value& params )
 {
-	return Json::Value(Json::objectValue);
+	std::ostringstream s;
+	s << params["image_structure"].size() << " images in the structure";
+	Json::Value response(Json::objectValue);
+	response["msg"] = s.str();
+	return response;
 }

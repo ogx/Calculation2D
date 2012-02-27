@@ -10,7 +10,7 @@ var http = require('http'),
 var config = {
 	serverAddress: 'localhost',
 	serverPort: 8081,
-	exePath: '..\\x64\\Debug\\calc2d.exe',
+	exePath: '..\\x64\\Debug\\calc2d.exe', // TODO: parametrize
 };
 
 
@@ -35,10 +35,15 @@ var c2d = {
 			deferred.resolve(JSON.parse(str));
 			this.child_busy = false;
 		});
-		this.child.stdin.write(JSON.stringify({
-			cmd: cmd,
-			params: params ? params : {}
-		})+'\r\n');
+		if(params && params.method) {
+			params.method = params.method.replace(/ /g, '_');
+			//console.log('sent exactly:', JSON.stringify(params.method));
+		}
+		var command = JSON.stringify({
+				cmd: cmd,
+				params: params ? params : {}
+			})+'\r\n';
+		this.child.stdin.write(command);
 		return deferred.promise;
 	},
 	
@@ -46,8 +51,8 @@ var c2d = {
 	getCalculationMethods: function() {
 		return this.sendCommand('getmethods');
 	},
-	runCalculationMethod: function(method) {
-		return this.sendCommand('run');
+	runCalculationMethod: function(params) {
+		return this.sendCommand('run', params);
 	},
 	getStatus: function() {
 		return this.sendCommand('getstatus');
@@ -60,34 +65,22 @@ c2d.spawnProcess();
 router.get('/', function() {
 	return viewEngine.respond('index.htm');
 });
-router.post('/test', function(req) {
-	var x = req.params.image,
-		image_base64 = x.slice(x.indexOf(',')+1),
-		buf = new Buffer(image_base64, 'base64'),
-		fs = require('fs'),
-		fp = path.join(__dirname, 'uploaded.png');
-	var ws = fs.createWriteStream(fp, {flags: 'w'});
-	ws.end(buf);
-	return bogart.json({
-		result: 0 ? 'success' : 'failure'
-	});
-});
 
+var promiseJson = function(obj_promise) {
+		var json_promise = q.defer();
+		q.when(obj_promise).then(function(obj_value) { 
+			json_promise.resolve(bogart.json(obj_value));
+		});
+		return json_promise;
+	};
 router.get('/getmethods', function(req) {
-	var response = q.defer();
-	q.when(c2d.getCalculationMethods()).then(function(value) { 
-		//console.log(value.readSync());
-		var json = bogart.json(value);
-		//console.log(json);
-		response.resolve(json);
-	});
-	return response;
+	return promiseJson(c2d.getCalculationMethods());
 });
 router.get('/getstatus', function(req) {
-	return bogart.json(c2d.getStatus());
+	return promiseJson(c2d.getStatus());
 });
 router.post('/run', function(req) {
-	return bogart.json(c2d.runCalculationMethod(req.params));
+	return promiseJson(c2d.runCalculationMethod(req.params));
 });
 	
 var errorHandler = function(req) {
