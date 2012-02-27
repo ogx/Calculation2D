@@ -202,7 +202,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\factories\mmUtilsFactory.cpp" />
-    <ClCompile Include="src\images\mmCalcMethod.cpp" />
     <ClCompile Include="src\interfaces\mmInterfaceInitializers.cpp" />
     <ClCompile Include="src\mmError.cpp" />
     <ClCompile Include="src\mmExecutionContext.cpp" />

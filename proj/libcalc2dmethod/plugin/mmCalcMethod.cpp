@@ -1,6 +1,3 @@
-
-#pragma once
-
 #include <interfaces/mmInterfaceInitializers.h>
 #include <mmOperatingSystemCalls.h>
 #include <mmStringUtilities.h>
@@ -61,7 +58,7 @@ void mmImages::mmCalcMethod::SetCalculationMethodParameters(mmImages::mmImageStr
 
 	RetrieveParameters();
 	m_rProgress = 0.0;
-	m_iThreadsCount = 0;
+	//m_iThreadsCount = 0;
 	m_bFinishImage = false;
 	
 	// prepare map with first available row for each image
@@ -130,27 +127,21 @@ mmReal mmImages::mmCalcMethod::GetProgress(void)
 //---------------------------------------------------------------------------
 void mmImages::mmCalcMethod::ForEachImage(mmCalcKernelI* p_psKernel)
 {
-	//mmImageI* v_psLocalCurrentImage = NULL;
-	//mmInt v_iLocalCurrentImage = 0;
 	mmInt v_iBlockHeight = 0;
 	mmInt v_iNextRowIndex = 0;
-	mmInt v_iWidth = 0;
 	mmInt v_iHeight = 0;
-	mmInt v_iChannels = 0;
 	std::vector<mmString> v_sImageNames = GetImageNames();
 	bool v_bNewImage = false;
 	bool v_bFinishImage = false;
 
 	m_psThreadSynchEL->Lock();
-		m_iThreadsCount++;
+		//m_iThreadsCount++;
 		v_iBlockHeight = m_iRowsCountInBlock;
 	m_psThreadSynchEL->Unlock();
 	
 	for (mmUInt v_iIndex = 0; v_iIndex < m_psImageStructure->GetImageCount(); ++v_iIndex) {
 
-		//m_psImageStructure->LockForRead();
-		//v_psLocalCurrentImage = m_psImageStructure->GetImage(v_iIndex);
-		//m_psImageStructure->UnlockFromRead();
+		v_iHeight = m_psImageStructure->GetImage(v_iIndex)->GetHeight();
 
 		m_psThreadSynchEL->Lock();
 			v_iNextRowIndex = m_mNextRows[v_sImageNames[v_iIndex]];
@@ -166,17 +157,13 @@ void mmImages::mmCalcMethod::ForEachImage(mmCalcKernelI* p_psKernel)
 					v_iBlockHeight = v_iHeight - v_iNextRowIndex;
 				}
 				if (v_iNextRowIndex == 0) {
-					ExecBeforeSingleImageCalc(v_iIndex /*v_psLocalCurrentImage*/);
+					ExecBeforeSingleImageCalc(m_psImageStructure->GetImage(v_iIndex));
 					v_bNewImage = true;
 					m_bFinishImage = false;
 				}
 				else v_bNewImage = false;
 			m_psThreadSynchEL->Unlock();
 
-
-			//(*p_psKernel)(v_psLocalCurrentImage, 
-			//	v_iNextRowIndex,
-			//	v_iBlockHeight);
 			(*p_psKernel)(m_psImageStructure->GetImage(v_iIndex), 
 				v_iNextRowIndex,
 				v_iBlockHeight);
@@ -186,7 +173,7 @@ void mmImages::mmCalcMethod::ForEachImage(mmCalcKernelI* p_psKernel)
 				if (v_iNextRowIndex >= v_iHeight && !m_bFinishImage) {
 					v_bFinishImage = true;
 					m_bFinishImage = true;
-					ExecAfterSingleImageCalc(v_iIndex /*v_psLocalCurrentImage*/);
+					ExecAfterSingleImageCalc(m_psImageStructure->GetImage(v_iIndex));
 				}
 				else {
 					v_bFinishImage = false;
@@ -195,14 +182,9 @@ void mmImages::mmCalcMethod::ForEachImage(mmCalcKernelI* p_psKernel)
 		}	
 	}
 
-	m_psThreadSynchEL->Lock();
+	/*m_psThreadSynchEL->Lock();
 		m_iThreadsCount--;
-		/*if (m_iThreadsCount <= 0) {
-			m_psImageStructure->LockForRead();
-				m_psImageStructure->UpdateImages();
-			m_psImageStructure->UnlockFromRead();
-		}*/
-	m_psThreadSynchEL->Unlock();
+	m_psThreadSynchEL->Unlock();*/
 }
 
 void mmImages::mmCalcMethod::SetParam(mmString p_sName, mmXML::mmXMLDataType p_eType, void* p_psValue, bool p_bIsOutput)

@@ -13,7 +13,7 @@
     </ClCompile>
     <Link>
       <AdditionalLibraryDirectories>$(C2DSdkDir)lib\$(IntDir)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>libcalc2d.lib</AdditionalDependencies>
+      <AdditionalDependencies>libcalc2d.lib;libcalc2dmethod.lib</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
