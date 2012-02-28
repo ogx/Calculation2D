@@ -3,3 +3,4 @@ method.cpp
 method.h
 [!endif]
 root.cpp
+root.vcxproj.user

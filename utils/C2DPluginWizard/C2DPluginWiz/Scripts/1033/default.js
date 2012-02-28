@@ -296,6 +296,9 @@ function GetTargetName(strName, strProjectName)
 		if (strName == 'root.cpp')
 		  strTarget = strProjectName + ".cpp";
 
+		if (strName == 'root.vcxproj.user')
+		  strTarget = strProjectName + ".vcxproj.user";
+
 		return strTarget;
 	}
 	catch(e)
@@ -328,10 +331,10 @@ function AddFilesToCustomProj(proj, strProjectName, strProjectPath, InfFile)
 
 				var bCopyOnly = false;  //"true" will only copy the file from strTemplate to strTarget without rendering/adding to the project
 				var strExt = strName.substr(strName.lastIndexOf("."));
-				if(strExt==".bmp" || strExt==".ico" || strExt==".gif" || strExt==".rtf" || strExt==".css")
+				if(strExt==".bmp" || strExt==".ico" || strExt==".gif" || strExt==".rtf" || strExt==".css" || strExt==".user")
 					bCopyOnly = true;
 				wizard.RenderTemplate(strTemplate, strFile, bCopyOnly);
-				proj.Object.AddFile(strFile);
+				if (!bCopyOnly) proj.Object.AddFile(strFile);
 			}
 		}
 		strTextStream.Close();
