@@ -41,7 +41,7 @@ var c2d = {
 		}
 		var command = JSON.stringify({
 				cmd: cmd,
-				params: params ? params : {}
+				params: params || {}
 			})+'\r\n';
 		this.child.stdin.write(command);
 		return deferred.promise;

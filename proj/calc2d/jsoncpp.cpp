@@ -2275,6 +2275,7 @@ Value::asUInt() const
    case booleanValue:
       return value_.bool_ ? 1 : 0;
    case stringValue:
+	   return atoi(value_.string_);
    case arrayValue:
    case objectValue:
       JSON_FAIL_MESSAGE( "Type is not convertible to uint" );
