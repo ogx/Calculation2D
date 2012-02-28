@@ -38,6 +38,17 @@ namespace mmFactories {
 		virtual mmFileIO::mmFileUtilsI* CreateFileUtils(mmLog::mmLogReceiverI* p_psLogReceiver = NULL) = 0;
 
 		////////////////////////////////////////////////////////////////////////////////
+		/// Initializes interface mmLog::mmLogSenderI. In case of
+		/// bad alloc error throws mmError(mmeBadAlloc).
+		///
+		/// @param[in] p_sClassName name of class sending logs
+		/// @param[in] p_pClassPointer pointer to class sending logs
+		/// @param[in] p_psLogRecever log receiver
+		/// @return pointer to initialized object
+		////////////////////////////////////////////////////////////////////////////////
+		virtual mmLog::mmLogSenderI* CreateLogSender(mmString const & p_sClassName, void * const p_pClassPointer, mmLog::mmLogReceiverI * const p_psLogReceiver) = 0;
+
+		////////////////////////////////////////////////////////////////////////////////
 		/// Initializes interface mmLog::mmLogReceiverI. In case of
 		/// bad alloc error throws mmError(mmeBadAlloc).
 		///

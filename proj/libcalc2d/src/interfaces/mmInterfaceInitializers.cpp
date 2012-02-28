@@ -48,11 +48,23 @@ mmFileIO::mmFileUtilsI* mmInterfaceInitializers::CreateFileUtils(mmLog::mmLogRec
 	};
 }
 
-mmLog::mmLogReceiverI* mmInterfaceInitializers::CreateLogFile(mmString p_sLogFileName)
+mmLog::mmLogReceiverI* mmInterfaceInitializers::CreateLogFile(mmString const & p_sLogFileName)
 {
 	try
 	{
 		return (new mmLog::mmLogFile(p_sLogFileName));
+	}
+	catch(std::bad_alloc)
+	{
+		throw mmError(mmeBadAlloc);
+	};
+}
+
+mmLog::mmLogSenderI* mmInterfaceInitializers::CreateLogSender(mmString const & p_sClassName, void * const p_pClassPointer, mmLog::mmLogReceiverI * const p_psLogReceiver)
+{
+	try
+	{
+		return (new mmLog::mmLogSender(p_sClassName, p_psLogReceiver, p_pClassPointer));
 	}
 	catch(std::bad_alloc)
 	{

@@ -1,6 +1,7 @@
 #pragma once
 
 #include <interfaces/mmICalcMethodExt.h>
+#include <log/mmLogSender.h>
 #include <map>
 
 namespace mmImages {
