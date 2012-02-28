@@ -35,13 +35,13 @@ namespace mmLog
 			///
 			/// @param[in] p_sLogFileName name of log file to open
 			////////////////////////////////////////////////////////////////////////////////
-			mmLogFile(mmString p_sLogFileName);
+			mmLogFile(mmString const & p_sLogFileName);
 			////////////////////////////////////////////////////////////////////////////////
 			/// Destructor.
 			////////////////////////////////////////////////////////////////////////////////
 			~mmLogFile();
 
-			void SendLogMessage(eLogMessagePriority p_ePriority,mmString* p_psString);
+			virtual void SendLogMessage(eLogMessagePriority const p_ePriority, mmString const & p_sString);
 	};
 };
 

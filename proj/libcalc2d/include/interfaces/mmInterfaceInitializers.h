@@ -59,7 +59,18 @@ namespace mmInterfaceInitializers
 	/// @param[in] p_sLogFileName name of log file
 	/// @return pointer to initialized object
 	////////////////////////////////////////////////////////////////////////////////
-	mmLog::mmLogReceiverI* CreateLogFile(mmString p_sLogFileName);
+	mmLog::mmLogReceiverI* CreateLogFile(mmString const & p_sLogFileName);
+
+	////////////////////////////////////////////////////////////////////////////////
+	/// Initializes interface mmLog::mmLogSenderI. In case of
+	/// bad alloc error throws mmError(mmeBadAlloc).
+	///
+	/// @param[in] p_sClassName name of class sending logs
+	/// @param[in] p_pClassPointer pointer to class sending logs
+	/// @param[in] p_psLogRecever log receiver
+	/// @return pointer to initialized object
+	////////////////////////////////////////////////////////////////////////////////
+	mmLog::mmLogSenderI* CreateLogSender(mmString const & p_sClassName, void * const p_pClassPointer, mmLog::mmLogReceiverI * const p_psLogReceiver);
 
 	////////////////////////////////////////////////////////////////////////////////
 	/// Initializes interface mmXML::mmXMLDocI. In case of

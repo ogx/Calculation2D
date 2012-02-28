@@ -13,7 +13,7 @@
 #ifndef mmExecutionContextH
 #define mmExecutionContextH
 
-#include <log\mmLogSender.h>
+#include <interfaces\mmILog.h>
 #include <interfaces\mmIUtilsFactory.h>
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -21,28 +21,8 @@
 ////////////////////////////////////////////////////////////////////////////////
 class mmExecutionContext {
 public:
-	////////////////////////////////////////////////////////////////////////////////
-	/// This constructor initializes all private members.
-	///
-	/// @param[in] p_psUtilsFactory pointer to utils factory.
-	/// @param[in] p_psLogReceiver pointer to log object.
-	////////////////////////////////////////////////////////////////////////////////
-	mmExecutionContext(mmFactories::mmUtilsFactoryI * const p_psUtilsFactory, mmLog::mmLogReceiverI * const p_psLogReceiver);
-	////////////////////////////////////////////////////////////////////////////////
-	/// Method returns pointer to utils factory.
-	///
-	/// @return pointer to utils factory
-	////////////////////////////////////////////////////////////////////////////////
-	mmFactories::mmUtilsFactoryI* GetUtilsFactory(void) const;
-	////////////////////////////////////////////////////////////////////////////////
-	/// Method returns pointer to log object.
-	///
-	/// @return pointer to log object
-	////////////////////////////////////////////////////////////////////////////////
-	mmLog::mmLogReceiverI* GetLogReceiver(void) const;
-private:
-	mmLog::mmLogReceiverI* const m_psLogReceiver;
-	mmFactories::mmUtilsFactoryI* const m_psUtilsFactory;
+	mmLog::mmLogReceiverI* m_psLogReceiver;
+	mmFactories::mmUtilsFactoryI* m_psUtilsFactory;
 };
 
 #endif

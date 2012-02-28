@@ -7,8 +7,7 @@
 #include <interfaces/mmIImages.h>
 
 // forward declaration of C2DPlugin defined function
-mmImages::mmImagesCalculationMethodI* GetCalculationMethod( mmInt const p_iCalculationMethodIndex, 
-	                                                          mmLog::mmLogReceiverI* p_psLogReceiver);
+mmImages::mmImagesCalculationMethodI* GetCalculationMethod( mmInt const p_iCalculationMethodIndex, mmLog::mmLogReceiverI* p_psLogReceiver);
 
 //---------------------------------------------------------------------------
 
@@ -42,7 +41,7 @@ __declspec(dllexport) mmImages::mmImagesCalculationMethodI::sCalculationMethodPa
 }
 //---------------------------------------------------------------------------
 
-__declspec(dllexport) mmImages::mmImagesCalculationMethodI* __stdcall mmDLLCreateImagesCalculationMethod(mmExecutionContext* m_psExecutionContext /*mmInterfacesStorage::mmGlobalInterfacesStorage* p_psGlobalInterfaces*/, const wchar_t* p_pcImagesCalculationMethodName ) //throw(mmError)
+__declspec(dllexport) mmImages::mmImagesCalculationMethodI* __stdcall mmDLLCreateImagesCalculationMethod(mmExecutionContext* m_psExecutionContext, const wchar_t* p_pcImagesCalculationMethodName )
 {
 	mmString v_sImagesCalculationMethodName = p_pcImagesCalculationMethodName;
 	mmInt v_iMethodIndex = -1;
@@ -59,7 +58,7 @@ __declspec(dllexport) mmImages::mmImagesCalculationMethodI* __stdcall mmDLLCreat
 		}
 	}
 
-	return ::GetCalculationMethod(v_iMethodIndex, m_psExecutionContext->GetLogReceiver());
+	return ::GetCalculationMethod(v_iMethodIndex, m_psExecutionContext->m_psLogReceiver);
 }
 //---------------------------------------------------------------------------
 

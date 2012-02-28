@@ -24,7 +24,7 @@ mmImages::mmImagesCalculationMethodDLLBroker::mmImagesCalculationMethodDLLBroker
 
 	// initialize images calculation method
 	m_psUtilsFactory = mmInterfaceInitializers::CreateUtilsFactory();
-	mmExecutionContext v_sExecutionContext(m_psUtilsFactory, p_psLogReceiver);
+	mmExecutionContext v_sExecutionContext = {p_psLogReceiver, m_psUtilsFactory};
 	m_psInitializedImagesCalculationMethod = m_psDLLImagesCalculationMethod_Create(&v_sExecutionContext, p_sImagesCalculationMethodName.c_str());
 
 	SendLogMessage(mmLog::debug,mmString(L"End Constructor"));
@@ -56,8 +56,7 @@ mmImages::mmImagesCalculationMethodI::sCalculationMethodParams mmImages::mmImage
 	return v_sCMP;
 }
 
-void mmImages::mmImagesCalculationMethodDLLBroker::SetCalculationMethodParameters(mmImages::mmImageStructureI* p_psImageStructure,
-																																												 mmImages::mmImagesCalculationMethodI::sCalculationAutomationParams* p_psAutomationParams)
+void mmImages::mmImagesCalculationMethodDLLBroker::SetCalculationMethodParameters(mmImages::mmImageStructureI* p_psImageStructure, mmImages::mmImagesCalculationMethodI::sCalculationAutomationParams* p_psAutomationParams)
 {
 	SendLogMessage(mmLog::debug,mmString(L"Start SetCalculationMethodParameters"));
 
@@ -75,8 +74,7 @@ void mmImages::mmImagesCalculationMethodDLLBroker::UserAction(mmString p_sXMLPar
 	SendLogMessage(mmLog::debug,mmString(L"End UserAction"));
 }
 
-void mmImages::mmImagesCalculationMethodDLLBroker::UserAction(wchar_t* p_pcXMLParamsBuffer,
-																																		 mmInt p_iXMLParamsBufferSize)
+void mmImages::mmImagesCalculationMethodDLLBroker::UserAction(wchar_t* p_pcXMLParamsBuffer, mmInt p_iXMLParamsBufferSize)
 {
 	SendLogMessage(mmLog::debug,mmString(L"Start UserAction"));
 

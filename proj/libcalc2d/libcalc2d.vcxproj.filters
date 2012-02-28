@@ -87,9 +87,6 @@
     <ClInclude Include="..\..\include\interfaces\mmICalcMethod.h">
       <Filter>Header Files\Interfaces</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\include\interfaces\mmICalcMethodExt.h">
-      <Filter>Header Files\Interfaces</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\include\interfaces\mmIFileIO.h">
       <Filter>Header Files\Interfaces</Filter>
     </ClInclude>
@@ -206,17 +203,11 @@
     <ClCompile Include="src\interfaces\mmIImages.cpp">
       <Filter>Source Files\Interfaces</Filter>
     </ClCompile>
-    <ClCompile Include="src\mmExecutionContext.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="src\interfaces\mmInterfaceInitializers.cpp">
       <Filter>Source Files\Interfaces</Filter>
     </ClCompile>
     <ClCompile Include="src\factories\mmUtilsFactory.cpp">
       <Filter>Source Files\Interfaces</Filter>
-    </ClCompile>
-    <ClCompile Include="src\images\mmCalcMethod.cpp">
-      <Filter>Source Files\Images</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

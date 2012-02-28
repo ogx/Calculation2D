@@ -2,17 +2,16 @@
 
 #include <interfaces\mmInterfaceInitializers.h>
 
-mmLog::mmLogRedirector::mmLogRedirector()
-{
-	m_psExclusiveLock = mmInterfaceInitializers::CreateExclusiveLock();
-}
+mmLog::mmLogRedirector::mmLogRedirector() :
+	m_psExclusiveLock(mmInterfaceInitializers::CreateExclusiveLock())
+{}
 
 mmLog::mmLogRedirector::~mmLogRedirector()
 {
 	delete m_psExclusiveLock;
 }
 
-bool mmLog::mmLogRedirector::IsRegistered(mmLogReceiverI* p_pLogReceiver)
+bool mmLog::mmLogRedirector::IsRegistered(mmLogReceiverI* const p_pLogReceiver) const
 {
 	mmInt v_iCount = static_cast<mmInt>(m_sReceiverTable.size());
 	mmInt v_i;
@@ -52,8 +51,7 @@ mmInt mmLog::mmLogRedirector::GetFreeReceiverTableIndex(void)
 	return static_cast<mmInt>(m_sReceiverTable.size()-1);
 }
 
-void mmLog::mmLogRedirector::RegisterLogReceiver(eLogMessagePriority p_eMinPriority,
-																								 mmLogReceiverI* p_pLogReceiver)
+void mmLog::mmLogRedirector::RegisterLogReceiver(eLogMessagePriority const p_eMinPriority, mmLogReceiverI* const p_pLogReceiver)
 {
 	bool bIsRegistered;
 
@@ -74,7 +72,7 @@ void mmLog::mmLogRedirector::RegisterLogReceiver(eLogMessagePriority p_eMinPrior
   m_psExclusiveLock->Unlock();
 }
 
-void mmLog::mmLogRedirector::UnregisterLogReceiver(mmLogReceiverI* p_pLogReceiver)
+void mmLog::mmLogRedirector::UnregisterLogReceiver(mmLogReceiverI* const p_pLogReceiver)
 {
 	mmInt v_iUnregisterCount = 0;
 
@@ -98,7 +96,7 @@ void mmLog::mmLogRedirector::UnregisterLogReceiver(mmLogReceiverI* p_pLogReceive
 	};
 }
 
-void mmLog::mmLogRedirector::SendLogMessage(eLogMessagePriority p_ePriority,mmString* p_psString)
+void mmLog::mmLogRedirector::SendLogMessage(eLogMessagePriority const p_ePriority, mmString const & p_sString)
 {
 	m_psExclusiveLock->Lock();
 		mmInt v_iCount = static_cast<mmInt>(m_sReceiverTable.size());
@@ -110,7 +108,7 @@ void mmLog::mmLogRedirector::SendLogMessage(eLogMessagePriority p_ePriority,mmSt
 			{
 				if(m_sReceiverTable[v_i].ePriority <= p_ePriority)
 				{
-					m_sReceiverTable[v_i].pReceiver->SendLogMessage(p_ePriority,p_psString);
+					m_sReceiverTable[v_i].pReceiver->SendLogMessage(p_ePriority, p_sString);
 				};
 			};
 		};

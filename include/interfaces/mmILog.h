@@ -41,7 +41,7 @@ namespace mmLog
 		critical  = 3
 	} eLogMessagePriority;
 
-  ////////////////////////////////////////////////////////////////////////////////
+	////////////////////////////////////////////////////////////////////////////////
 	/// Log receiver interface defines functionality for collecting log messages
 	/// from whole environment. It have to be implemented as thread safe.
 	////////////////////////////////////////////////////////////////////////////////
@@ -60,8 +60,37 @@ namespace mmLog
 			///													 value
 			/// @param[in] p_psString - pointer to string with message
 			////////////////////////////////////////////////////////////////////////////////
-			virtual void SendLogMessage(eLogMessagePriority p_ePriority, mmString* p_psString) = 0;
-  };
+			virtual void SendLogMessage(eLogMessagePriority const p_ePriority, mmString const & p_psString) = 0;
+	};
+
+	class mmLogSenderI
+	{
+	public:
+		virtual ~mmLogSenderI(void) {};
+		////////////////////////////////////////////////////////////////////////////////
+		/// Method sends a log message with defined priority. If m_psLog is equal NULL
+		/// then do	nothing.
+		///
+		/// @param[in] p_pClassPointer pointer to class sending this message
+		/// @param[in] p_ePriority type of log message
+		/// @param[in] p_sString content of message
+		////////////////////////////////////////////////////////////////////////////////
+		virtual void SendLogMessage(void * const p_pClassPointer, eLogMessagePriority const p_ePriority, mmString const & p_sString) = 0;
+		////////////////////////////////////////////////////////////////////////////////
+		/// Method sends a log message with defined priority. If m_psLog is equal NULL
+		/// then do	nothing.
+		///
+		/// @param[in] p_ePriority type of log message
+		/// @param[in] p_sString content of message
+		////////////////////////////////////////////////////////////////////////////////
+		virtual void SendLogMessage(mmLog::eLogMessagePriority const p_ePriority, mmString const & p_sString) = 0;
+		////////////////////////////////////////////////////////////////////////////////
+		/// Return a pointer to mmLogReceiverI object stored in m_psLog field.
+		///
+		/// @return pointer to log receiver.
+		////////////////////////////////////////////////////////////////////////////////
+		virtual mmLogReceiverI* GetLogReceiver(void) = 0;
+	};
 };
 
 #endif

@@ -3,7 +3,7 @@
 
 //JK rapid debugging
 function DebugTest(strMessage) {
-  wizard.ReportError(strMessage);
+  //wizard.ReportError(strMessage);
 }
 
 function OnFinish(selProj, selObj)
@@ -57,7 +57,7 @@ function OnFinish(selProj, selObj)
     var strProjectPath = wizard.FindSymbol('PROJECT_PATH');
 
     CreatePropertyPage(strPluginsPath);
-
+	
     DebugTest("CreateCustomProject");
 
 		selProj = CreateCustomProject(strProjectName, strProjectPath, strOldProjectName + ".sln", strSolutionPath);
@@ -80,6 +80,9 @@ function OnFinish(selProj, selObj)
 		  DebugTest(strSaveSolutionPath + " = strSaveSolutionPath");
 		  dte.Solution.SaveAs(strSaveSolutionPath);
 		}
+    // apparently, adding project user file doesn't work
+	//var strProjUserFilePath = strNewProjectPath + "\\" + strNewProjectName + ".vcxproj";
+	//CreateProjUserFile(strProjUserFilePath);
 
     // getting rid of the useless folder
 //		wizard.AddSymbol('PROJECT_PATH', "");
@@ -106,13 +109,13 @@ function OnFinish(selProj, selObj)
 
 function CreatePropertyPage(strPluginsFolder) {
 
-	var strProjTemplatePath = wizard.FindSymbol('TEMPLATES_PATH');
+  var strProjTemplatePath = wizard.FindSymbol('TEMPLATES_PATH');
 
   var strPropPageTemplate = strProjTemplatePath + "\\C2DPlugin.props";
   var strPropPagePath = strPluginsFolder + "\\C2DPlugin.props";
 
-  DebugTest(strPropPagePath + " = strPropPagePath");
   DebugTest(strPropPageTemplate + " = strPropPageTemplate");
+  DebugTest(strPropPagePath + " = strPropPagePath");
 
   var fso = new ActiveXObject("Scripting.FileSystemObject");
 
@@ -120,6 +123,23 @@ function CreatePropertyPage(strPluginsFolder) {
     fso.CopyFile(strPropPageTemplate, strPropPagePath, false);
 }
 
+function CreateProjUserFile(strProjectPath) {
+
+  var strProjTemplatePath = wizard.FindSymbol('TEMPLATES_PATH');
+
+  var strProjUserTemplate = strProjTemplatePath + "\\root.vcxproj.user";
+  var strProjUserPath = strProjectPath + ".user";
+
+  DebugTest(strProjUserTemplate + " = strProjUserTemplate");
+  DebugTest(strProjUserPath + " = strProjUserPath");
+
+  var fso = new ActiveXObject("Scripting.FileSystemObject");
+
+  if ((!fso.FileExists(strProjUserPath)) && fso.FileExists(strProjUserTemplate)) {
+    DebugTest("About to copy .vcxproj.user file");
+    fso.CopyFile(strProjUserTemplate, strProjUserPath, false);
+  }
+}
 
 function CreateCustomProject(strProjectName, strProjectPath, strSolutionName, strSolutionPath)
 {
@@ -276,6 +296,9 @@ function GetTargetName(strName, strProjectName)
 		if (strName == 'root.cpp')
 		  strTarget = strProjectName + ".cpp";
 
+		if (strName == 'root.vcxproj.user')
+		  strTarget = strProjectName + ".vcxproj.user";
+
 		return strTarget;
 	}
 	catch(e)
@@ -308,10 +331,10 @@ function AddFilesToCustomProj(proj, strProjectName, strProjectPath, InfFile)
 
 				var bCopyOnly = false;  //"true" will only copy the file from strTemplate to strTarget without rendering/adding to the project
 				var strExt = strName.substr(strName.lastIndexOf("."));
-				if(strExt==".bmp" || strExt==".ico" || strExt==".gif" || strExt==".rtf" || strExt==".css")
+				if(strExt==".bmp" || strExt==".ico" || strExt==".gif" || strExt==".rtf" || strExt==".css" || strExt==".user")
 					bCopyOnly = true;
 				wizard.RenderTemplate(strTemplate, strFile, bCopyOnly);
-				proj.Object.AddFile(strFile);
+				if (!bCopyOnly) proj.Object.AddFile(strFile);
 			}
 		}
 		strTextStream.Close();

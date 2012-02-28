@@ -27,6 +27,7 @@ WizardInstallerName = "C2DPluginWizardSetup"
 
 UtilsPath = fso.GetParentFolderName(WScript.ScriptFullName)
 WizardPath = UtilsPath & "\" & WizardFolderName
+VCProjects2010Path = UtilsPath & "\" & WizardFolderName & "\VCProjects2010"
 
 
 ' check if 'SolutionDir\utils\C2DPluginWizard' exists
@@ -39,8 +40,8 @@ End If
 
 VCPaths = Array( _
 "C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC", _
-"C:\Program Files (x86)\Microsoft Visual Studio 9.0\VC", _
 "C:\Program Files\Microsoft Visual Studio 10.0\VC", _
+"C:\Program Files (x86)\Microsoft Visual Studio 9.0\VC", _
 "C:\Program Files\Microsoft Visual Studio 9.0\VC")
 
 Dim VisualStudioPath
@@ -59,34 +60,47 @@ If IsEmpty(VisualStudioPath) Then
     Wscript.Quit
 End If
 
+' path to check if installed
+VisualStudioCProjects = VisualStudioPath & "\VCProjects\" & WizardLinkName
+' template installation path (slave)
+VisualStudioCWizards = VisualStudioPath & "\VCWizards\" & WizardLinkName
+
+ShouldSetupUninstall = fso.FolderExists(VisualStudioCProjects)
+
 ' projects path
-Call InstallerFlipFlop(VisualStudioPath & "\VCProjects\" & WizardLinkName, WizardPath)
+Call InstallerFlipFlop(VisualStudioCProjects, VCProjects2010Path, ShouldSetupUninstall, true)
 
 ' wizards (templates) path
-Call InstallerFlipFlop(VisualStudioPath & "\VCWizards\" & WizardLinkName, WizardPath)
+Call InstallerFlipFlop(VisualStudioCWizards, WizardPath, ShouldSetupUninstall, false)
 
 
 ' hic sunt dracones
 
-Sub InstallerFlipFlop(Location, Target)
-
-    Uninstall = fso.FolderExists(Location)
+''' InstallerFlipFlop - modified installation query
+Sub InstallerFlipFlop(Location, Target, Uninstall, Ask)
 
     If Uninstall Then
-        IsSymbolic = (fso.GetFolder(Location).Attributes And FA_REPARSE_POINT) = FA_REPARSE_POINT
-        If IsSymbolic Then LinkOrFolder = "symbolic link" Else LinkOrFolder = "folder"
-        Operation = "- found " & LinkOrFolder & ". Uninstall?"
+        'IsSymbolic = (fso.GetFolder(Location).Attributes And FA_REPARSE_POINT) = FA_REPARSE_POINT
+        'If IsSymbolic Then LinkOrFolder = "symbolic link" Else LinkOrFolder = "folder"
+        'Operation = "- found " & LinkOrFolder & ". Uninstall?"
+        Operation = "Uninstall"
     Else
-        Operation = "- not Found. Install? " 
+        'Operation = "- not Found. Install? " 
+        Operation = "Install"
     End If
 
-    Question = "Wizard installation " & Location & Chr(13) & Operation
-    If Not Msgbox(Question, vbYesNo, WizardInstallerName) = vbYes Then Exit Sub
+    ' proceed with installation?
+    If Ask Then
+      'Question = "Wizard installation " & Location & Chr(13) & Operation
+      Question = Operation & " C2DPluginWizard?"
+      If Not Msgbox(Question, vbYesNo, WizardInstallerName) = vbYes Then Wscript.Quit
+    End If
 
     ' create or remove link
     Call SymbolicDirLink(Location, Target, Uninstall)
 End Sub
 
+''' SymbolicDirLink - creates or removes specified symbolic link
 Sub SymbolicDirLink(Location, Target, Remove)
 
     If Remove Then
@@ -103,7 +117,10 @@ Sub SymbolicDirLink(Location, Target, Remove)
     WScript.Sleep(1000)
 
     If Remove Then Operation = "Removing " Else Operation = "Creating "
-    If fso.FolderExists(Location) Xor Remove Then  Result = "SUCCEEDED!" Else  Result = "FAILED!"
-
-    WScript.Echo Operation & Location & Chr(13) & Result
+    If fso.FolderExists(Location) Xor Remove Then  
+      Result = "SUCCEEDED!" 
+    Else  
+      Result = "FAILED!"
+      WScript.Echo Operation & Location & Chr(13) & Result
+    End If
 End Sub
