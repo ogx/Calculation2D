@@ -160,7 +160,6 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="..\..\include\interfaces\mmICalcMethod.h" />
-    <ClInclude Include="..\..\include\interfaces\mmICalcMethodExt.h" />
     <ClInclude Include="..\..\include\interfaces\mmIFileIO.h" />
     <ClInclude Include="..\..\include\interfaces\mmIHardware.h" />
     <ClInclude Include="..\..\include\interfaces\mmIImages.h" />

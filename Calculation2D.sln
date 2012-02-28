@@ -7,24 +7,17 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "calc2d", "proj\calc2d\calc2d.vcxproj", "{51B17ACA-BAC0-408E-8145-B366393F0734}"
-	ProjectSection(ProjectDependencies) = postProject
-		{81764A51-4B0F-4310-ACD1-059BFC9BEDDE} = {81764A51-4B0F-4310-ACD1-059BFC9BEDDE}
-	EndProjectSection
-EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libcalc2d", "proj\libcalc2d\Calculation2D.vcxproj", "{81764A51-4B0F-4310-ACD1-059BFC9BEDDE}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "plugins", "plugins", "{85415F62-44CE-466F-B067-39A923D60352}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "C2DPluginSample", "plugins\C2DPluginSample\C2DPluginSample.vcxproj", "{0A32DE24-BE34-4761-B964-B91C941558E5}"
 	ProjectSection(ProjectDependencies) = postProject
 		{F699503B-5691-4ACB-9F1B-FA48C1703D65} = {F699503B-5691-4ACB-9F1B-FA48C1703D65}
-		{81764A51-4B0F-4310-ACD1-059BFC9BEDDE} = {81764A51-4B0F-4310-ACD1-059BFC9BEDDE}
 	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libcalc2dmethod", "proj\libcalc2dmethod\libcalc2dmethod.vcxproj", "{F699503B-5691-4ACB-9F1B-FA48C1703D65}"
-	ProjectSection(ProjectDependencies) = postProject
-		{81764A51-4B0F-4310-ACD1-059BFC9BEDDE} = {81764A51-4B0F-4310-ACD1-059BFC9BEDDE}
-	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libcalc2d", "proj\libcalc2d\libcalc2d.vcxproj", "{81764A51-4B0F-4310-ACD1-059BFC9BEDDE}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -42,14 +35,6 @@ Global
 		{51B17ACA-BAC0-408E-8145-B366393F0734}.Release|Win32.Build.0 = Release|Win32
 		{51B17ACA-BAC0-408E-8145-B366393F0734}.Release|x64.ActiveCfg = Release|x64
 		{51B17ACA-BAC0-408E-8145-B366393F0734}.Release|x64.Build.0 = Release|x64
-		{81764A51-4B0F-4310-ACD1-059BFC9BEDDE}.Debug|Win32.ActiveCfg = Debug|Win32
-		{81764A51-4B0F-4310-ACD1-059BFC9BEDDE}.Debug|Win32.Build.0 = Debug|Win32
-		{81764A51-4B0F-4310-ACD1-059BFC9BEDDE}.Debug|x64.ActiveCfg = Debug|x64
-		{81764A51-4B0F-4310-ACD1-059BFC9BEDDE}.Debug|x64.Build.0 = Debug|x64
-		{81764A51-4B0F-4310-ACD1-059BFC9BEDDE}.Release|Win32.ActiveCfg = Release|Win32
-		{81764A51-4B0F-4310-ACD1-059BFC9BEDDE}.Release|Win32.Build.0 = Release|Win32
-		{81764A51-4B0F-4310-ACD1-059BFC9BEDDE}.Release|x64.ActiveCfg = Release|x64
-		{81764A51-4B0F-4310-ACD1-059BFC9BEDDE}.Release|x64.Build.0 = Release|x64
 		{0A32DE24-BE34-4761-B964-B91C941558E5}.Debug|Win32.ActiveCfg = Debug|Win32
 		{0A32DE24-BE34-4761-B964-B91C941558E5}.Debug|Win32.Build.0 = Debug|Win32
 		{0A32DE24-BE34-4761-B964-B91C941558E5}.Debug|x64.ActiveCfg = Debug|x64
@@ -66,6 +51,14 @@ Global
 		{F699503B-5691-4ACB-9F1B-FA48C1703D65}.Release|Win32.Build.0 = Release|Win32
 		{F699503B-5691-4ACB-9F1B-FA48C1703D65}.Release|x64.ActiveCfg = Release|x64
 		{F699503B-5691-4ACB-9F1B-FA48C1703D65}.Release|x64.Build.0 = Release|x64
+		{81764A51-4B0F-4310-ACD1-059BFC9BEDDE}.Debug|Win32.ActiveCfg = Debug|Win32
+		{81764A51-4B0F-4310-ACD1-059BFC9BEDDE}.Debug|Win32.Build.0 = Debug|Win32
+		{81764A51-4B0F-4310-ACD1-059BFC9BEDDE}.Debug|x64.ActiveCfg = Debug|x64
+		{81764A51-4B0F-4310-ACD1-059BFC9BEDDE}.Debug|x64.Build.0 = Debug|x64
+		{81764A51-4B0F-4310-ACD1-059BFC9BEDDE}.Release|Win32.ActiveCfg = Release|Win32
+		{81764A51-4B0F-4310-ACD1-059BFC9BEDDE}.Release|Win32.Build.0 = Release|Win32
+		{81764A51-4B0F-4310-ACD1-059BFC9BEDDE}.Release|x64.ActiveCfg = Release|x64
+		{81764A51-4B0F-4310-ACD1-059BFC9BEDDE}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

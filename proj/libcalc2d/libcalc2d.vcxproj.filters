@@ -87,9 +87,6 @@
     <ClInclude Include="..\..\include\interfaces\mmICalcMethod.h">
       <Filter>Header Files\Interfaces</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\include\interfaces\mmICalcMethodExt.h">
-      <Filter>Header Files\Interfaces</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\include\interfaces\mmIFileIO.h">
       <Filter>Header Files\Interfaces</Filter>
     </ClInclude>
