@@ -23,6 +23,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "html", "html", "{548C27A9-B
 	ProjectSection(SolutionItems) = preProject
 		utils\C2DPluginWizard\C2DPluginWiz\HTML\1033\CalcMethod.htm = utils\C2DPluginWizard\C2DPluginWiz\HTML\1033\CalcMethod.htm
 		utils\C2DPluginWizard\C2DPluginWiz\HTML\1033\default.htm = utils\C2DPluginWizard\C2DPluginWiz\HTML\1033\default.htm
+		utils\C2DPluginWizard\C2DPluginWiz\HTML\1033\gui_logic.js = utils\C2DPluginWizard\C2DPluginWiz\HTML\1033\gui_logic.js
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "scripts", "scripts", "{7EE9D488-1B3D-4BA2-A918-56DD80A870A6}"
@@ -37,6 +38,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "templates", "templates", "{
 		utils\C2DPluginWizard\C2DPluginWiz\Templates\1033\method.h = utils\C2DPluginWizard\C2DPluginWiz\Templates\1033\method.h
 		utils\C2DPluginWizard\C2DPluginWiz\Templates\1033\root.cpp = utils\C2DPluginWizard\C2DPluginWiz\Templates\1033\root.cpp
 		utils\C2DPluginWizard\C2DPluginWiz\Templates\1033\root.vcxproj = utils\C2DPluginWizard\C2DPluginWiz\Templates\1033\root.vcxproj
+		utils\C2DPluginWizard\C2DPluginWiz\Templates\1033\root.vcxproj.user = utils\C2DPluginWizard\C2DPluginWiz\Templates\1033\root.vcxproj.user
 		utils\C2DPluginWizard\C2DPluginWiz\Templates\1033\Templates.inf = utils\C2DPluginWizard\C2DPluginWiz\Templates\1033\Templates.inf
 	EndProjectSection
 EndProject

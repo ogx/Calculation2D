@@ -8,14 +8,6 @@
 	<!--  -->
 	<!-- The SYMBOL tag is used to set the default values for the user-defined symbols.-->
 	<!--  -->
-
-	<SYMBOL NAME='WIZARD_DIALOG_TITLE' TYPE=text VALUE='C2DPlugin Project'></SYMBOL>
-	<SYMBOL NAME='SAMPLE_CHECKBOX' TYPE=checkbox VALUE=true></SYMBOL>
-	<SYMBOL NAME='SAMPLE_RADIO_OPTION1' TYPE=checkbox VALUE=true></SYMBOL>
-	<SYMBOL NAME='SAMPLE_RADIO_OPTION2' TYPE=checkbox VALUE=false></SYMBOL>
-	<SYMBOL NAME='SAMPLE_LISTBOX' TYPE=select-one VALUE='option1'></SYMBOL>
-	<SYMBOL NAME='SOURCE_FILTER' TYPE=text VALUE='txt'></SYMBOL>
-	<SYMBOL NAME='APP_TYPE_SUMMARY' TYPE=text VALUE='//TODO: Application summary'></SYMBOL>
 	                         
 	<SYMBOL NAME='STUDENT_FIRSTNAME' TYPE=text VALUE='Jan'></SYMBOL>
 	<SYMBOL NAME='STUDENT_LASTNAME' TYPE=text VALUE='Kowalski'></SYMBOL>
@@ -26,6 +18,7 @@
 	<SYMBOL NAME='CALCMETHOD_SHORT_NAME' TYPE=text VALUE='Generic method'></SYMBOL>
 	<SYMBOL NAME='CALCMETHOD_DESCRIPTION' TYPE=text VALUE='A generic calculation method'></SYMBOL>
 	<SYMBOL NAME='CALCMETHOD_CREATE' TYPE=checkbox VALUE=true></SYMBOL>
+	<SYMBOL NAME='CALCMETHOD_EXTEND' TYPE=checkbox VALUE=false></SYMBOL>
 	
 </HEAD>
 
@@ -323,6 +316,8 @@
 </BODY>
 </HTML>
 
+<script src="gui_logic.js"></script>
+
 <SCRIPT LANGUAGE="JSCRIPT">
 
 var tab_array = new Array();
@@ -334,9 +329,11 @@ tab_array[1] = CalcMethod;
 function InitDocument(document)
 {
 	setDirection();
-	
+
+
 	if (window.external.FindSymbol('DOCUMENT_FIRST_LOAD'))
 	{
+	  VerifyCalculation2DDir();
 		// This function sets the default symbols based 
 		// on the values specified in the SYMBOL tags above
 		//
@@ -349,7 +346,7 @@ function InitDocument(document)
 	window.external.Load(document);
 }
 
-// JK validate input
+// Validate input
 function ValidateStudentInfo() 
 {
   var bValid = true;
@@ -380,24 +377,11 @@ function Next(document, linkto) {
 	window.external.Next(document, linkto);
 }
 
-// This is an example of a function which
-// gets called when the user clicks on 'Finish'
+// perform input validation before finishing
 //
 function OnFinish(document)
 {
-
-  var strProjectPath = window.external.FindSymbol('PROJECT_PATH');
-
-  var fso = new ActiveXObject("Scripting.FileSystemObject");
-  var strNewProjectPath = fso.GetParentFolderName(strProjectPath);
-
-  var strPluginsDir = window.external.FindSymbol('PLUGINS_DIR');
-  var strTestPluginsPath = strNewProjectPath + "\\" + strPluginsDir;
-
-  if (!fso.FolderExists(strTestPluginsPath)) {
-    window.external.ReportError(strTestPluginsPath + " - location not found. Please cancel and choose a valid Calculation 2D SDK directory!");
-    return VS_E_WIZCANCEL;
-  }
+  if (!VerifyCalculation2DDir()) return VS_E_WIZCANCEL;
 
   if (ValidateStudentInfo())
   OnWizFinish(document);

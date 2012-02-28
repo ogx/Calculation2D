@@ -181,7 +181,7 @@
 
         <TR>
   			  <TD ALIGN="RIGHT" COLSPAN="1">			  
-       			 <LABEL FOR="CALCMETHOD_SHORT_NAME" ID="CALCMETHOD_SHORT_NAME_LABEL"><U>S</U>Short name:</LABEL>
+       			 <LABEL FOR="CALCMETHOD_SHORT_NAME" ID="CALCMETHOD_SHORT_NAME_LABEL"><U>S</U>hort name:</LABEL>
        		</TD>
        		<TD COLSPAN="4">
        			 <INPUT SIZE="40" ID="CALCMETHOD_SHORT_NAME" ACCESSKEY="S" TITLE="Short name to appear on method list" TYPE="text">
@@ -198,18 +198,26 @@
        	</TR>
 
         <TR>
-  			  <TD ALIGN="RIGHT" COLSPAN="2">			  
-            <LABEL FOR="CALCMETHOD_CREATE" ID="CALCMETHOD_CREATE_LABEL">C<U>r</U>eate method?</LABEL>
+  			  <TD ALIGN="RIGHT" COLSPAN="1">			  
+       			<INPUT CLASS="CheckBox" onPropertyChange="InitControls();" TYPE="checkbox" ID="CALCMETHOD_CREATE" ACCESSKEY="R" TITLE="Uncheck this if you don't want to add any methods automatically">
        		</TD>
-       		<TD COLSPAN="3">
-       			 <INPUT CLASS="CheckBox" TYPE="checkbox" ID="CALCMETHOD_CREATE" ACCESSKEY="R" TITLE="Uncheck this if you don't want to add any methods automatically">
+       		<TD COLSPAN="4">
+            <LABEL FOR="CALCMETHOD_CREATE" ID="CALCMETHOD_CREATE_LABEL">C<U>r</U>eate method?</LABEL>
+       	  </TD>
+       	</TR>
+        <TR>
+  			  <TD ALIGN="RIGHT" COLSPAN="1">			  
+       			<INPUT CLASS="CheckBox" TYPE="checkbox" ID="CALCMETHOD_EXTEND" ACCESSKEY="U" TITLE="Tick to use ForEachImage kernel operations">
+       		</TD>
+       		<TD COLSPAN="4">
+            <LABEL FOR="CALCMETHOD_EXTEND" ID="CALCMETHOD_EXTEND_LABEL"><U>U</U>se extended functionality?</LABEL>
        	  </TD>
        	</TR>
        	
 	  		
  		  	 
         <TR>
-          <TD HEIGHT="50%" COLSPAN="5">&nbsp;</TD>
+          <TD HEIGHT="45%" COLSPAN="5">&nbsp;</TD>
         </TR>
 
 		 	</TABLE>
@@ -288,6 +296,8 @@
 </BODY>
 </HTML>
 
+<script src="gui_logic.js"></script>
+
 <SCRIPT LANGUAGE="JSCRIPT">
 
 var tab_array = new Array();
@@ -314,7 +324,7 @@ function InitDocument(document)
 	window.external.Load(document);
 }
 
-// JK validate input
+// Validate input
 function ValidateMethodInfo() {
   var bValid = true;
   var L_ErrMsg_Text = "Unknown error";
@@ -346,6 +356,17 @@ function ValidateMethodInfo() {
   return bValid;
 }
 
+function InitControls() {
+
+  bEnable = !CALCMETHOD_CREATE.checked;
+
+  CALCMETHOD_NAME.disabled = bEnable;
+  CALCMETHOD_SHORT_NAME.disabled = bEnable;
+  CALCMETHOD_DESCRIPTION.disabled = bEnable;
+
+  CALCMETHOD_EXTEND.disabled = bEnable;
+}
+
 // If the wizard has more than 1 page, this 
 // function will browse to the page specified
 //
@@ -360,7 +381,9 @@ function Next(document, linkto)
 //
 function OnFinish(document)
 {
-  if(ValidateMethodInfo())
+  if (!VerifyCalculation2DDir()) return VS_E_WIZCANCEL;
+
+  if (ValidateMethodInfo())
 	OnWizFinish(document);
 }
 
