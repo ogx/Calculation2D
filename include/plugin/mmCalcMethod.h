@@ -1,6 +1,7 @@
 #pragma once
 
 #include <interfaces/mmICalcMethod.h>
+#include <log/mmLogSender.h>
 #include <map>
 
 //******************************************************************************
