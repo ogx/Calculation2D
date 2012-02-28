@@ -1,0 +1,63 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Studio 2010
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "utils", "utils", "{846C7FFF-68CA-4638-AE82-54BEE872BD1C}"
+	ProjectSection(SolutionItems) = preProject
+		utils\C2DPluginWizardSetup.vbs = utils\C2DPluginWizardSetup.vbs
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "C2DPluginWizard", "C2DPluginWizard", "{0646526D-BE22-459A-AC78-29D1BB2EBE81}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "C2DPluginWiz", "C2DPluginWiz", "{0774F7D9-11FB-4EBB-8987-86C55B87E91A}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "images", "images", "{B892CA3A-E765-4F2F-BD9C-17F554577461}"
+	ProjectSection(SolutionItems) = preProject
+		utils\C2DPluginWizard\C2DPluginWiz\Images\C2DPluginWizard.gif = utils\C2DPluginWizard\C2DPluginWiz\Images\C2DPluginWizard.gif
+		utils\C2DPluginWizard\C2DPluginWiz\Images\C2DPluginWizard_Background.gif = utils\C2DPluginWizard\C2DPluginWiz\Images\C2DPluginWizard_Background.gif
+		utils\C2DPluginWizard\C2DPluginWiz\1033\Images\DottedHori.gif = utils\C2DPluginWizard\C2DPluginWiz\1033\Images\DottedHori.gif
+		utils\C2DPluginWizard\C2DPluginWiz\1033\Images\DottedVert.gif = utils\C2DPluginWizard\C2DPluginWiz\1033\Images\DottedVert.gif
+		utils\C2DPluginWizard\C2DPluginWiz\1033\Images\spacer.gif = utils\C2DPluginWizard\C2DPluginWiz\1033\Images\spacer.gif
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "html", "html", "{548C27A9-BAD1-410F-98B6-0723BBC9106C}"
+	ProjectSection(SolutionItems) = preProject
+		utils\C2DPluginWizard\C2DPluginWiz\HTML\1033\CalcMethod.htm = utils\C2DPluginWizard\C2DPluginWiz\HTML\1033\CalcMethod.htm
+		utils\C2DPluginWizard\C2DPluginWiz\HTML\1033\default.htm = utils\C2DPluginWizard\C2DPluginWiz\HTML\1033\default.htm
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "scripts", "scripts", "{7EE9D488-1B3D-4BA2-A918-56DD80A870A6}"
+	ProjectSection(SolutionItems) = preProject
+		utils\C2DPluginWizard\C2DPluginWiz\Scripts\1033\default.js = utils\C2DPluginWizard\C2DPluginWiz\Scripts\1033\default.js
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "templates", "templates", "{4C6A325D-ABAE-47A6-A8ED-0B5F984CA49D}"
+	ProjectSection(SolutionItems) = preProject
+		utils\C2DPluginWizard\C2DPluginWiz\Templates\1033\C2DPlugin.props = utils\C2DPluginWizard\C2DPluginWiz\Templates\1033\C2DPlugin.props
+		utils\C2DPluginWizard\C2DPluginWiz\Templates\1033\method.cpp = utils\C2DPluginWizard\C2DPluginWiz\Templates\1033\method.cpp
+		utils\C2DPluginWizard\C2DPluginWiz\Templates\1033\method.h = utils\C2DPluginWizard\C2DPluginWiz\Templates\1033\method.h
+		utils\C2DPluginWizard\C2DPluginWiz\Templates\1033\root.cpp = utils\C2DPluginWizard\C2DPluginWiz\Templates\1033\root.cpp
+		utils\C2DPluginWizard\C2DPluginWiz\Templates\1033\root.vcxproj = utils\C2DPluginWizard\C2DPluginWiz\Templates\1033\root.vcxproj
+		utils\C2DPluginWizard\C2DPluginWiz\Templates\1033\Templates.inf = utils\C2DPluginWizard\C2DPluginWiz\Templates\1033\Templates.inf
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "VCProjects2010", "VCProjects2010", "{54D67274-8C72-467C-BABA-E9342ABEA218}"
+	ProjectSection(SolutionItems) = preProject
+		utils\C2DPluginWizard\VCProjects2010\C2DPluginWiz.ico = utils\C2DPluginWizard\VCProjects2010\C2DPluginWiz.ico
+		utils\C2DPluginWizard\VCProjects2010\C2DPluginWiz.vsdir = utils\C2DPluginWizard\VCProjects2010\C2DPluginWiz.vsdir
+		utils\C2DPluginWizard\VCProjects2010\C2DPluginWiz.vsz = utils\C2DPluginWizard\VCProjects2010\C2DPluginWiz.vsz
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{0646526D-BE22-459A-AC78-29D1BB2EBE81} = {846C7FFF-68CA-4638-AE82-54BEE872BD1C}
+		{0774F7D9-11FB-4EBB-8987-86C55B87E91A} = {0646526D-BE22-459A-AC78-29D1BB2EBE81}
+		{54D67274-8C72-467C-BABA-E9342ABEA218} = {0646526D-BE22-459A-AC78-29D1BB2EBE81}
+		{B892CA3A-E765-4F2F-BD9C-17F554577461} = {0774F7D9-11FB-4EBB-8987-86C55B87E91A}
+		{548C27A9-BAD1-410F-98B6-0723BBC9106C} = {0774F7D9-11FB-4EBB-8987-86C55B87E91A}
+		{7EE9D488-1B3D-4BA2-A918-56DD80A870A6} = {0774F7D9-11FB-4EBB-8987-86C55B87E91A}
+		{4C6A325D-ABAE-47A6-A8ED-0B5F984CA49D} = {0774F7D9-11FB-4EBB-8987-86C55B87E91A}
+	EndGlobalSection
+EndGlobal
