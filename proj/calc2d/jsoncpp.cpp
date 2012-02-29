@@ -35,7 +35,7 @@ Copyright (c) 2007-2010 Baptiste Lepilleur
 
 Permission is hereby granted, free of charge, to any person
 obtaining a copy of this software and associated documentation
-files (the "Software"), to deal in the Software without
+files (the L"Software"), to deal in the Software without
 restriction, including without limitation the rights to use, copy,
 modify, merge, publish, distribute, sublicense, and/or sell copies
 of the Software, and to permit persons to whom the Software is
@@ -44,7 +44,7 @@ furnished to do so, subject to the following conditions:
 The above copyright notice and this permission notice shall be
 included in all copies or substantial portions of the Software.
 
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+THE SOFTWARE IS PROVIDED L"AS IS", WITHOUT WARRANTY OF ANY KIND,
 EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
 MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
 NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS
@@ -59,7 +59,7 @@ The MIT license is compatible with both the GPL and commercial
 software, affording one all of the rights of Public Domain with the
 minor nuisance of being required to keep the above copyright notice
 and license text in the source code. Note also that by accepting the
-Public Domain "license" you can re-license your copy using whatever
+Public Domain L"license" you can re-license your copy using whatever
 license you like.
 
 */
@@ -88,7 +88,7 @@ license you like.
 #ifndef LIB_JSONCPP_JSON_TOOL_H_INCLUDED
 # define LIB_JSONCPP_JSON_TOOL_H_INCLUDED
 
-/* This header provides common string manipulation support, such as UTF-8,
+/* This header provides common wstring manipulation support, such as UTF-8,
  * portable conversion from/to string...
  *
  * It is an internal header that must not be exposed.
@@ -97,38 +97,38 @@ license you like.
 namespace Json {
 
 /// Converts a unicode code-point to UTF-8.
-static inline std::string 
+static inline std::wstring 
 codePointToUTF8(unsigned int cp)
 {
-   std::string result;
+   std::wstring result;
    
    // based on description from http://en.wikipedia.org/wiki/UTF-8
 
    if (cp <= 0x7f) 
    {
       result.resize(1);
-      result[0] = static_cast<char>(cp);
+      result[0] = static_cast<wchar_t>(cp);
    } 
    else if (cp <= 0x7FF) 
    {
       result.resize(2);
-      result[1] = static_cast<char>(0x80 | (0x3f & cp));
-      result[0] = static_cast<char>(0xC0 | (0x1f & (cp >> 6)));
+      result[1] = static_cast<wchar_t>(0x80 | (0x3f & cp));
+      result[0] = static_cast<wchar_t>(0xC0 | (0x1f & (cp >> 6)));
    } 
    else if (cp <= 0xFFFF) 
    {
       result.resize(3);
-      result[2] = static_cast<char>(0x80 | (0x3f & cp));
-      result[1] = 0x80 | static_cast<char>((0x3f & (cp >> 6)));
-      result[0] = 0xE0 | static_cast<char>((0xf & (cp >> 12)));
+      result[2] = static_cast<wchar_t>(0x80 | (0x3f & cp));
+      result[1] = 0x80 | static_cast<wchar_t>((0x3f & (cp >> 6)));
+      result[0] = 0xE0 | static_cast<wchar_t>((0xf & (cp >> 12)));
    }
    else if (cp <= 0x10FFFF) 
    {
       result.resize(4);
-      result[3] = static_cast<char>(0x80 | (0x3f & cp));
-      result[2] = static_cast<char>(0x80 | (0x3f & (cp >> 6)));
-      result[1] = static_cast<char>(0x80 | (0x3f & (cp >> 12)));
-      result[0] = static_cast<char>(0xF0 | (0x7 & (cp >> 18)));
+      result[3] = static_cast<wchar_t>(0x80 | (0x3f & cp));
+      result[2] = static_cast<wchar_t>(0x80 | (0x3f & (cp >> 6)));
+      result[1] = static_cast<wchar_t>(0x80 | (0x3f & (cp >> 12)));
+      result[0] = static_cast<wchar_t>(0xF0 | (0x7 & (cp >> 18)));
    }
 
    return result;
@@ -137,7 +137,7 @@ codePointToUTF8(unsigned int cp)
 
 /// Returns true if ch is a control character (in range [0,32[).
 static inline bool 
-isControlCharacter(char ch)
+isControlCharacter(wchar_t ch)
 {
    return ch > 0 && ch <= 0x1F;
 }
@@ -148,23 +148,23 @@ enum {
    uintToStringBufferSize = 3*sizeof(LargestUInt)+1 
 };
 
-// Defines a char buffer for use with uintToString().
-typedef char UIntToStringBuffer[uintToStringBufferSize];
+// Defines a wchar_t buffer for use with uintToString().
+typedef wchar_t UIntToStringBuffer[uintToStringBufferSize];
 
 
 /** Converts an unsigned integer to string.
  * @param value Unsigned interger to convert to string
- * @param current Input/Output string buffer. 
+ * @param current Input/Output wstring buffer. 
  *        Must have at least uintToStringBufferSize chars free.
  */
 static inline void 
 uintToString( LargestUInt value, 
-              char *&current )
+              wchar_t *&current )
 {
    *--current = 0;
    do
    {
-      *--current = char(value % 10) + '0';
+      *--current = char(value % 10) + L'0';
       value /= 10;
    }
    while ( value != 0 );
@@ -195,7 +195,7 @@ uintToString( LargestUInt value,
 #if !defined(JSON_IS_AMALGAMATION)
 # include <json/reader.h>
 # include <json/value.h>
-# include "json_tool.h"
+# include L"json_tool.h"
 #endif // if !defined(JSON_IS_AMALGAMATION)
 #include <utility>
 #include <cstdio>
@@ -258,7 +258,7 @@ containsNewLine( Reader::Location begin,
                  Reader::Location end )
 {
    for ( ;begin < end; ++begin )
-      if ( *begin == '\n'  ||  *begin == '\r' )
+      if ( *begin == L'\n'  ||  *begin == L'\r' )
          return true;
    return false;
 }
@@ -280,36 +280,36 @@ Reader::Reader( const Features &features )
 
 
 bool
-Reader::parse( const std::string &document, 
+Reader::parse( const std::wstring &document, 
                Value &root,
                bool collectComments )
 {
    document_ = document;
-   const char *begin = document_.c_str();
-   const char *end = begin + document_.length();
+   const wchar_t *begin = document_.c_str();
+   const wchar_t *end = begin + document_.length();
    return parse( begin, end, root, collectComments );
 }
 
 
 bool
-Reader::parse( std::istream& sin,
+Reader::parse( std::wistream& sin,
                Value &root,
                bool collectComments )
 {
-   //std::istream_iterator<char> begin(sin);
-   //std::istream_iterator<char> end;
+   //std::wistream_iterator<wchar_t> begin(sin);
+   //std::wistream_iterator<wchar_t> end;
    // Those would allow streamed input from a file, if parse() were a
    // template function.
 
-   // Since std::string is reference-counted, this at least does not
+   // Since std::wstring is reference-counted, this at least does not
    // create an extra copy.
-   std::string doc;
-   std::getline(sin, doc, (char)EOF);
+   std::wstring doc;
+   std::getline(sin, doc, (wchar_t)EOF);
    return parse( doc, root, collectComments );
 }
 
 bool 
-Reader::parse( const char *beginDoc, const char *endDoc, 
+Reader::parse( const wchar_t *beginDoc, const wchar_t *endDoc, 
                Value &root,
                bool collectComments )
 {
@@ -324,7 +324,7 @@ Reader::parse( const char *beginDoc, const char *endDoc,
    current_ = begin_;
    lastValueEnd_ = 0;
    lastValue_ = 0;
-   commentsBefore_ = "";
+   commentsBefore_ = L"";
    errors_.clear();
    while ( !nodes_.empty() )
       nodes_.pop();
@@ -343,7 +343,7 @@ Reader::parse( const char *beginDoc, const char *endDoc,
          token.type_ = tokenError;
          token.start_ = beginDoc;
          token.end_ = endDoc;
-         addError( "A valid JSON document must be either an array or an object value.",
+         addError( L"A valid JSON document must be either an array or an object value.",
                    token );
          return false;
       }
@@ -362,7 +362,7 @@ Reader::readValue()
    if ( collectComments_  &&  !commentsBefore_.empty() )
    {
       currentValue().setComment( commentsBefore_, commentBefore );
-      commentsBefore_ = "";
+      commentsBefore_ = L"";
    }
 
 
@@ -390,7 +390,7 @@ Reader::readValue()
       currentValue() = Value();
       break;
    default:
-      return addError( "Syntax error: value, object or array expected.", token );
+      return addError( L"Syntax error: value, object or array expected.", token );
    }
 
    if ( collectComments_ )
@@ -422,7 +422,7 @@ Reader::skipCommentTokens( Token &token )
 
 
 bool 
-Reader::expectToken( TokenType type, Token &token, const char *message )
+Reader::expectToken( TokenType type, Token &token, const wchar_t *message )
 {
    readToken( token );
    if ( token.type_ != type )
@@ -436,60 +436,60 @@ Reader::readToken( Token &token )
 {
    skipSpaces();
    token.start_ = current_;
-   Char c = getNextChar();
+   wchar_t c = getNextChar();
    bool ok = true;
    switch ( c )
    {
-   case '{':
+   case L'{':
       token.type_ = tokenObjectBegin;
       break;
-   case '}':
+   case L'}':
       token.type_ = tokenObjectEnd;
       break;
-   case '[':
+   case L'[':
       token.type_ = tokenArrayBegin;
       break;
-   case ']':
+   case L']':
       token.type_ = tokenArrayEnd;
       break;
-   case '"':
+   case L'"':
       token.type_ = tokenString;
       ok = readString();
       break;
-   case '/':
+   case L'/':
       token.type_ = tokenComment;
       ok = readComment();
       break;
-   case '0':
-   case '1':
-   case '2':
-   case '3':
-   case '4':
-   case '5':
-   case '6':
-   case '7':
-   case '8':
-   case '9':
-   case '-':
+   case L'0':
+   case L'1':
+   case L'2':
+   case L'3':
+   case L'4':
+   case L'5':
+   case L'6':
+   case L'7':
+   case L'8':
+   case L'9':
+   case L'-':
       token.type_ = tokenNumber;
       readNumber();
       break;
-   case 't':
+   case L't':
       token.type_ = tokenTrue;
-      ok = match( "rue", 3 );
+      ok = match( L"rue", 3 );
       break;
-   case 'f':
+   case L'f':
       token.type_ = tokenFalse;
-      ok = match( "alse", 4 );
+      ok = match( L"alse", 4 );
       break;
-   case 'n':
+   case L'n':
       token.type_ = tokenNull;
-      ok = match( "ull", 3 );
+      ok = match( L"ull", 3 );
       break;
-   case ',':
+   case L',':
       token.type_ = tokenArraySeparator;
       break;
-   case ':':
+   case L':':
       token.type_ = tokenMemberSeparator;
       break;
    case 0:
@@ -511,8 +511,8 @@ Reader::skipSpaces()
 {
    while ( current_ != end_ )
    {
-      Char c = *current_;
-      if ( c == ' '  ||  c == '\t'  ||  c == '\r'  ||  c == '\n' )
+      wchar_t c = *current_;
+      if ( c == L' '  ||  c == L'\t'  ||  c == L'\r'  ||  c == L'\n' )
          ++current_;
       else
          break;
@@ -539,11 +539,11 @@ bool
 Reader::readComment()
 {
    Location commentBegin = current_ - 1;
-   Char c = getNextChar();
+   wchar_t c = getNextChar();
    bool successful = false;
-   if ( c == '*' )
+   if ( c == L'*' )
       successful = readCStyleComment();
-   else if ( c == '/' )
+   else if ( c == L'/' )
       successful = readCppStyleComment();
    if ( !successful )
       return false;
@@ -553,7 +553,7 @@ Reader::readComment()
       CommentPlacement placement = commentBefore;
       if ( lastValueEnd_  &&  !containsNewLine( lastValueEnd_, commentBegin ) )
       {
-         if ( c != '*'  ||  !containsNewLine( commentBegin, current_ ) )
+         if ( c != L'*'  ||  !containsNewLine( commentBegin, current_ ) )
             placement = commentAfterOnSameLine;
       }
 
@@ -572,13 +572,13 @@ Reader::addComment( Location begin,
    if ( placement == commentAfterOnSameLine )
    {
       assert( lastValue_ != 0 );
-      lastValue_->setComment( std::string( begin, end ), placement );
+      lastValue_->setComment( std::wstring( begin, end ), placement );
    }
    else
    {
       if ( !commentsBefore_.empty() )
-         commentsBefore_ += "\n";
-      commentsBefore_ += std::string( begin, end );
+         commentsBefore_ += L"\n";
+      commentsBefore_ += std::wstring( begin, end );
    }
 }
 
@@ -588,11 +588,11 @@ Reader::readCStyleComment()
 {
    while ( current_ != end_ )
    {
-      Char c = getNextChar();
-      if ( c == '*'  &&  *current_ == '/' )
+      wchar_t c = getNextChar();
+      if ( c == L'*'  &&  *current_ == L'/' )
          break;
    }
-   return getNextChar() == '/';
+   return getNextChar() == L'/';
 }
 
 
@@ -601,8 +601,8 @@ Reader::readCppStyleComment()
 {
    while ( current_ != end_ )
    {
-      Char c = getNextChar();
-      if (  c == '\r'  ||  c == '\n' )
+      wchar_t c = getNextChar();
+      if (  c == L'\r'  ||  c == L'\n' )
          break;
    }
    return true;
@@ -614,8 +614,8 @@ Reader::readNumber()
 {
    while ( current_ != end_ )
    {
-      if ( !(*current_ >= '0'  &&  *current_ <= '9')  &&
-           !in( *current_, '.', 'e', 'E', '+', '-' ) )
+      if ( !(*current_ >= L'0'  &&  *current_ <= L'9')  &&
+           !in( *current_, L'.', L'e', L'E', L'+', L'-' ) )
          break;
       ++current_;
    }
@@ -624,16 +624,16 @@ Reader::readNumber()
 bool
 Reader::readString()
 {
-   Char c = 0;
+   wchar_t c = 0;
    while ( current_ != end_ )
    {
       c = getNextChar();
-      if ( c == '\\' )
+      if ( c == L'\\' )
          getNextChar();
-      else if ( c == '"' )
+      else if ( c == L'"' )
          break;
    }
-   return c == '"';
+   return c == L'"';
 }
 
 
@@ -641,7 +641,7 @@ bool
 Reader::readObject( Token &/*tokenStart*/ )
 {
    Token tokenName;
-   std::string name;
+   std::wstring name;
    currentValue() = Value( objectValue );
    while ( readToken( tokenName ) )
    {
@@ -655,14 +655,14 @@ Reader::readObject( Token &/*tokenStart*/ )
       if ( tokenName.type_ != tokenString )
          break;
       
-      name = "";
+      name = L"";
       if ( !decodeString( tokenName, name ) )
          return recoverFromError( tokenObjectEnd );
 
       Token colon;
       if ( !readToken( colon ) ||  colon.type_ != tokenMemberSeparator )
       {
-         return addErrorAndRecover( "Missing ':' after object member name", 
+         return addErrorAndRecover( L"Missing L':' after object member name", 
                                     colon, 
                                     tokenObjectEnd );
       }
@@ -679,7 +679,7 @@ Reader::readObject( Token &/*tokenStart*/ )
                   comma.type_ != tokenArraySeparator &&
                   comma.type_ != tokenComment ) )
       {
-         return addErrorAndRecover( "Missing ',' or '}' in object declaration", 
+         return addErrorAndRecover( L"Missing L',' or L'}' in object declaration", 
                                     comma, 
                                     tokenObjectEnd );
       }
@@ -690,7 +690,7 @@ Reader::readObject( Token &/*tokenStart*/ )
       if ( comma.type_ == tokenObjectEnd )
          return true;
    }
-   return addErrorAndRecover( "Missing '}' or object member name", 
+   return addErrorAndRecover( L"Missing L'}' or object member name", 
                               tokenName, 
                               tokenObjectEnd );
 }
@@ -701,7 +701,7 @@ Reader::readArray( Token &/*tokenStart*/ )
 {
    currentValue() = Value( arrayValue );
    skipSpaces();
-   if ( *current_ == ']' ) // empty array
+   if ( *current_ == L']' ) // empty array
    {
       Token endArray;
       readToken( endArray );
@@ -728,7 +728,7 @@ Reader::readArray( Token &/*tokenStart*/ )
                             token.type_ != tokenArrayEnd );
       if ( !ok  ||  badTokenType )
       {
-         return addErrorAndRecover( "Missing ',' or ']' in array declaration", 
+         return addErrorAndRecover( L"Missing L',' or L']' in array declaration", 
                                     token, 
                                     tokenArrayEnd );
       }
@@ -746,8 +746,8 @@ Reader::decodeNumber( Token &token )
    for ( Location inspect = token.start_; inspect != token.end_; ++inspect )
    {
       isDouble = isDouble  
-                 ||  in( *inspect, '.', 'e', 'E', '+' )  
-                 ||  ( *inspect == '-'  &&  inspect != token.start_ );
+                 ||  in( *inspect, L'.', L'e', L'E', L'+' )  
+                 ||  ( *inspect == L'-'  &&  inspect != token.start_ );
    }
    if ( isDouble )
       return decodeDouble( token );
@@ -755,7 +755,7 @@ Reader::decodeNumber( Token &token )
    // larger than the maximum supported value of an integer then
    // we decode the number as a double.
    Location current = token.start_;
-   bool isNegative = *current == '-';
+   bool isNegative = *current == L'-';
    if ( isNegative )
       ++current;
    Value::LargestUInt maxIntegerValue = isNegative ? Value::LargestUInt(-Value::minLargestInt) 
@@ -766,10 +766,10 @@ Reader::decodeNumber( Token &token )
    Value::LargestUInt value = 0;
    while ( current < token.end_ )
    {
-      Char c = *current++;
-      if ( c < '0'  ||  c > '9' )
-         return addError( "'" + std::string( token.start_, token.end_ ) + "' is not a number.", token );
-      Value::UInt digit(c - '0');
+      wchar_t c = *current++;
+      if ( c < L'0'  ||  c > L'9' )
+         return addError( L"'" + std::wstring( token.start_, token.end_ ) + L"' is not a number.", token );
+      Value::UInt digit(c - L'0');
       if ( value >= threshold )
       {
          // If the current digit is not the last one, or if it is
@@ -801,19 +801,19 @@ Reader::decodeDouble( Token &token )
    int length = int(token.end_ - token.start_);
    if ( length <= bufferSize )
    {
-      Char buffer[bufferSize+1];
+      wchar_t buffer[bufferSize+1];
       memcpy( buffer, token.start_, length );
       buffer[length] = 0;
-      count = sscanf( buffer, "%lf", &value );
+      count = swscanf_s( buffer, L"%lf", &value );
    }
    else
    {
-      std::string buffer( token.start_, token.end_ );
-      count = sscanf( buffer.c_str(), "%lf", &value );
+      std::wstring buffer( token.start_, token.end_ );
+      count = swscanf_s( buffer.c_str(), L"%lf", &value );
    }
 
    if ( count != 1 )
-      return addError( "'" + std::string( token.start_, token.end_ ) + "' is not a number.", token );
+      return addError( L"'" + std::wstring( token.start_, token.end_ ) + L"' is not a number.", token );
    currentValue() = value;
    return true;
 }
@@ -822,7 +822,7 @@ Reader::decodeDouble( Token &token )
 bool 
 Reader::decodeString( Token &token )
 {
-   std::string decoded;
+   std::wstring decoded;
    if ( !decodeString( token, decoded ) )
       return false;
    currentValue() = decoded;
@@ -831,32 +831,32 @@ Reader::decodeString( Token &token )
 
 
 bool 
-Reader::decodeString( Token &token, std::string &decoded )
+Reader::decodeString( Token &token, std::wstring &decoded )
 {
    decoded.reserve( token.end_ - token.start_ - 2 );
-   Location current = token.start_ + 1; // skip '"'
-   Location end = token.end_ - 1;      // do not include '"'
+   Location current = token.start_ + 1; // skip L'"'
+   Location end = token.end_ - 1;      // do not include L'"'
    while ( current != end )
    {
-      Char c = *current++;
-      if ( c == '"' )
+      wchar_t c = *current++;
+      if ( c == L'"' )
          break;
-      else if ( c == '\\' )
+      else if ( c == L'\\' )
       {
          if ( current == end )
-            return addError( "Empty escape sequence in string", token, current );
-         Char escape = *current++;
+            return addError( L"Empty escape sequence in string", token, current );
+         wchar_t escape = *current++;
          switch ( escape )
          {
-         case '"': decoded += '"'; break;
-         case '/': decoded += '/'; break;
-         case '\\': decoded += '\\'; break;
-         case 'b': decoded += '\b'; break;
-         case 'f': decoded += '\f'; break;
-         case 'n': decoded += '\n'; break;
-         case 'r': decoded += '\r'; break;
-         case 't': decoded += '\t'; break;
-         case 'u':
+         case L'"': decoded += L'"'; break;
+         case L'/': decoded += L'/'; break;
+         case L'\\': decoded += L'\\'; break;
+         case L'b': decoded += L'\b'; break;
+         case L'f': decoded += L'\f'; break;
+         case L'n': decoded += L'\n'; break;
+         case L'r': decoded += L'\r'; break;
+         case L't': decoded += L'\t'; break;
+         case L'u':
             {
                unsigned int unicode;
                if ( !decodeUnicodeCodePoint( token, current, end, unicode ) )
@@ -865,7 +865,7 @@ Reader::decodeString( Token &token, std::string &decoded )
             }
             break;
          default:
-            return addError( "Bad escape sequence in string", token, current );
+            return addError( L"Bad escape sequence in string", token, current );
          }
       }
       else
@@ -889,9 +889,9 @@ Reader::decodeUnicodeCodePoint( Token &token,
    {
       // surrogate pairs
       if (end - current < 6)
-         return addError( "additional six characters expected to parse unicode surrogate pair.", token, current );
+         return addError( L"additional six characters expected to parse unicode surrogate pair.", token, current );
       unsigned int surrogatePair;
-      if (*(current++) == '\\' && *(current++)== 'u')
+      if (*(current++) == L'\\' && *(current++)== L'u')
       {
          if (decodeUnicodeEscapeSequence( token, current, end, surrogatePair ))
          {
@@ -901,7 +901,7 @@ Reader::decodeUnicodeCodePoint( Token &token,
             return false;
       } 
       else
-         return addError( "expecting another \\u token to begin the second half of a unicode surrogate pair", token, current );
+         return addError( L"expecting another \\u token to begin the second half of a unicode surrogate pair", token, current );
    }
    return true;
 }
@@ -913,27 +913,27 @@ Reader::decodeUnicodeEscapeSequence( Token &token,
                                      unsigned int &unicode )
 {
    if ( end - current < 4 )
-      return addError( "Bad unicode escape sequence in string: four digits expected.", token, current );
+      return addError( L"Bad unicode escape sequence in string: four digits expected.", token, current );
    unicode = 0;
    for ( int index =0; index < 4; ++index )
    {
-      Char c = *current++;
+      wchar_t c = *current++;
       unicode *= 16;
-      if ( c >= '0'  &&  c <= '9' )
-         unicode += c - '0';
-      else if ( c >= 'a'  &&  c <= 'f' )
-         unicode += c - 'a' + 10;
-      else if ( c >= 'A'  &&  c <= 'F' )
-         unicode += c - 'A' + 10;
+      if ( c >= L'0'  &&  c <= L'9' )
+         unicode += c - L'0';
+      else if ( c >= L'a'  &&  c <= L'f' )
+         unicode += c - L'a' + 10;
+      else if ( c >= L'A'  &&  c <= L'F' )
+         unicode += c - L'A' + 10;
       else
-         return addError( "Bad unicode escape sequence in string: hexadecimal digit expected.", token, current );
+         return addError( L"Bad unicode escape sequence in string: hexadecimal digit expected.", token, current );
    }
    return true;
 }
 
 
 bool 
-Reader::addError( const std::string &message, 
+Reader::addError( const std::wstring &message, 
                   Token &token,
                   Location extra )
 {
@@ -964,7 +964,7 @@ Reader::recoverFromError( TokenType skipUntilToken )
 
 
 bool 
-Reader::addErrorAndRecover( const std::string &message, 
+Reader::addErrorAndRecover( const std::wstring &message, 
                             Token &token,
                             TokenType skipUntilToken )
 {
@@ -999,15 +999,15 @@ Reader::getLocationLineAndColumn( Location location,
    line = 0;
    while ( current < location  &&  current != end_ )
    {
-      Char c = *current++;
-      if ( c == '\r' )
+      wchar_t c = *current++;
+      if ( c == L'\r' )
       {
-         if ( *current == '\n' )
+         if ( *current == L'\n' )
             ++current;
          lastLineStart = current;
          ++line;
       }
-      else if ( c == '\n' )
+      else if ( c == L'\n' )
       {
          lastLineStart = current;
          ++line;
@@ -1019,13 +1019,13 @@ Reader::getLocationLineAndColumn( Location location,
 }
 
 
-std::string
+std::wstring
 Reader::getLocationLineAndColumn( Location location ) const
 {
    int line, column;
    getLocationLineAndColumn( location, line, column );
-   char buffer[18+16+16+1];
-   sprintf( buffer, "Line %d, Column %d", line, column );
+   wchar_t buffer[18+16+16+1];
+   swprintf_s( buffer, L"Line %d, Column %d", line, column );
    return buffer;
 }
 
@@ -1041,22 +1041,27 @@ Reader::getFormatedErrorMessages() const
 std::string 
 Reader::getFormattedErrorMessages() const
 {
-   std::string formattedMessage;
+   std::wstring formattedMessage;
    for ( Errors::const_iterator itError = errors_.begin();
          itError != errors_.end();
          ++itError )
    {
       const ErrorInfo &error = *itError;
-      formattedMessage += "* " + getLocationLineAndColumn( error.token_.start_ ) + "\n";
-      formattedMessage += "  " + error.message_ + "\n";
+      formattedMessage += L"* L" + getLocationLineAndColumn( error.token_.start_ ) + L"\n";
+      formattedMessage += L"  L" + error.message_ + L"\n";
       if ( error.extra_ )
-         formattedMessage += "See " + getLocationLineAndColumn( error.extra_ ) + " for detail.\n";
+         formattedMessage += L"See L" + getLocationLineAndColumn( error.extra_ ) + L" for detail.\n";
    }
-   return formattedMessage;
+   
+   std::string formattedMessage_out;
+   formattedMessage_out.resize(formattedMessage.size());
+   std::copy(formattedMessage.begin(), formattedMessage.end(), formattedMessage_out.begin());
+
+   return formattedMessage_out;
 }
 
 
-std::istream& operator>>( std::istream &sin, Value &root )
+std::wistream& operator>>( std::wistream &sin, Value &root )
 {
     Json::Reader reader;
     bool ok = reader.parse(sin, root, true);
@@ -1119,7 +1124,7 @@ public:
       : freeHead_( 0 )
       , objectsPerPage_( objectsPerPage )
    {
-//      printf( "Size: %d => %s\n", sizeof(AllocatedType), typeid(AllocatedType).name() );
+//      printf( L"Size: %d => %s\n", sizeof(AllocatedType), typeid(AllocatedType).name() );
       assert( sizeof(AllocatedType) * objectPerAllocation >= sizeof(AllocatedType *) ); // We must be able to store a slist in the object free space.
       assert( objectsPerPage >= 16 );
       batches_ = allocateBatch( 0 );   // allocated a dummy page
@@ -1400,7 +1405,7 @@ ValueIteratorBase::key() const
    if ( isArray_ )
       return Value( ValueInternalArray::indexOf( iterator_.array_ ) );
    bool isStatic;
-   const char *memberName = ValueInternalMap::key( iterator_.map_, isStatic );
+   const wchar_t *memberName = ValueInternalMap::key( iterator_.map_, isStatic );
    if ( isStatic )
       return Value( StaticString( memberName ) );
    return Value( memberName );
@@ -1424,16 +1429,16 @@ ValueIteratorBase::index() const
 }
 
 
-const char *
+const wchar_t *
 ValueIteratorBase::memberName() const
 {
 #ifndef JSON_VALUE_USE_INTERNAL_MAP
-   const char *name = (*current_).first.c_str();
-   return name ? name : "";
+   const wchar_t *name = (*current_).first.c_str();
+   return name ? name : L"";
 #else
    if ( !isArray_ )
       return ValueInternalMap::key( iterator_.map_ );
-   return "";
+   return L"";
 #endif
 }
 
@@ -1547,7 +1552,7 @@ ValueIterator::operator =( const SelfType &other )
 # include <json/value.h>
 # include <json/writer.h>
 # ifndef JSON_USE_SIMPLE_INTERNAL_ALLOCATOR
-#  include "json_batchallocator.h"
+#  include L"json_batchallocator.h"
 # endif // #ifndef JSON_USE_SIMPLE_INTERNAL_ALLOCATOR
 #endif // if !defined(JSON_IS_AMALGAMATION)
 #include <iostream>
@@ -1583,31 +1588,31 @@ const LargestUInt Value::maxLargestUInt = LargestUInt(-1);
 static const unsigned int unknown = (unsigned)-1;
 
 
-/** Duplicates the specified string value.
- * @param value Pointer to the string to duplicate. Must be zero-terminated if
- *              length is "unknown".
+/** Duplicates the specified wstring value.
+ * @param value Pointer to the wstring to duplicate. Must be zero-terminated if
+ *              length is L"unknown".
  * @param length Length of the value. if equals to unknown, then it will be
- *               computed using strlen(value).
+ *               computed using wcslen(value).
  * @return Pointer on the duplicate instance of string.
  */
-static inline char *
-duplicateStringValue( const char *value, 
+static inline wchar_t *
+duplicateStringValue( const wchar_t *value, 
                       unsigned int length = unknown )
 {
    if ( length == unknown )
-      length = (unsigned int)strlen(value);
-   char *newString = static_cast<char *>( malloc( length + 1 ) );
-   JSON_ASSERT_MESSAGE( newString != 0, "Failed to allocate string value buffer" );
+      length = (unsigned int)wcslen(value);
+   wchar_t *newString = static_cast<wchar_t *>( malloc( length * sizeof(wchar_t) + 1 ) );
+   JSON_ASSERT_MESSAGE( newString != 0, "Failed to allocate wstring value buffer" );
    memcpy( newString, value, length );
    newString[length] = 0;
    return newString;
 }
 
 
-/** Free the string duplicated by duplicateStringValue().
+/** Free the wstring duplicated by duplicateStringValue().
  */
 static inline void 
-releaseStringValue( char *value )
+releaseStringValue( wchar_t *value )
 {
    if ( value )
       free( value );
@@ -1625,11 +1630,11 @@ releaseStringValue( char *value )
 // //////////////////////////////////////////////////////////////////
 #if !defined(JSON_IS_AMALGAMATION)
 # ifdef JSON_VALUE_USE_INTERNAL_MAP
-#  include "json_internalarray.inl"
-#  include "json_internalmap.inl"
+#  include L"json_internalarray.inl"
+#  include L"json_internalmap.inl"
 # endif // JSON_VALUE_USE_INTERNAL_MAP
 
-# include "json_valueiterator.inl"
+# include L"json_valueiterator.inl"
 #endif // if !defined(JSON_IS_AMALGAMATION)
 
 namespace Json {
@@ -1656,7 +1661,7 @@ Value::CommentInfo::~CommentInfo()
 
 
 void 
-Value::CommentInfo::setComment( const char *text )
+Value::CommentInfo::setComment( const wchar_t *text )
 {
    if ( comment_ )
       releaseStringValue( comment_ );
@@ -1676,8 +1681,8 @@ Value::CommentInfo::setComment( const char *text )
 // //////////////////////////////////////////////////////////////////
 # ifndef JSON_VALUE_USE_INTERNAL_MAP
 
-// Notes: index_ indicates if the string was allocated when
-// a string is stored.
+// Notes: index_ indicates if the wstring was allocated when
+// a wstring is stored.
 
 Value::CZString::CZString( ArrayIndex index )
    : cstr_( 0 )
@@ -1685,7 +1690,7 @@ Value::CZString::CZString( ArrayIndex index )
 {
 }
 
-Value::CZString::CZString( const char *cstr, DuplicationPolicy allocate )
+Value::CZString::CZString( const wchar_t *cstr, DuplicationPolicy allocate )
    : cstr_( allocate == duplicate ? duplicateStringValue(cstr) 
                                   : cstr )
    , index_( allocate )
@@ -1704,7 +1709,7 @@ Value::CZString::CZString( const CZString &other )
 Value::CZString::~CZString()
 {
    if ( cstr_  &&  index_ == duplicate )
-      releaseStringValue( const_cast<char *>( cstr_ ) );
+      releaseStringValue( const_cast<wchar_t *>( cstr_ ) );
 }
 
 void 
@@ -1726,7 +1731,7 @@ bool
 Value::CZString::operator<( const CZString &other ) const 
 {
    if ( cstr_ )
-      return strcmp( cstr_, other.cstr_ ) < 0;
+      return wcscmp( cstr_, other.cstr_ ) < 0;
    return index_ < other.index_;
 }
 
@@ -1734,7 +1739,7 @@ bool
 Value::CZString::operator==( const CZString &other ) const 
 {
    if ( cstr_ )
-      return strcmp( cstr_, other.cstr_ ) == 0;
+      return wcscmp( cstr_, other.cstr_ ) == 0;
    return index_ == other.index_;
 }
 
@@ -1746,7 +1751,7 @@ Value::CZString::index() const
 }
 
 
-const char *
+const wchar_t *
 Value::CZString::c_str() const
 {
    return cstr_;
@@ -1872,7 +1877,7 @@ Value::Value( double value )
    value_.real_ = value;
 }
 
-Value::Value( const char *value )
+Value::Value( const wchar_t *value )
    : type_( stringValue )
    , allocated_( true )
    , comments_( 0 )
@@ -1884,8 +1889,8 @@ Value::Value( const char *value )
 }
 
 
-Value::Value( const char *beginValue, 
-              const char *endValue )
+Value::Value( const wchar_t *beginValue, 
+              const wchar_t *endValue )
    : type_( stringValue )
    , allocated_( true )
    , comments_( 0 )
@@ -1898,7 +1903,7 @@ Value::Value( const char *beginValue,
 }
 
 
-Value::Value( const std::string &value )
+Value::Value( const std::wstring &value )
    : type_( stringValue )
    , allocated_( true )
    , comments_( 0 )
@@ -1919,12 +1924,12 @@ Value::Value( const StaticString &value )
    , itemIsUsed_( 0 )
 #endif
 {
-   value_.string_ = const_cast<char *>( value.c_str() );
+   value_.string_ = const_cast<wchar_t *>( value.c_str() );
 }
 
 
 # ifdef JSON_USE_CPPTL
-Value::Value( const CppTL::ConstString &value )
+Value::Value( const CppTL::Constwstring &value )
    : type_( stringValue )
    , allocated_( true )
    , comments_( 0 )
@@ -2096,7 +2101,7 @@ Value::operator <( const Value &other ) const
       return ( value_.string_ == 0  &&  other.value_.string_ )
              || ( other.value_.string_  
                   &&  value_.string_  
-                  && strcmp( value_.string_, other.value_.string_ ) < 0 );
+                  && wcscmp( value_.string_, other.value_.string_ ) < 0 );
 #ifndef JSON_VALUE_USE_INTERNAL_MAP
    case arrayValue:
    case objectValue:
@@ -2162,7 +2167,7 @@ Value::operator ==( const Value &other ) const
       return ( value_.string_ == other.value_.string_ )
              || ( other.value_.string_  
                   &&  value_.string_  
-                  && strcmp( value_.string_, other.value_.string_ ) == 0 );
+                  && wcscmp( value_.string_, other.value_.string_ ) == 0 );
 #ifndef JSON_VALUE_USE_INTERNAL_MAP
    case arrayValue:
    case objectValue:
@@ -2186,7 +2191,7 @@ Value::operator !=( const Value &other ) const
    return !( *this == other );
 }
 
-const char *
+const wchar_t *
 Value::asCString() const
 {
    JSON_ASSERT( type_ == stringValue );
@@ -2194,17 +2199,17 @@ Value::asCString() const
 }
 
 
-std::string 
+std::wstring 
 Value::asString() const
 {
    switch ( type_ )
    {
    case nullValue:
-      return "";
+      return L"";
    case stringValue:
-      return value_.string_ ? value_.string_ : "";
+      return value_.string_ ? value_.string_ : L"";
    case booleanValue:
-      return value_.bool_ ? "true" : "false";
+      return value_.bool_ ? L"true" : L"false";
    case intValue:
    case uintValue:
    case realValue:
@@ -2214,11 +2219,11 @@ Value::asString() const
    default:
       JSON_ASSERT_UNREACHABLE;
    }
-   return ""; // unreachable
+   return L""; // unreachable
 }
 
 # ifdef JSON_USE_CPPTL
-CppTL::ConstString 
+CppTL::Constwstring 
 Value::asConstString() const
 {
    return CppTL::ConstString( asString().c_str() );
@@ -2663,14 +2668,14 @@ Value::operator[]( int index ) const
 
 
 Value &
-Value::operator[]( const char *key )
+Value::operator[]( const wchar_t *key )
 {
    return resolveReference( key, false );
 }
 
 
 Value &
-Value::resolveReference( const char *key, 
+Value::resolveReference( const wchar_t *key, 
                          bool isStatic )
 {
    JSON_ASSERT( type_ == nullValue  ||  type_ == objectValue );
@@ -2711,7 +2716,7 @@ Value::isValidIndex( ArrayIndex index ) const
 
 
 const Value &
-Value::operator[]( const char *key ) const
+Value::operator[]( const wchar_t *key ) const
 {
    JSON_ASSERT( type_ == nullValue  ||  type_ == objectValue );
    if ( type_ == nullValue )
@@ -2730,14 +2735,14 @@ Value::operator[]( const char *key ) const
 
 
 Value &
-Value::operator[]( const std::string &key )
+Value::operator[]( const std::wstring &key )
 {
    return (*this)[ key.c_str() ];
 }
 
 
 const Value &
-Value::operator[]( const std::string &key ) const
+Value::operator[]( const std::wstring &key ) const
 {
    return (*this)[ key.c_str() ];
 }
@@ -2751,14 +2756,14 @@ Value::operator[]( const StaticString &key )
 
 # ifdef JSON_USE_CPPTL
 Value &
-Value::operator[]( const CppTL::ConstString &key )
+Value::operator[]( const CppTL::Constwstring &key )
 {
    return (*this)[ key.c_str() ];
 }
 
 
 const Value &
-Value::operator[]( const CppTL::ConstString &key ) const
+Value::operator[]( const CppTL::Constwstring &key ) const
 {
    return (*this)[ key.c_str() ];
 }
@@ -2773,7 +2778,7 @@ Value::append( const Value &value )
 
 
 Value 
-Value::get( const char *key, 
+Value::get( const wchar_t *key, 
             const Value &defaultValue ) const
 {
    const Value *value = &((*this)[key]);
@@ -2782,14 +2787,14 @@ Value::get( const char *key,
 
 
 Value 
-Value::get( const std::string &key,
+Value::get( const std::wstring &key,
             const Value &defaultValue ) const
 {
    return get( key.c_str(), defaultValue );
 }
 
 Value
-Value::removeMember( const char* key )
+Value::removeMember( const wchar_t* key )
 {
    JSON_ASSERT( type_ == nullValue  ||  type_ == objectValue );
    if ( type_ == nullValue )
@@ -2815,14 +2820,14 @@ Value::removeMember( const char* key )
 }
 
 Value
-Value::removeMember( const std::string &key )
+Value::removeMember( const std::wstring &key )
 {
    return removeMember( key.c_str() );
 }
 
 # ifdef JSON_USE_CPPTL
 Value 
-Value::get( const CppTL::ConstString &key,
+Value::get( const CppTL::Constwstring &key,
             const Value &defaultValue ) const
 {
    return get( key.c_str(), defaultValue );
@@ -2830,7 +2835,7 @@ Value::get( const CppTL::ConstString &key,
 # endif
 
 bool 
-Value::isMember( const char *key ) const
+Value::isMember( const wchar_t *key ) const
 {
    const Value *value = &((*this)[key]);
    return value != &null;
@@ -2838,7 +2843,7 @@ Value::isMember( const char *key ) const
 
 
 bool 
-Value::isMember( const std::string &key ) const
+Value::isMember( const std::wstring &key ) const
 {
    return isMember( key.c_str() );
 }
@@ -2846,7 +2851,7 @@ Value::isMember( const std::string &key ) const
 
 # ifdef JSON_USE_CPPTL
 bool 
-Value::isMember( const CppTL::ConstString &key ) const
+Value::isMember( const CppTL::Constwstring &key ) const
 {
    return isMember( key.c_str() );
 }
@@ -2864,14 +2869,14 @@ Value::getMemberNames() const
    ObjectValues::const_iterator it = value_.map_->begin();
    ObjectValues::const_iterator itEnd = value_.map_->end();
    for ( ; it != itEnd; ++it )
-      members.push_back( std::string( (*it).first.c_str() ) );
+      members.push_back( std::wstring( (*it).first.c_str() ) );
 #else
    ValueInternalMap::IteratorState it;
    ValueInternalMap::IteratorState itEnd;
    value_.map_->makeBeginIterator( it );
    value_.map_->makeEndIterator( itEnd );
    for ( ; !ValueInternalMap::equals( it, itEnd ); ValueInternalMap::increment(it) )
-      members.push_back( std::string( ValueInternalMap::key( it ) ) );
+      members.push_back( std::wstring( ValueInternalMap::key( it ) ) );
 #endif
    return members;
 }
@@ -2975,7 +2980,7 @@ Value::isObject() const
 
 
 void 
-Value::setComment( const char *comment,
+Value::setComment( const wchar_t *comment,
                    CommentPlacement placement )
 {
    if ( !comments_ )
@@ -2985,7 +2990,7 @@ Value::setComment( const char *comment,
 
 
 void 
-Value::setComment( const std::string &comment,
+Value::setComment( const std::wstring &comment,
                    CommentPlacement placement )
 {
    setComment( comment.c_str(), placement );
@@ -2998,16 +3003,16 @@ Value::hasComment( CommentPlacement placement ) const
    return comments_ != 0  &&  comments_[placement].comment_ != 0;
 }
 
-std::string 
+std::wstring 
 Value::getComment( CommentPlacement placement ) const
 {
    if ( hasComment(placement) )
       return comments_[placement].comment_;
-   return "";
+   return L"";
 }
 
 
-std::string 
+std::wstring 
 Value::toStyledString() const
 {
    StyledWriter writer;
@@ -3173,14 +3178,14 @@ PathArgument::PathArgument( ArrayIndex index )
 }
 
 
-PathArgument::PathArgument( const char *key )
+PathArgument::PathArgument( const wchar_t *key )
    : key_( key )
    , kind_( kindKey )
 {
 }
 
 
-PathArgument::PathArgument( const std::string &key )
+PathArgument::PathArgument( const std::wstring &key )
    : key_( key.c_str() )
    , kind_( kindKey )
 {
@@ -3189,7 +3194,7 @@ PathArgument::PathArgument( const std::string &key )
 // class Path
 // //////////////////////////////////////////////////////////////////
 
-Path::Path( const std::string &path,
+Path::Path( const std::wstring &path,
             const PathArgument &a1,
             const PathArgument &a2,
             const PathArgument &a3,
@@ -3207,51 +3212,51 @@ Path::Path( const std::string &path,
 
 
 void 
-Path::makePath( const std::string &path,
+Path::makePath( const std::wstring &path,
                 const InArgs &in )
 {
-   const char *current = path.c_str();
-   const char *end = current + path.length();
+   const wchar_t *current = path.c_str();
+   const wchar_t *end = current + path.length();
    InArgs::const_iterator itInArg = in.begin();
    while ( current != end )
    {
-      if ( *current == '[' )
+      if ( *current == L'[' )
       {
          ++current;
-         if ( *current == '%' )
+         if ( *current == L'%' )
             addPathInArg( path, in, itInArg, PathArgument::kindIndex );
          else
          {
             ArrayIndex index = 0;
-            for ( ; current != end && *current >= '0'  &&  *current <= '9'; ++current )
-               index = index * 10 + ArrayIndex(*current - '0');
+            for ( ; current != end && *current >= L'0'  &&  *current <= L'9'; ++current )
+               index = index * 10 + ArrayIndex(*current - L'0');
             args_.push_back( index );
          }
-         if ( current == end  ||  *current++ != ']' )
+         if ( current == end  ||  *current++ != L']' )
             invalidPath( path, int(current - path.c_str()) );
       }
-      else if ( *current == '%' )
+      else if ( *current == L'%' )
       {
          addPathInArg( path, in, itInArg, PathArgument::kindKey );
          ++current;
       }
-      else if ( *current == '.' )
+      else if ( *current == L'.' )
       {
          ++current;
       }
       else
       {
-         const char *beginName = current;
-         while ( current != end  &&  !strchr( "[.", *current ) )
+         const wchar_t *beginName = current;
+         while ( current != end  &&  !wcschr( L"[.", *current ) )
             ++current;
-         args_.push_back( std::string( beginName, current ) );
+         args_.push_back( std::wstring( beginName, current ) );
       }
    }
 }
 
 
 void 
-Path::addPathInArg( const std::string &path, 
+Path::addPathInArg( const std::wstring &path, 
                     const InArgs &in, 
                     InArgs::const_iterator &itInArg, 
                     PathArgument::Kind kind )
@@ -3272,7 +3277,7 @@ Path::addPathInArg( const std::string &path,
 
 
 void 
-Path::invalidPath( const std::string &path, 
+Path::invalidPath( const std::wstring &path, 
                    int location )
 {
    // Error: invalid path.
@@ -3303,7 +3308,7 @@ Path::resolve( const Value &root ) const
          node = &((*node)[arg.key_]);
          if ( node == &Value::null )
          {
-            // Error: unable to resolve path (object has no member named '' at position...)
+            // Error: unable to resolve path (object has no member named L'' at position...)
          }
       }
    }
@@ -3388,7 +3393,7 @@ Path::make( Value &root ) const
 
 #if !defined(JSON_IS_AMALGAMATION)
 # include <json/writer.h>
-# include "json_tool.h"
+# include L"json_tool.h"
 #endif // if !defined(JSON_IS_AMALGAMATION)
 #include <utility>
 #include <assert.h>
@@ -3404,7 +3409,7 @@ Path::make( Value &root ) const
 
 namespace Json {
 
-static bool containsControlCharacter( const char* str )
+static bool containsControlCharacter( const wchar_t* str )
 {
    while ( *str ) 
    {
@@ -3415,25 +3420,25 @@ static bool containsControlCharacter( const char* str )
 }
 
 
-std::string valueToString( LargestInt value )
+std::wstring valueToString( LargestInt value )
 {
    UIntToStringBuffer buffer;
-   char *current = buffer + sizeof(buffer);
+   wchar_t *current = buffer + sizeof(buffer);
    bool isNegative = value < 0;
    if ( isNegative )
       value = -value;
    uintToString( LargestUInt(value), current );
    if ( isNegative )
-      *--current = '-';
+      *--current = L'-';
    assert( current >= buffer );
    return current;
 }
 
 
-std::string valueToString( LargestUInt value )
+std::wstring valueToString( LargestUInt value )
 {
    UIntToStringBuffer buffer;
-   char *current = buffer + sizeof(buffer);
+   wchar_t *current = buffer + sizeof(buffer);
    uintToString( value, current );
    assert( current >= buffer );
    return current;
@@ -3441,13 +3446,13 @@ std::string valueToString( LargestUInt value )
 
 #if defined(JSON_HAS_INT64)
 
-std::string valueToString( Int value )
+std::wstring valueToString( Int value )
 {
    return valueToString( LargestInt(value) );
 }
 
 
-std::string valueToString( UInt value )
+std::wstring valueToString( UInt value )
 {
    return valueToString( LargestUInt(value) );
 }
@@ -3455,37 +3460,37 @@ std::string valueToString( UInt value )
 #endif // # if defined(JSON_HAS_INT64)
 
 
-std::string valueToString( double value )
+std::wstring valueToString( double value )
 {
-   char buffer[32];
+   wchar_t buffer[32];
 #if defined(_MSC_VER) && defined(__STDC_SECURE_LIB__) // Use secure version with visual studio 2005 to avoid warning. 
-   sprintf_s(buffer, sizeof(buffer), "%#.16g", value); 
+   swprintf_s(buffer, sizeof(buffer), L"%#.16g", value); 
 #else	
-   sprintf(buffer, "%#.16g", value); 
+   swprintf(buffer, L"%#.16g", value); 
 #endif
-   char* ch = buffer + strlen(buffer) - 1;
-   if (*ch != '0') return buffer; // nothing to truncate, so save time
-   while(ch > buffer && *ch == '0'){
+   wchar_t* ch = buffer + wcslen(buffer) - 1;
+   if (*ch != L'0') return buffer; // nothing to truncate, so save time
+   while(ch > buffer && *ch == L'0'){
      --ch;
    }
-   char* last_nonzero = ch;
+   wchar_t* last_nonzero = ch;
    while(ch >= buffer){
      switch(*ch){
-     case '0':
-     case '1':
-     case '2':
-     case '3':
-     case '4':
-     case '5':
-     case '6':
-     case '7':
-     case '8':
-     case '9':
+     case L'0':
+     case L'1':
+     case L'2':
+     case L'3':
+     case L'4':
+     case L'5':
+     case L'6':
+     case L'7':
+     case L'8':
+     case L'9':
        --ch;
        continue;
-     case '.':
+     case L'.':
        // Truncate zeroes to save bytes in output, but keep one.
-       *(last_nonzero+2) = '\0';
+       *(last_nonzero+2) = L'\0';
        return buffer;
      default:
        return buffer;
@@ -3495,49 +3500,49 @@ std::string valueToString( double value )
 }
 
 
-std::string valueToString( bool value )
+std::wstring valueToString( bool value )
 {
-   return value ? "true" : "false";
+   return value ? L"true" : L"false";
 }
 
-std::string valueToQuotedString( const char *value )
+std::wstring valueToQuotedString( const wchar_t *value )
 {
    // Not sure how to handle unicode...
-   if (strpbrk(value, "\"\\\b\f\n\r\t") == NULL && !containsControlCharacter( value ))
-      return std::string("\"") + value + "\"";
+   if (wcspbrk(value, L"\"\\\b\f\n\r\t") == NULL && !containsControlCharacter( value ))
+      return std::wstring(L"\"") + value + L"\"";
    // We have to walk value and escape any special characters.
-   // Appending to std::string is not efficient, but this should be rare.
+   // Appending to std::wstring is not efficient, but this should be rare.
    // (Note: forward slashes are *not* rare, but I am not escaping them.)
-   std::string::size_type maxsize = strlen(value)*2 + 3; // allescaped+quotes+NULL
-   std::string result;
+   std::wstring::size_type maxsize = wcslen(value)*2 + 3; // allescaped+quotes+NULL
+   std::wstring result;
    result.reserve(maxsize); // to avoid lots of mallocs
-   result += "\"";
-   for (const char* c=value; *c != 0; ++c)
+   result += L"\"";
+   for (const wchar_t* c=value; *c != 0; ++c)
    {
       switch(*c)
       {
-         case '\"':
-            result += "\\\"";
+         case L'\"':
+            result += L"\\\"";
             break;
-         case '\\':
-            result += "\\\\";
+         case L'\\':
+            result += L"\\\\";
             break;
-         case '\b':
-            result += "\\b";
+         case L'\b':
+            result += L"\\b";
             break;
-         case '\f':
-            result += "\\f";
+         case L'\f':
+            result += L"\\f";
             break;
-         case '\n':
-            result += "\\n";
+         case L'\n':
+            result += L"\\n";
             break;
-         case '\r':
-            result += "\\r";
+         case L'\r':
+            result += L"\\r";
             break;
-         case '\t':
-            result += "\\t";
+         case L'\t':
+            result += L"\\t";
             break;
-         //case '/':
+         //case L'/':
             // Even though \/ is considered a legal escape in JSON, a bare
             // slash is also legal, so I see no reason to escape it.
             // (I hope I am not misunderstanding something.
@@ -3548,8 +3553,8 @@ std::string valueToQuotedString( const char *value )
          default:
             if ( isControlCharacter( *c ) )
             {
-               std::ostringstream oss;
-               oss << "\\u" << std::hex << std::uppercase << std::setfill('0') << std::setw(4) << static_cast<int>(*c);
+               std::wostringstream oss;
+               oss << L"\\u" << std::hex << std::uppercase << std::setfill(L'0') << std::setw(4) << static_cast<int>(*c);
                result += oss.str();
             }
             else
@@ -3559,7 +3564,7 @@ std::string valueToQuotedString( const char *value )
             break;
       }
    }
-   result += "\"";
+   result += L"\"";
    return result;
 }
 
@@ -3586,12 +3591,12 @@ FastWriter::enableYAMLCompatibility()
 }
 
 
-std::string 
+std::wstring 
 FastWriter::write( const Value &root )
 {
-   document_ = "";
+   document_ = L"";
    writeValue( root );
-   document_ += "\n";
+   document_ += L"\n";
    return document_;
 }
 
@@ -3602,7 +3607,7 @@ FastWriter::writeValue( const Value &value )
    switch ( value.type() )
    {
    case nullValue:
-      document_ += "null";
+      document_ += L"null";
       break;
    case intValue:
       document_ += valueToString( value.asLargestInt() );
@@ -3621,34 +3626,34 @@ FastWriter::writeValue( const Value &value )
       break;
    case arrayValue:
       {
-         document_ += "[";
+         document_ += L"[";
          int size = value.size();
          for ( int index =0; index < size; ++index )
          {
             if ( index > 0 )
-               document_ += ",";
+               document_ += L",";
             writeValue( value[index] );
          }
-         document_ += "]";
+         document_ += L"]";
       }
       break;
    case objectValue:
       {
          Value::Members members( value.getMemberNames() );
-         document_ += "{";
+         document_ += L"{";
          for ( Value::Members::iterator it = members.begin(); 
                it != members.end(); 
                ++it )
          {
-            const std::string &name = *it;
+            const std::wstring &name = *it;
             if ( it != members.begin() )
-               document_ += ",";
+               document_ += L",";
             document_ += valueToQuotedString( name.c_str() );
-            document_ += yamlCompatiblityEnabled_ ? ": " 
-                                                  : ":";
+            document_ += yamlCompatiblityEnabled_ ? L": L" 
+                                                  : L":";
             writeValue( value[name] );
          }
-         document_ += "}";
+         document_ += L"}";
       }
       break;
    }
@@ -3665,16 +3670,16 @@ StyledWriter::StyledWriter()
 }
 
 
-std::string 
+std::wstring 
 StyledWriter::write( const Value &root )
 {
-   document_ = "";
+   document_ = L"";
    addChildValues_ = false;
-   indentString_ = "";
+   indentString_ = L"";
    writeCommentBeforeValue( root );
    writeValue( root );
    writeCommentAfterValueOnSameLine( root );
-   document_ += "\n";
+   document_ += L"\n";
    return document_;
 }
 
@@ -3685,7 +3690,7 @@ StyledWriter::writeValue( const Value &value )
    switch ( value.type() )
    {
    case nullValue:
-      pushValue( "null" );
+      pushValue( L"null" );
       break;
    case intValue:
       pushValue( valueToString( value.asLargestInt() ) );
@@ -3709,30 +3714,30 @@ StyledWriter::writeValue( const Value &value )
       {
          Value::Members members( value.getMemberNames() );
          if ( members.empty() )
-            pushValue( "{}" );
+            pushValue( L"{}" );
          else
          {
-            writeWithIndent( "{" );
+            writeWithIndent( L"{" );
             indent();
             Value::Members::iterator it = members.begin();
             for (;;)
             {
-               const std::string &name = *it;
+               const std::wstring &name = *it;
                const Value &childValue = value[name];
                writeCommentBeforeValue( childValue );
                writeWithIndent( valueToQuotedString( name.c_str() ) );
-               document_ += " : ";
+               document_ += L" : L";
                writeValue( childValue );
                if ( ++it == members.end() )
                {
                   writeCommentAfterValueOnSameLine( childValue );
                   break;
                }
-               document_ += ",";
+               document_ += L",";
                writeCommentAfterValueOnSameLine( childValue );
             }
             unindent();
-            writeWithIndent( "}" );
+            writeWithIndent( L"}" );
          }
       }
       break;
@@ -3745,13 +3750,13 @@ StyledWriter::writeArrayValue( const Value &value )
 {
    unsigned size = value.size();
    if ( size == 0 )
-      pushValue( "[]" );
+      pushValue( L"[]" );
    else
    {
       bool isArrayMultiLine = isMultineArray( value );
       if ( isArrayMultiLine )
       {
-         writeWithIndent( "[" );
+         writeWithIndent( L"[" );
          indent();
          bool hasChildValue = !childValues_.empty();
          unsigned index =0;
@@ -3771,23 +3776,23 @@ StyledWriter::writeArrayValue( const Value &value )
                writeCommentAfterValueOnSameLine( childValue );
                break;
             }
-            document_ += ",";
+            document_ += L",";
             writeCommentAfterValueOnSameLine( childValue );
          }
          unindent();
-         writeWithIndent( "]" );
+         writeWithIndent( L"]" );
       }
       else // output on a single line
       {
          assert( childValues_.size() == size );
-         document_ += "[ ";
+         document_ += L"[ L";
          for ( unsigned index =0; index < size; ++index )
          {
             if ( index > 0 )
-               document_ += ", ";
+               document_ += L", L";
             document_ += childValues_[index];
          }
-         document_ += " ]";
+         document_ += L" ]";
       }
    }
 }
@@ -3810,7 +3815,7 @@ StyledWriter::isMultineArray( const Value &value )
    {
       childValues_.reserve( size );
       addChildValues_ = true;
-      int lineLength = 4 + (size-1)*2; // '[ ' + ', '*n + ' ]'
+      int lineLength = 4 + (size-1)*2; // L'[ L' + L', L'*n + L' ]'
       for ( int index =0; index < size  &&  !isMultiLine; ++index )
       {
          writeValue( value[index] );
@@ -3825,7 +3830,7 @@ StyledWriter::isMultineArray( const Value &value )
 
 
 void 
-StyledWriter::pushValue( const std::string &value )
+StyledWriter::pushValue( const std::wstring &value )
 {
    if ( addChildValues_ )
       childValues_.push_back( value );
@@ -3839,18 +3844,18 @@ StyledWriter::writeIndent()
 {
    if ( !document_.empty() )
    {
-      char last = document_[document_.length()-1];
-      if ( last == ' ' )     // already indented
+      wchar_t last = document_[document_.length()-1];
+      if ( last == L' ' )     // already indented
          return;
-      if ( last != '\n' )    // Comments may add new-line
-         document_ += '\n';
+      if ( last != L'\n' )    // Comments may add new-line
+         document_ += L'\n';
    }
    document_ += indentString_;
 }
 
 
 void 
-StyledWriter::writeWithIndent( const std::string &value )
+StyledWriter::writeWithIndent( const std::wstring &value )
 {
    writeIndent();
    document_ += value;
@@ -3860,7 +3865,7 @@ StyledWriter::writeWithIndent( const std::string &value )
 void 
 StyledWriter::indent()
 {
-   indentString_ += std::string( indentSize_, ' ' );
+   indentString_ += std::wstring( indentSize_, L' ' );
 }
 
 
@@ -3878,7 +3883,7 @@ StyledWriter::writeCommentBeforeValue( const Value &root )
    if ( !root.hasComment( commentBefore ) )
       return;
    document_ += normalizeEOL( root.getComment( commentBefore ) );
-   document_ += "\n";
+   document_ += L"\n";
 }
 
 
@@ -3886,13 +3891,13 @@ void
 StyledWriter::writeCommentAfterValueOnSameLine( const Value &root )
 {
    if ( root.hasComment( commentAfterOnSameLine ) )
-      document_ += " " + normalizeEOL( root.getComment( commentAfterOnSameLine ) );
+      document_ += L" L" + normalizeEOL( root.getComment( commentAfterOnSameLine ) );
 
    if ( root.hasComment( commentAfter ) )
    {
-      document_ += "\n";
+      document_ += L"\n";
       document_ += normalizeEOL( root.getComment( commentAfter ) );
-      document_ += "\n";
+      document_ += L"\n";
    }
 }
 
@@ -3906,22 +3911,22 @@ StyledWriter::hasCommentForValue( const Value &value )
 }
 
 
-std::string 
-StyledWriter::normalizeEOL( const std::string &text )
+std::wstring 
+StyledWriter::normalizeEOL( const std::wstring &text )
 {
-   std::string normalized;
+   std::wstring normalized;
    normalized.reserve( text.length() );
-   const char *begin = text.c_str();
-   const char *end = begin + text.length();
-   const char *current = begin;
+   const wchar_t *begin = text.c_str();
+   const wchar_t *end = begin + text.length();
+   const wchar_t *current = begin;
    while ( current != end )
    {
-      char c = *current++;
-      if ( c == '\r' ) // mac or dos EOL
+      wchar_t c = *current++;
+      if ( c == L'\r' ) // mac or dos EOL
       {
-         if ( *current == '\n' ) // convert dos EOL
+         if ( *current == L'\n' ) // convert dos EOL
             ++current;
-         normalized += '\n';
+         normalized += L'\n';
       }
       else // handle unix EOL & other char
          normalized += c;
@@ -3933,7 +3938,7 @@ StyledWriter::normalizeEOL( const std::string &text )
 // Class StyledStreamWriter
 // //////////////////////////////////////////////////////////////////
 
-StyledStreamWriter::StyledStreamWriter( std::string indentation )
+StyledStreamWriter::StyledStreamWriter( std::wstring indentation )
    : document_(NULL)
    , rightMargin_( 74 )
    , indentation_( indentation )
@@ -3946,11 +3951,11 @@ StyledStreamWriter::write( std::ostream &out, const Value &root )
 {
    document_ = &out;
    addChildValues_ = false;
-   indentString_ = "";
+   indentString_ = L"";
    writeCommentBeforeValue( root );
    writeValue( root );
    writeCommentAfterValueOnSameLine( root );
-   *document_ << "\n";
+   *document_ << L"\n";
    document_ = NULL; // Forget the stream, for safety.
 }
 
@@ -3961,7 +3966,7 @@ StyledStreamWriter::writeValue( const Value &value )
    switch ( value.type() )
    {
    case nullValue:
-      pushValue( "null" );
+      pushValue( L"null" );
       break;
    case intValue:
       pushValue( valueToString( value.asLargestInt() ) );
@@ -3985,30 +3990,30 @@ StyledStreamWriter::writeValue( const Value &value )
       {
          Value::Members members( value.getMemberNames() );
          if ( members.empty() )
-            pushValue( "{}" );
+            pushValue( L"{}" );
          else
          {
-            writeWithIndent( "{" );
+            writeWithIndent( L"{" );
             indent();
             Value::Members::iterator it = members.begin();
             for (;;)
             {
-               const std::string &name = *it;
+               const std::wstring &name = *it;
                const Value &childValue = value[name];
                writeCommentBeforeValue( childValue );
                writeWithIndent( valueToQuotedString( name.c_str() ) );
-               *document_ << " : ";
+               *document_ << L" : L";
                writeValue( childValue );
                if ( ++it == members.end() )
                {
                   writeCommentAfterValueOnSameLine( childValue );
                   break;
                }
-               *document_ << ",";
+               *document_ << L",";
                writeCommentAfterValueOnSameLine( childValue );
             }
             unindent();
-            writeWithIndent( "}" );
+            writeWithIndent( L"}" );
          }
       }
       break;
@@ -4021,13 +4026,13 @@ StyledStreamWriter::writeArrayValue( const Value &value )
 {
    unsigned size = value.size();
    if ( size == 0 )
-      pushValue( "[]" );
+      pushValue( L"[]" );
    else
    {
       bool isArrayMultiLine = isMultineArray( value );
       if ( isArrayMultiLine )
       {
-         writeWithIndent( "[" );
+         writeWithIndent( L"[" );
          indent();
          bool hasChildValue = !childValues_.empty();
          unsigned index =0;
@@ -4047,23 +4052,23 @@ StyledStreamWriter::writeArrayValue( const Value &value )
                writeCommentAfterValueOnSameLine( childValue );
                break;
             }
-            *document_ << ",";
+            *document_ << L",";
             writeCommentAfterValueOnSameLine( childValue );
          }
          unindent();
-         writeWithIndent( "]" );
+         writeWithIndent( L"]" );
       }
       else // output on a single line
       {
          assert( childValues_.size() == size );
-         *document_ << "[ ";
+         *document_ << L"[ L";
          for ( unsigned index =0; index < size; ++index )
          {
             if ( index > 0 )
-               *document_ << ", ";
+               *document_ << L", L";
             *document_ << childValues_[index];
          }
-         *document_ << " ]";
+         *document_ << L" ]";
       }
    }
 }
@@ -4086,7 +4091,7 @@ StyledStreamWriter::isMultineArray( const Value &value )
    {
       childValues_.reserve( size );
       addChildValues_ = true;
-      int lineLength = 4 + (size-1)*2; // '[ ' + ', '*n + ' ]'
+      int lineLength = 4 + (size-1)*2; // L'[ L' + L', L'*n + L' ]'
       for ( int index =0; index < size  &&  !isMultiLine; ++index )
       {
          writeValue( value[index] );
@@ -4101,7 +4106,7 @@ StyledStreamWriter::isMultineArray( const Value &value )
 
 
 void 
-StyledStreamWriter::pushValue( const std::string &value )
+StyledStreamWriter::pushValue( const std::wstring &value )
 {
    if ( addChildValues_ )
       childValues_.push_back( value );
@@ -4118,19 +4123,19 @@ StyledStreamWriter::writeIndent()
 
    if ( !document_.empty() )
    {
-      char last = document_[document_.length()-1];
-      if ( last == ' ' )     // already indented
+      wchar_t last = document_[document_.length()-1];
+      if ( last == L' L' )     // already indented
          return;
-      if ( last != '\n' )    // Comments may add new-line
-         *document_ << '\n';
+      if ( last != L'\n' )    // Comments may add new-line
+         *document_ << L'\n';
    }
   */
-   *document_ << '\n' << indentString_;
+   *document_ << L'\n' << indentString_;
 }
 
 
 void 
-StyledStreamWriter::writeWithIndent( const std::string &value )
+StyledStreamWriter::writeWithIndent( const std::wstring &value )
 {
    writeIndent();
    *document_ << value;
@@ -4158,7 +4163,7 @@ StyledStreamWriter::writeCommentBeforeValue( const Value &root )
    if ( !root.hasComment( commentBefore ) )
       return;
    *document_ << normalizeEOL( root.getComment( commentBefore ) );
-   *document_ << "\n";
+   *document_ << L"\n";
 }
 
 
@@ -4166,13 +4171,13 @@ void
 StyledStreamWriter::writeCommentAfterValueOnSameLine( const Value &root )
 {
    if ( root.hasComment( commentAfterOnSameLine ) )
-      *document_ << " " + normalizeEOL( root.getComment( commentAfterOnSameLine ) );
+      *document_ << L" L" + normalizeEOL( root.getComment( commentAfterOnSameLine ) );
 
    if ( root.hasComment( commentAfter ) )
    {
-      *document_ << "\n";
+      *document_ << L"\n";
       *document_ << normalizeEOL( root.getComment( commentAfter ) );
-      *document_ << "\n";
+      *document_ << L"\n";
    }
 }
 
@@ -4186,22 +4191,22 @@ StyledStreamWriter::hasCommentForValue( const Value &value )
 }
 
 
-std::string 
-StyledStreamWriter::normalizeEOL( const std::string &text )
+std::wstring 
+StyledStreamWriter::normalizeEOL( const std::wstring &text )
 {
-   std::string normalized;
+   std::wstring normalized;
    normalized.reserve( text.length() );
-   const char *begin = text.c_str();
-   const char *end = begin + text.length();
-   const char *current = begin;
+   const wchar_t *begin = text.c_str();
+   const wchar_t *end = begin + text.length();
+   const wchar_t *current = begin;
    while ( current != end )
    {
-      char c = *current++;
-      if ( c == '\r' ) // mac or dos EOL
+      wchar_t c = *current++;
+      if ( c == L'\r' ) // mac or dos EOL
       {
-         if ( *current == '\n' ) // convert dos EOL
+         if ( *current == L'\n' ) // convert dos EOL
             ++current;
-         normalized += '\n';
+         normalized += L'\n';
       }
       else // handle unix EOL & other char
          normalized += c;

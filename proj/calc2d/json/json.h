@@ -271,17 +271,17 @@ namespace Json {
    class JSON_API Features
    {
    public:
-      /** \brief A configuration that allows all features and assumes all strings are UTF-8.
+      /** \brief A configuration that allows all features and assumes all wstrings are UTF-8.
        * - C & C++ comments are allowed
        * - Root object can be any JSON value
-       * - Assumes Value strings are encoded in UTF-8
+       * - Assumes Value wstrings are encoded in UTF-8
        */
       static Features all();
 
       /** \brief A configuration that is strictly compatible with the JSON specification.
        * - Comments are forbidden.
        * - Root object must be either an array or an object value.
-       * - Assumes Value strings are encoded in UTF-8
+       * - Assumes Value wstrings are encoded in UTF-8
        */
       static Features strictMode();
 
@@ -348,7 +348,7 @@ namespace Json {
       intValue,      ///< signed integer value
       uintValue,     ///< unsigned integer value
       realValue,     ///< double value
-      stringValue,   ///< UTF-8 string value
+      stringValue,   ///< UTF-8 wstring value
       booleanValue,  ///< bool value
       arrayValue,    ///< array value (ordered list)
       objectValue    ///< object value (collection of name/value pairs).
@@ -363,15 +363,15 @@ namespace Json {
    };
 
 //# ifdef JSON_USE_CPPTL
-//   typedef CppTL::AnyEnumerator<const char *> EnumMemberNames;
+//   typedef CppTL::AnyEnumerator<const wchar_t *> EnumMemberNames;
 //   typedef CppTL::AnyEnumerator<const Value &> EnumValues;
 //# endif
 
-   /** \brief Lightweight wrapper to tag static string.
+   /** \brief Lightweight wrapper to tag static wstring.
     *
     * Value constructor and objectValue member assignement takes advantage of the
-    * StaticString and avoid the cost of string duplication when storing the
-    * string or the member name.
+    * StaticString and avoid the cost of wstring duplication when storing the
+    * wstring or the member name.
     *
     * Example of usage:
     * \code
@@ -384,23 +384,23 @@ namespace Json {
    class JSON_API StaticString
    {
    public:
-      explicit StaticString( const char *czstring )
+      explicit StaticString( const wchar_t *czstring )
          : str_( czstring )
       {
       }
 
-      operator const char *() const
+      operator const wchar_t *() const
       {
          return str_;
       }
 
-      const char *c_str() const
+      const wchar_t *c_str() const
       {
          return str_;
       }
 
    private:
-      const char *str_;
+      const wchar_t *str_;
    };
 
    /** \brief Represents a <a HREF="http://www.json.org">JSON</a> value.
@@ -409,7 +409,7 @@ namespace Json {
     * - signed integer [range: Value::minInt - Value::maxInt]
     * - unsigned integer (range: 0 - Value::maxUInt)
     * - double
-    * - UTF-8 string
+    * - UTF-8 wstring
     * - boolean
     * - 'null'
     * - an ordered list of Value
@@ -438,7 +438,7 @@ namespace Json {
       friend class ValueInternalMap;
 # endif
    public:
-      typedef std::vector<std::string> Members;
+      typedef std::vector<std::wstring> Members;
       typedef ValueIterator iterator;
       typedef ValueConstIterator const_iterator;
       typedef Json::UInt UInt;
@@ -486,18 +486,18 @@ namespace Json {
             duplicateOnCopy
          };
          CZString( ArrayIndex index );
-         CZString( const char *cstr, DuplicationPolicy allocate );
+         CZString( const wchar_t *cstr, DuplicationPolicy allocate );
          CZString( const CZString &other );
          ~CZString();
          CZString &operator =( const CZString &other );
          bool operator<( const CZString &other ) const;
          bool operator==( const CZString &other ) const;
          ArrayIndex index() const;
-         const char *c_str() const;
+         const wchar_t *c_str() const;
          bool isStaticString() const;
       private:
          void swap( CZString &other );
-         const char *cstr_;
+         const wchar_t *cstr_;
          ArrayIndex index_;
       };
 
@@ -534,12 +534,12 @@ namespace Json {
       Value( UInt64 value );
 #endif // if defined(JSON_HAS_INT64)
       Value( double value );
-      Value( const char *value );
-      Value( const char *beginValue, const char *endValue );
-      /** \brief Constructs a value from a static string.
+      Value( const wchar_t *value );
+      Value( const wchar_t *beginValue, const wchar_t *endValue );
+      /** \brief Constructs a value from a static wstring.
 
-       * Like other value string constructor but do not duplicate the string for
-       * internal storage. The given string must remain alive after the call to this
+       * Like other value wstring constructor but do not duplicate the wstring for
+       * internal storage. The given wstring must remain alive after the call to this
        * constructor.
        * Example of usage:
        * \code
@@ -547,9 +547,9 @@ namespace Json {
        * \endcode
        */
       Value( const StaticString &value );
-      Value( const std::string &value );
+      Value( const std::wstring &value );
 # ifdef JSON_USE_CPPTL
-      Value( const CppTL::ConstString &value );
+      Value( const CppTL::Constwstring &value );
 # endif
       Value( bool value );
       Value( const Value &other );
@@ -573,10 +573,10 @@ namespace Json {
 
       int compare( const Value &other ) const;
 
-      const char *asCString() const;
-      std::string asString() const;
+      const wchar_t *asCString() const;
+      std::wstring asString() const;
 # ifdef JSON_USE_CPPTL
-      CppTL::ConstString asConstString() const;
+      CppTL::Constwstring asConstwstring() const;
 # endif
       Int asInt() const;
       UInt asUInt() const;
@@ -627,24 +627,24 @@ namespace Json {
       /// If the array contains less than index element, then null value are inserted
       /// in the array so that its size is index+1.
       /// (You may need to say 'value[0u]' to get your compiler to distinguish
-      ///  this from the operator[] which takes a string.)
+      ///  this from the operator[] which takes a wstring.)
       Value &operator[]( ArrayIndex index );
 
       /// Access an array element (zero based index ).
       /// If the array contains less than index element, then null value are inserted
       /// in the array so that its size is index+1.
       /// (You may need to say 'value[0u]' to get your compiler to distinguish
-      ///  this from the operator[] which takes a string.)
+      ///  this from the operator[] which takes a wstring.)
       Value &operator[]( int index );
 
       /// Access an array element (zero based index )
       /// (You may need to say 'value[0u]' to get your compiler to distinguish
-      ///  this from the operator[] which takes a string.)
+      ///  this from the operator[] which takes a wstring.)
       const Value &operator[]( ArrayIndex index ) const;
 
       /// Access an array element (zero based index )
       /// (You may need to say 'value[0u]' to get your compiler to distinguish
-      ///  this from the operator[] which takes a string.)
+      ///  this from the operator[] which takes a wstring.)
       const Value &operator[]( int index ) const;
 
       /// If the array contains at least index+1 elements, returns the element value, 
@@ -659,13 +659,13 @@ namespace Json {
       Value &append( const Value &value );
 
       /// Access an object value by name, create a null member if it does not exist.
-      Value &operator[]( const char *key );
+      Value &operator[]( const wchar_t *key );
       /// Access an object value by name, returns null if there is no member with that name.
-      const Value &operator[]( const char *key ) const;
+      const Value &operator[]( const wchar_t *key ) const;
       /// Access an object value by name, create a null member if it does not exist.
-      Value &operator[]( const std::string &key );
+      Value &operator[]( const std::wstring &key );
       /// Access an object value by name, returns null if there is no member with that name.
-      const Value &operator[]( const std::string &key ) const;
+      const Value &operator[]( const std::wstring &key ) const;
       /** \brief Access an object value by name, create a null member if it does not exist.
 
        * If the object as no entry for that name, then the member name used to store
@@ -680,19 +680,19 @@ namespace Json {
       Value &operator[]( const StaticString &key );
 # ifdef JSON_USE_CPPTL
       /// Access an object value by name, create a null member if it does not exist.
-      Value &operator[]( const CppTL::ConstString &key );
+      Value &operator[]( const CppTL::Constwstring &key );
       /// Access an object value by name, returns null if there is no member with that name.
-      const Value &operator[]( const CppTL::ConstString &key ) const;
+      const Value &operator[]( const CppTL::Constwstring &key ) const;
 # endif
       /// Return the member named key if it exist, defaultValue otherwise.
-      Value get( const char *key, 
+      Value get( const wchar_t *key, 
                  const Value &defaultValue ) const;
       /// Return the member named key if it exist, defaultValue otherwise.
-      Value get( const std::string &key,
+      Value get( const std::wstring &key,
                  const Value &defaultValue ) const;
 # ifdef JSON_USE_CPPTL
       /// Return the member named key if it exist, defaultValue otherwise.
-      Value get( const CppTL::ConstString &key,
+      Value get( const CppTL::Constwstring &key,
                  const Value &defaultValue ) const;
 # endif
       /// \brief Remove and return the named member.  
@@ -701,17 +701,17 @@ namespace Json {
       /// \return the removed Value, or null.
       /// \pre type() is objectValue or nullValue
       /// \post type() is unchanged
-      Value removeMember( const char* key );
-      /// Same as removeMember(const char*)
-      Value removeMember( const std::string &key );
+      Value removeMember( const wchar_t* key );
+      /// Same as removeMember(const wchar_t*)
+      Value removeMember( const std::wstring &key );
 
       /// Return true if the object has a member named key.
-      bool isMember( const char *key ) const;
+      bool isMember( const wchar_t *key ) const;
       /// Return true if the object has a member named key.
-      bool isMember( const std::string &key ) const;
+      bool isMember( const std::wstring &key ) const;
 # ifdef JSON_USE_CPPTL
       /// Return true if the object has a member named key.
-      bool isMember( const CppTL::ConstString &key ) const;
+      bool isMember( const CppTL::Constwstring &key ) const;
 # endif
 
       /// \brief Return a list of the member names.
@@ -727,16 +727,16 @@ namespace Json {
 //# endif
 
       /// Comments must be //... or /* ... */
-      void setComment( const char *comment,
+      void setComment( const wchar_t *comment,
                        CommentPlacement placement );
       /// Comments must be //... or /* ... */
-      void setComment( const std::string &comment,
+      void setComment( const std::wstring &comment,
                        CommentPlacement placement );
       bool hasComment( CommentPlacement placement ) const;
       /// Include delimiters and embedded newlines.
-      std::string getComment( CommentPlacement placement ) const;
+      std::wstring getComment( CommentPlacement placement ) const;
 
-      std::string toStyledString() const;
+      std::wstring toStyledString() const;
 
       const_iterator begin() const;
       const_iterator end() const;
@@ -745,7 +745,7 @@ namespace Json {
       iterator end();
 
    private:
-      Value &resolveReference( const char *key, 
+      Value &resolveReference( const wchar_t *key, 
                                bool isStatic );
 
 # ifdef JSON_VALUE_USE_INTERNAL_MAP
@@ -776,15 +776,15 @@ namespace Json {
          CommentInfo();
          ~CommentInfo();
 
-         void setComment( const char *text );
+         void setComment( const wchar_t *text );
 
-         char *comment_;
+         wchar_t *comment_;
       };
 
       //struct MemberNamesTransform
       //{
-      //   typedef const char *result_type;
-      //   const char *operator()( const CZString &name ) const
+      //   typedef const wchar_t *result_type;
+      //   const wchar_t *operator()( const CZString &name ) const
       //   {
       //      return name.c_str();
       //   }
@@ -796,7 +796,7 @@ namespace Json {
          LargestUInt uint_;
          double real_;
          bool bool_;
-         char *string_;
+         wchar_t *string_;
 # ifdef JSON_VALUE_USE_INTERNAL_MAP
          ValueInternalArray *array_;
          ValueInternalMap *map_;
@@ -823,8 +823,8 @@ namespace Json {
 
       PathArgument();
       PathArgument( ArrayIndex index );
-      PathArgument( const char *key );
-      PathArgument( const std::string &key );
+      PathArgument( const wchar_t *key );
+      PathArgument( const std::wstring &key );
 
    private:
       enum Kind
@@ -833,7 +833,7 @@ namespace Json {
          kindIndex,
          kindKey
       };
-      std::string key_;
+      std::wstring key_;
       ArrayIndex index_;
       Kind kind_;
    };
@@ -852,7 +852,7 @@ namespace Json {
    class Path
    {
    public:
-      Path( const std::string &path,
+      Path( const std::wstring &path,
             const PathArgument &a1 = PathArgument(),
             const PathArgument &a2 = PathArgument(),
             const PathArgument &a3 = PathArgument(),
@@ -869,13 +869,13 @@ namespace Json {
       typedef std::vector<const PathArgument *> InArgs;
       typedef std::vector<PathArgument> Args;
 
-      void makePath( const std::string &path,
+      void makePath( const std::wstring &path,
                      const InArgs &in );
-      void addPathInArg( const std::string &path, 
+      void addPathInArg( const std::wstring &path, 
                          const InArgs &in, 
                          InArgs::const_iterator &itInArg, 
                          PathArgument::Kind kind );
-      void invalidPath( const std::string &path, 
+      void invalidPath( const std::wstring &path, 
                         int location );
 
       Args args_;
@@ -958,7 +958,7 @@ namespace Json {
       ~ValueInternalLink();
 
       Value items_[itemPerLink];
-      char *keys_[itemPerLink];
+      wchar_t *keys_[itemPerLink];
       ValueInternalLink *previous_;
       ValueInternalLink *next_;
    };
@@ -1016,14 +1016,14 @@ namespace Json {
 
       bool reserve( BucketIndex newItemCount );
 
-      const Value *find( const char *key ) const;
+      const Value *find( const wchar_t *key ) const;
 
-      Value *find( const char *key );
+      Value *find( const wchar_t *key );
 
-      Value &resolveReference( const char *key, 
+      Value &resolveReference( const wchar_t *key, 
                                bool isStatic );
 
-      void remove( const char *key );
+      void remove( const wchar_t *key );
 
       void doActualRemove( ValueInternalLink *link, 
                            BucketIndex index,
@@ -1031,16 +1031,16 @@ namespace Json {
 
       ValueInternalLink *&getLastLinkInBucket( BucketIndex bucketIndex );
 
-      Value &setNewItem( const char *key, 
+      Value &setNewItem( const wchar_t *key, 
                          bool isStatic, 
                          ValueInternalLink *link, 
                          BucketIndex index );
 
-      Value &unsafeAdd( const char *key, 
+      Value &unsafeAdd( const wchar_t *key, 
                         bool isStatic, 
                         HashKey hashedKey );
 
-      HashKey hash( const char *key ) const;
+      HashKey hash( const wchar_t *key ) const;
 
       int compare( const ValueInternalMap &other ) const;
 
@@ -1051,8 +1051,8 @@ namespace Json {
       static void increment( IteratorState &iterator );
       static void incrementBucket( IteratorState &iterator );
       static void decrement( IteratorState &iterator );
-      static const char *key( const IteratorState &iterator );
-      static const char *key( const IteratorState &iterator, bool &isStatic );
+      static const wchar_t *key( const IteratorState &iterator );
+      static const wchar_t *key( const IteratorState &iterator, bool &isStatic );
       static Value &value( const IteratorState &iterator );
       static int distance( const IteratorState &x, const IteratorState &y );
 
@@ -1262,7 +1262,7 @@ public: // overridden from ValueArrayAllocator
       UInt index() const;
 
       /// Return the member name of the referenced Value. "" if it is not an objectValue.
-      const char *memberName() const;
+      const wchar_t *memberName() const;
 
    protected:
       Value &deref() const;
@@ -1455,8 +1455,8 @@ namespace Json {
    class JSON_API Reader
    {
    public:
-      typedef char Char;
-      typedef const Char *Location;
+      typedef wchar_t Char;
+      typedef const wchar_t *Location;
 
       /** \brief Constructs a Reader allowing all features
        * for parsing.
@@ -1469,7 +1469,7 @@ namespace Json {
       Reader( const Features &features );
 
       /** \brief Read a Value from a <a HREF="http://www.json.org">JSON</a> document.
-       * \param document UTF-8 encoded string containing the document to read.
+       * \param document UTF-8 encoded wstring containing the document to read.
        * \param root [out] Contains the root value of the document if it was
        *             successfully parsed.
        * \param collectComments \c true to collect comment and allow writing them back during
@@ -1478,13 +1478,13 @@ namespace Json {
        *                        is \c false.
        * \return \c true if the document was successfully parsed, \c false if an error occurred.
        */
-      bool parse( const std::string &document, 
+      bool parse( const std::wstring &document, 
                   Value &root,
                   bool collectComments = true );
 
       /** \brief Read a Value from a <a HREF="http://www.json.org">JSON</a> document.
-       * \param beginDoc Pointer on the beginning of the UTF-8 encoded string of the document to read.
-       * \param endDoc Pointer on the end of the UTF-8 encoded string of the document to read. 
+       * \param beginDoc Pointer on the beginning of the UTF-8 encoded wstring of the document to read.
+       * \param endDoc Pointer on the end of the UTF-8 encoded wstring of the document to read. 
        \               Must be >= beginDoc.
        * \param root [out] Contains the root value of the document if it was
        *             successfully parsed.
@@ -1494,28 +1494,28 @@ namespace Json {
        *                        is \c false.
        * \return \c true if the document was successfully parsed, \c false if an error occurred.
        */
-      bool parse( const char *beginDoc, const char *endDoc, 
+      bool parse( const wchar_t *beginDoc, const wchar_t *endDoc, 
                   Value &root,
                   bool collectComments = true );
 
       /// \brief Parse from input stream.
-      /// \see Json::operator>>(std::istream&, Json::Value&).
-      bool parse( std::istream &is,
+      /// \see Json::operator>>(std::wistream&, Json::Value&).
+      bool parse( std::wistream &is,
                   Value &root,
                   bool collectComments = true );
 
-      /** \brief Returns a user friendly string that list errors in the parsed document.
+      /** \brief Returns a user friendly wstring that list errors in the parsed document.
        * \return Formatted error message with the list of errors with their location in 
-       *         the parsed document. An empty string is returned if no error occurred
+       *         the parsed document. An empty wstring is returned if no error occurred
        *         during parsing.
        * \deprecated Use getFormattedErrorMessages() instead (typo fix).
        */
       JSONCPP_DEPRECATED("Use getFormattedErrorMessages instead") 
       std::string getFormatedErrorMessages() const;
 
-      /** \brief Returns a user friendly string that list errors in the parsed document.
+      /** \brief Returns a user friendly wstring that list errors in the parsed document.
        * \return Formatted error message with the list of errors with their location in 
-       *         the parsed document. An empty string is returned if no error occurred
+       *         the parsed document. An empty wstring is returned if no error occurred
        *         during parsing.
        */
       std::string getFormattedErrorMessages() const;
@@ -1551,13 +1551,13 @@ namespace Json {
       {
       public:
          Token token_;
-         std::string message_;
+         std::wstring message_;
          Location extra_;
       };
 
       typedef std::deque<ErrorInfo> Errors;
 
-      bool expectToken( TokenType type, Token &token, const char *message );
+      bool expectToken( TokenType type, Token &token, const wchar_t *message );
       bool readToken( Token &token );
       void skipSpaces();
       bool match( Location pattern, 
@@ -1572,7 +1572,7 @@ namespace Json {
       bool readArray( Token &token );
       bool decodeNumber( Token &token );
       bool decodeString( Token &token );
-      bool decodeString( Token &token, std::string &decoded );
+      bool decodeString( Token &token, std::wstring &decoded );
       bool decodeDouble( Token &token );
       bool decodeUnicodeCodePoint( Token &token, 
                                    Location &current, 
@@ -1582,20 +1582,20 @@ namespace Json {
                                         Location &current, 
                                         Location end, 
                                         unsigned int &unicode );
-      bool addError( const std::string &message, 
+      bool addError( const std::wstring &message, 
                      Token &token,
                      Location extra = 0 );
       bool recoverFromError( TokenType skipUntilToken );
-      bool addErrorAndRecover( const std::string &message, 
+      bool addErrorAndRecover( const std::wstring &message, 
                                Token &token,
                                TokenType skipUntilToken );
       void skipUntilSpace();
       Value &currentValue();
-      Char getNextChar();
+      wchar_t getNextChar();
       void getLocationLineAndColumn( Location location,
                                      int &line,
                                      int &column ) const;
-      std::string getLocationLineAndColumn( Location location ) const;
+      std::wstring getLocationLineAndColumn( Location location ) const;
       void addComment( Location begin, 
                        Location end, 
                        CommentPlacement placement );
@@ -1604,13 +1604,13 @@ namespace Json {
       typedef std::stack<Value *> Nodes;
       Nodes nodes_;
       Errors errors_;
-      std::string document_;
+      std::wstring document_;
       Location begin_;
       Location end_;
       Location current_;
       Location lastValueEnd_;
       Value *lastValue_;
-      std::string commentsBefore_;
+      std::wstring commentsBefore_;
       Features features_;
       bool collectComments_;
    };
@@ -1639,7 +1639,7 @@ namespace Json {
     \throw std::exception on parse error.
     \see Json::operator<<()
    */
-   std::istream& operator>>( std::istream&, Value& );
+   std::wistream& operator>>( std::wistream&, Value& );
 
 } // namespace Json
 
@@ -1684,7 +1684,7 @@ namespace Json {
    public:
       virtual ~Writer();
 
-      virtual std::string write( const Value &root ) = 0;
+      virtual std::wstring write( const Value &root ) = 0;
    };
 
    /** \brief Outputs a Value in <a HREF="http://www.json.org">JSON</a> format without formatting (not human friendly).
@@ -1702,12 +1702,12 @@ namespace Json {
       void enableYAMLCompatibility();
 
    public: // overridden from Writer
-      virtual std::string write( const Value &root );
+      virtual std::wstring write( const Value &root );
 
    private:
       void writeValue( const Value &value );
 
-      std::string document_;
+      std::wstring document_;
       bool yamlCompatiblityEnabled_;
    };
 
@@ -1738,36 +1738,36 @@ namespace Json {
    public: // overridden from Writer
       /** \brief Serialize a Value in <a HREF="http://www.json.org">JSON</a> format.
        * \param root Value to serialize.
-       * \return String containing the JSON document that represents the root value.
+       * \return wstring containing the JSON document that represents the root value.
        */
-      virtual std::string write( const Value &root );
+      virtual std::wstring write( const Value &root );
 
    private:
       void writeValue( const Value &value );
       void writeArrayValue( const Value &value );
       bool isMultineArray( const Value &value );
-      void pushValue( const std::string &value );
+      void pushValue( const std::wstring &value );
       void writeIndent();
-      void writeWithIndent( const std::string &value );
+      void writeWithIndent( const std::wstring &value );
       void indent();
       void unindent();
       void writeCommentBeforeValue( const Value &root );
       void writeCommentAfterValueOnSameLine( const Value &root );
       bool hasCommentForValue( const Value &value );
-      static std::string normalizeEOL( const std::string &text );
+      static std::wstring normalizeEOL( const std::wstring &text );
 
-      typedef std::vector<std::string> ChildValues;
+      typedef std::vector<std::wstring> ChildValues;
 
       ChildValues childValues_;
-      std::string document_;
-      std::string indentString_;
+      std::wstring document_;
+      std::wstring indentString_;
       int rightMargin_;
       int indentSize_;
       bool addChildValues_;
    };
 
    /** \brief Writes a Value in <a HREF="http://www.json.org">JSON</a> format in a human friendly way,
-        to a stream rather than to a string.
+        to a stream rather than to a wstring.
     *
     * The rules for line break and indent are as follow:
     * - Object value:
@@ -1789,12 +1789,12 @@ namespace Json {
    class JSON_API StyledStreamWriter
    {
    public:
-      StyledStreamWriter( std::string indentation="\t" );
+      StyledStreamWriter( std::wstring indentation=L"\t" );
       ~StyledStreamWriter(){}
 
    public:
       /** \brief Serialize a Value in <a HREF="http://www.json.org">JSON</a> format.
-       * \param out Stream to write to. (Can be ostringstream, e.g.)
+       * \param out Stream to write to. (Can be owstringstream, e.g.)
        * \param root Value to serialize.
        * \note There is no point in deriving from Writer, since write() should not return a value.
        */
@@ -1804,35 +1804,35 @@ namespace Json {
       void writeValue( const Value &value );
       void writeArrayValue( const Value &value );
       bool isMultineArray( const Value &value );
-      void pushValue( const std::string &value );
+      void pushValue( const std::wstring &value );
       void writeIndent();
-      void writeWithIndent( const std::string &value );
+      void writeWithIndent( const std::wstring &value );
       void indent();
       void unindent();
       void writeCommentBeforeValue( const Value &root );
       void writeCommentAfterValueOnSameLine( const Value &root );
       bool hasCommentForValue( const Value &value );
-      static std::string normalizeEOL( const std::string &text );
+      static std::wstring normalizeEOL( const std::wstring &text );
 
-      typedef std::vector<std::string> ChildValues;
+      typedef std::vector<std::wstring> ChildValues;
 
       ChildValues childValues_;
       std::ostream* document_;
-      std::string indentString_;
+      std::wstring indentString_;
       int rightMargin_;
-      std::string indentation_;
+      std::wstring indentation_;
       bool addChildValues_;
    };
 
 # if defined(JSON_HAS_INT64)
-   std::string JSON_API valueToString( Int value );
-   std::string JSON_API valueToString( UInt value );
+   std::wstring JSON_API valueTowstring( Int value );
+   std::wstring JSON_API valueTowstring( UInt value );
 # endif // if defined(JSON_HAS_INT64)
-   std::string JSON_API valueToString( LargestInt value );
-   std::string JSON_API valueToString( LargestUInt value );
-   std::string JSON_API valueToString( double value );
-   std::string JSON_API valueToString( bool value );
-   std::string JSON_API valueToQuotedString( const char *value );
+   std::wstring JSON_API valueTowstring( LargestInt value );
+   std::wstring JSON_API valueTowstring( LargestUInt value );
+   std::wstring JSON_API valueTowstring( double value );
+   std::wstring JSON_API valueTowstring( bool value );
+   std::wstring JSON_API valueToQuotedwstring( const wchar_t *value );
 
    /// \brief Output using the StyledStreamWriter.
    /// \see Json::operator>>()

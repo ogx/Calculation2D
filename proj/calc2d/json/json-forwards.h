@@ -219,7 +219,7 @@ namespace Json {
 
    // value.h
    typedef unsigned int ArrayIndex;
-   class StaticString;
+   class Staticstring;
    class Path;
    class PathArgument;
    class Value;
