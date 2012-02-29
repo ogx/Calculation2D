@@ -28,7 +28,8 @@ private:
 	mmString const m_sName;
 };
 
-mmImages::mmLayer::mmLayer(mmString const & p_sName, mmUInt const p_iWidth, mmUInt const p_iHeight, mmReal const p_rDefaultValue, mmCallbackI * const p_psCallback) :
+mmImages::mmLayer::mmLayer(mmID const & p_sID, mmString const & p_sName, mmUInt const p_iWidth, mmUInt const p_iHeight, mmReal const p_rDefaultValue, mmCallbackI * const p_psCallback) :
+	m_sID(p_sID),
 	m_sName(p_sName),
 	m_rDefaultValue(p_rDefaultValue),
 	m_prValues((p_iWidth * p_iHeight) ? new mmReal[p_iWidth * p_iHeight] : NULL),
@@ -48,6 +49,10 @@ mmImages::mmLayer::~mmLayer(void) {
 
 	if(m_psCallback != NULL)
 		m_psCallback->OnLayerDestroy(this);
+}
+
+mmID mmImages::mmLayer::GetID(void) const {
+	return m_sID;
 }
 
 mmUInt mmImages::mmLayer::GetWidth(void) const {
@@ -179,7 +184,8 @@ bool mmImages::mmLayer::SetPixels(mmRect const & p_sRect, mmReal const p_prValue
 	return true;
 }
 
-mmImages::mmImage::mmImage(mmString const & p_sName, mmUInt const p_iWidth, mmUInt const p_iHeight, mmPixelType const p_ePixelType, mmImageI::mmCallbackI * const p_psCallback) :
+mmImages::mmImage::mmImage(mmID const & p_sID, mmString const & p_sName, mmUInt const p_iWidth, mmUInt const p_iHeight, mmPixelType const p_ePixelType, mmImageI::mmCallbackI * const p_psCallback) :
+	m_sID(p_sID),
 	m_sName(p_sName),
 	m_iWidth(p_iWidth), m_iHeight(p_iHeight), 
 	m_ePixelType(p_ePixelType), 
@@ -187,18 +193,18 @@ mmImages::mmImage::mmImage(mmString const & p_sName, mmUInt const p_iWidth, mmUI
 {
 	switch(m_ePixelType) {
 		case mmP8:
-			m_sChannels.push_back(new mmLayer(L"I", m_iWidth, m_iHeight, 0.0, NULL));
+			m_sChannels.push_back(new mmLayer(++m_sLastLayerID, L"I", m_iWidth, m_iHeight, 0.0, NULL));
 			break;
 		case mmP24:
-			m_sChannels.push_back(new mmLayer(L"R", m_iWidth, m_iHeight, 0.0, NULL));
-			m_sChannels.push_back(new mmLayer(L"G", m_iWidth, m_iHeight, 0.0, NULL));
-			m_sChannels.push_back(new mmLayer(L"B", m_iWidth, m_iHeight, 0.0, NULL));
+			m_sChannels.push_back(new mmLayer(++m_sLastLayerID, L"R", m_iWidth, m_iHeight, 0.0, NULL));
+			m_sChannels.push_back(new mmLayer(++m_sLastLayerID, L"G", m_iWidth, m_iHeight, 0.0, NULL));
+			m_sChannels.push_back(new mmLayer(++m_sLastLayerID, L"B", m_iWidth, m_iHeight, 0.0, NULL));
 			break;
 		case mmP32:
-			m_sChannels.push_back(new mmLayer(L"R", m_iWidth, m_iHeight, 0.0, NULL));
-			m_sChannels.push_back(new mmLayer(L"G", m_iWidth, m_iHeight, 0.0, NULL));
-			m_sChannels.push_back(new mmLayer(L"B", m_iWidth, m_iHeight, 0.0, NULL));
-			m_sChannels.push_back(new mmLayer(L"A", m_iWidth, m_iHeight, 0.0, NULL));
+			m_sChannels.push_back(new mmLayer(++m_sLastLayerID, L"R", m_iWidth, m_iHeight, 0.0, NULL));
+			m_sChannels.push_back(new mmLayer(++m_sLastLayerID, L"G", m_iWidth, m_iHeight, 0.0, NULL));
+			m_sChannels.push_back(new mmLayer(++m_sLastLayerID, L"B", m_iWidth, m_iHeight, 0.0, NULL));
+			m_sChannels.push_back(new mmLayer(++m_sLastLayerID, L"A", m_iWidth, m_iHeight, 0.0, NULL));
 			break;
 		default:
 			break;
@@ -574,9 +580,9 @@ mmRect mmImages::mmImage::GetRegionOfInterest(void) const {
 	return m_sRegionOfInterest;
 }
 
-mmUInt mmImages::mmImage::CreateLayer(mmString const & p_sName, mmReal const p_rDefaultValue) {
-	m_sLayers.push_back(new mmLayer(p_sName, m_iWidth, m_iHeight, p_rDefaultValue, this));
-	return static_cast<mmUInt>(m_sLayers.size() - 1);
+mmImages::mmLayerI* mmImages::mmImage::CreateLayer(mmString const & p_sName, mmReal const p_rDefaultValue) {
+	m_sLayers.push_back(new mmLayer(++m_sLastLayerID, p_sName, m_iWidth, m_iHeight, p_rDefaultValue, this));
+	return m_sLayers.back();
 }
 
 mmUInt mmImages::mmImage::GetLayerCount(void) const {
@@ -592,7 +598,7 @@ mmImages::mmLayerI * mmImages::mmImage::GetLayer(mmUInt const p_iIndex) const {
 		return NULL;
 }
 
-mmImages::mmLayerI * mmImages::mmImage::GetLayer(mmString const & p_sName) const {
+mmImages::mmLayerI * mmImages::mmImage::FindLayer(mmString const & p_sName) const {
 	std::list<mmLayer*>::const_iterator v_sLayer = std::find_if(m_sLayers.begin(), m_sLayers.end(), FindByName(p_sName));
 	if(v_sLayer != m_sLayers.end())
 		return *v_sLayer;
@@ -656,9 +662,9 @@ mmImages::mmImageStructure::mmImageStructure(mmImageI::mmCallbackI * const p_psC
 mmImages::mmImageStructure::~mmImageStructure(void) {
 }
 
-mmUInt mmImages::mmImageStructure::CreateImage(mmString const & p_sName, mmUInt const p_iWidth, mmUInt const p_iHeight, mmImageI::mmPixelType const p_ePixelType) {
-	m_sImages.push_back(new mmImage(p_sName, p_iWidth, p_iHeight, p_ePixelType, m_psCallback));
-	return static_cast<mmUInt>(m_sImages.size() - 1);
+mmImages::mmImageI* mmImages::mmImageStructure::CreateImage(mmString const & p_sName, mmUInt const p_iWidth, mmUInt const p_iHeight, mmImageI::mmPixelType const p_ePixelType) {
+	m_sImages.push_back(new mmImage(++m_sLastImageID, p_sName, p_iWidth, p_iHeight, p_ePixelType, m_psCallback));
+	return m_sImages.back();
 }
 
 mmUInt mmImages::mmImageStructure::GetImageCount(void) const {
@@ -674,7 +680,7 @@ mmImages::mmImageI * mmImages::mmImageStructure::GetImage(mmUInt const p_iIndex)
 		return NULL;
 }
 
-mmImages::mmImageI * mmImages::mmImageStructure::GetImage(mmString const & p_sName) const {
+mmImages::mmImageI * mmImages::mmImageStructure::FindImage(mmString const & p_sName) const {
 	std::list<mmImage*>::const_iterator v_sImage = std::find_if(m_sImages.begin(), m_sImages.end(), FindByName(p_sName));
 	if(v_sImage != m_sImages.end())
 		return *v_sImage;
