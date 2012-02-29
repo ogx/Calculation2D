@@ -21,11 +21,12 @@ namespace mmImages
 {
 	class mmLayer : public mmLayerI {
 	public:
-		mmLayer(mmString const & p_sName, mmUInt const p_iWidth, mmUInt const p_iHeight, mmReal const p_rDefaultValue, mmCallbackI * const p_psCallback);
+		mmLayer(mmID const & p_sID, mmString const & p_sName, mmUInt const p_iWidth, mmUInt const p_iHeight, mmReal const p_rDefaultValue, mmCallbackI * const p_psCallback);
 		~mmLayer(void);
 	public:
 		void Resize(mmUInt const p_iWidth, mmUInt const p_iHeight);
 	public: // mmLayerI implementation
+		virtual mmID GetID(void) const;
 		virtual mmUInt GetWidth(void) const;
 		virtual mmUInt GetHeight(void) const;
 		virtual mmReal GetDefaultValue(void) const;
@@ -41,6 +42,7 @@ namespace mmImages
 		virtual bool GetPixels(mmRect const & p_sRect, mmReal p_prValues[]) const;
 		virtual bool SetPixels(mmRect const & p_sRect, mmReal const p_prValues[]);
 	private:
+		mmID const m_sID;
 		mmUInt m_iWidth;
 		mmUInt m_iHeight;
 		mmString m_sName;
@@ -53,9 +55,10 @@ namespace mmImages
 
 	class mmImage : public mmImageI, private mmLayerI::mmCallbackI {
 	public:
-		mmImage(mmString const & p_sName, mmUInt const p_iWidth, mmUInt const p_iHeight, mmPixelType const p_ePixelType, mmImageI::mmCallbackI * const p_psCallback);
+		mmImage(mmID const & p_sID, mmString const & p_sName, mmUInt const p_iWidth, mmUInt const p_iHeight, mmPixelType const p_ePixelType, mmImageI::mmCallbackI * const p_psCallback);
 		~mmImage(void);
 	public: // mmImageI implementation
+		virtual mmID GetID(void) const;
 		virtual mmUInt GetWidth(void) const;
 		virtual mmUInt GetHeight(void) const;
 		virtual void Resize(mmUInt const p_iWidth, mmUInt const p_iHeight);
@@ -86,10 +89,11 @@ namespace mmImages
 		virtual void SetRegionOfInterest(mmRect const & p_sRegion);
 		virtual mmRect GetRegionOfInterest(void) const;
 		
-		virtual mmUInt CreateLayer(mmString const & p_sName, mmReal const p_rDefaultValue);
+		virtual mmLayerI * CreateLayer(mmString const & p_sName, mmReal const p_rDefaultValue);
 		virtual mmUInt GetLayerCount(void) const;
 		virtual mmLayerI * GetLayer(mmUInt const p_iIndex) const;
-		virtual mmLayerI * GetLayer(mmString const & p_sName) const;
+		virtual mmLayerI * GetLayer(mmID const & p_sID) const;
+		virtual mmLayerI * FindLayer(mmString const & p_sName) const;
 		virtual bool DeleteLayer(mmUInt const p_iIndex);
 		virtual bool DeleteLayer(mmString const & p_sName);
 		
@@ -101,6 +105,8 @@ namespace mmImages
 		virtual void OnLayerPropertiesChange(mmLayerI * p_psLayer);
 		virtual void OnLayerValuesChange(mmLayerI * p_psLayer);
 	private:
+		mmID m_sLastLayerID;
+		mmID const m_sID;
 		mmUInt m_iWidth;
 		mmUInt m_iHeight;
 		mmString m_sName;
@@ -117,13 +123,15 @@ namespace mmImages
 		mmImageStructure(mmImageI::mmCallbackI * const p_psCallback);
 		~mmImageStructure(void);
 	public: // mmImageStructureI implementation
-		virtual mmUInt CreateImage(mmString const & p_sName, mmUInt const p_iWidth, mmUInt const p_iHeight, mmImageI::mmPixelType const p_ePixelType);
+		virtual mmImageI * CreateImage(mmString const & p_sName, mmUInt const p_iWidth, mmUInt const p_iHeight, mmImageI::mmPixelType const p_ePixelType);
 		virtual mmUInt GetImageCount(void) const;
 		virtual mmImageI * GetImage(mmUInt const p_iIndex) const;
-		virtual mmImageI * GetImage(mmString const & p_sName) const;
+		virtual mmImageI * GetImage(mmID const & p_sID) const;
+		virtual mmImageI * FindImage(mmString const & p_sName) const;
 		virtual bool DeleteImage(mmUInt const p_iIndex);
 		virtual bool DeleteImage(mmString const & p_sName);		
 	private: 
+		mmID m_sLastImageID;
 		std::list<mmImage*> m_sImages;
 		mmImageI::mmCallbackI * m_psCallback;
 	};
