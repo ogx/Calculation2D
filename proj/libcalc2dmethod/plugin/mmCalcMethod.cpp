@@ -3,6 +3,52 @@
 #include <mmStringUtilities.h>
 #include <plugin/mmCalcMethod.h>
 
+////////////////////////////////////////////////////////////////////////////////
+/// Additional tool class simplifying edition of method's parameters 
+////////////////////////////////////////////////////////////////////////////////
+namespace mmImages {
+	class mmCMParameter
+	{
+	public:
+		mmCMParameter(): m_sName(L""), 
+			m_eType(mmXML::g_eXMLUnknownDataType),
+			m_bIsOutput(false) { }
+		mmCMParameter(mmString p_sName, 
+			mmXML::mmXMLDataType p_eType, 
+			void* p_psValue,
+			bool p_bIsOutput = false)
+		{
+			m_sName = p_sName;
+			m_eType = p_eType;
+			m_bIsOutput = p_bIsOutput;
+
+			switch (m_eType) {
+			case mmXML::g_eXMLReal:
+				m_pValue.reset(new mmReal(*reinterpret_cast<mmReal*>(p_psValue)));
+				break;
+			case mmXML::g_eXMLInt:
+				m_pValue.reset(new mmInt(*reinterpret_cast<mmInt*>(p_psValue)));
+				break;
+			case mmXML::g_eXMLString:
+			case mmXML::g_eXMLImageName:
+			case mmXML::g_eXMLDataLayerName:
+				m_pValue.reset(new mmString(*reinterpret_cast<mmString*>(p_psValue)));
+				break;
+			case mmXML::g_eXMLBool:
+				m_pValue.reset(new bool(*reinterpret_cast<bool*>(p_psValue)));
+				break;
+			}
+		}
+		~mmCMParameter() { }
+
+		mmString m_sName;
+		mmXML::mmXMLDataType m_eType;
+		mmXML::mmXMLNodePosition m_sPosition;
+		std::tr1::shared_ptr<void> m_pValue;
+		bool m_bIsOutput;
+	};
+}
+
 mmImages::mmCalcMethod::mmCalcMethod(mmLog::mmLogReceiverI *p_psLogReceiver, mmString p_sClassName) :
 	mmLog::mmLogSender(p_sClassName,p_psLogReceiver)
 {
@@ -301,5 +347,8 @@ std::vector<mmString> mmImages::mmCalcMethod::GetDLNames(mmUInt const p_iImage)
 }
 
 void mmImages::mmCalcMethod::RetrieveParameters() {
+	for(auto it = m_vParameters.begin(); it != m_vParameters.end(); it++) {
+		GetParam(it->m_sName, it->m_pValue.get());
+	}
 		// TODO: JK need to implement
 }

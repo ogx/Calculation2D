@@ -154,6 +154,8 @@ namespace mmFileIO
 			/// @return path to file.
 			////////////////////////////////////////////////////////////////////////////////
 			virtual mmString GetPathToFile(mmString p_sFileName) = 0;
+
+			virtual ~mmFileUtilsI() {}
 	};
 };
 

@@ -1,0 +1,48 @@
+# Calculation2D file ignore list
+
+# Visual Studio mud
+
+*.[ip]db
+*.ilk
+*.suo
+*.ncb
+*.pch
+*.ipch
+*.dep
+*.exp
+*.res
+*.aps
+*.sdf
+*.opensdf
+*.user
+
+*.tl[hi]
+*.log
+*.tlog
+*.manifest
+/proj/*/Win32
+/proj/*/x64
+/plugins/*/Win32
+/plugins/*/x64
+
+
+# Visual Studio build output
+
+*.obj
+*.exe
+*.dll
+*.lib
+
+# archives and history files
+
+*.rar
+*.old
+
+# EXCEPT specific stuff
+
+!node.exe
+!libcalc2dmath.lib
+
+!root.vcpxproj.user
+!calc2d.vcpxproj.user
+!C2DPluginSample.vcxproj.user
