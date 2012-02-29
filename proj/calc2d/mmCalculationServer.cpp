@@ -9,26 +9,6 @@
 using namespace mmImages;
 
 
-const size_t buf_size = INOUT_PARAMS_SIZE;
-size_t converted = 0;
-char buf[buf_size];
-wchar_t mmbuf[buf_size];
-std::string mmstr2str(mmString const & mmstr)
-{
-	wcstombs_s(&converted, buf, mmstr.c_str(), buf_size);
-	if(converted-1 != mmstr.size())
-		return "--Error converting!--";
-	return buf;
-}
-mmString str2mmstr(std::string const & str)
-{
-	mbstowcs_s(&converted, mmbuf, str.c_str(), buf_size);
-	if(converted-1 != str.size())
-		return L"--Error converting!--";
-	return mmbuf;
-}
-
-
 mmCalculationServer::mmCalculationServer(void) :
 	calc_mgr(3, NULL),
 	methods_mgr(NULL),
@@ -36,18 +16,18 @@ mmCalculationServer::mmCalculationServer(void) :
 	image_structure(NULL),
 	calculation_method(NULL)
 {
-	param_type_lookup["real"] = mmXML::g_eXMLReal;
-	param_type_lookup["int"] = mmXML::g_eXMLInt;
-	param_type_lookup["string"] = mmXML::g_eXMLString;
-	param_type_lookup["bool"] = mmXML::g_eXMLBool;
-	param_type_lookup["image"] = mmXML::g_eXMLImageName;
-	param_type_lookup["layer"] = mmXML::g_eXMLDataLayerName;
-	param_type_lookup["unknown"] = mmXML::g_eXMLUnknownDataType;
+	param_type_lookup[L"real"] = mmXML::g_eXMLReal;
+	param_type_lookup[L"int"] = mmXML::g_eXMLInt;
+	param_type_lookup[L"string"] = mmXML::g_eXMLString;
+	param_type_lookup[L"bool"] = mmXML::g_eXMLBool;
+	param_type_lookup[L"image"] = mmXML::g_eXMLImageName;
+	param_type_lookup[L"layer"] = mmXML::g_eXMLDataLayerName;
+	param_type_lookup[L"unknown"] = mmXML::g_eXMLUnknownDataType;
 
 	success_response = failure_response = Json::Value(Json::objectValue);
-	success_response["success"] = true;
-	failure_response["success"] = false;
-	failure_response["error"] = "No error message provided.";
+	success_response[L"success"] = true;
+	failure_response[L"success"] = false;
+	failure_response[L"error"] = L"No error message provided.";
 }
 
 mmCalculationServer::~mmCalculationServer(void)
@@ -58,9 +38,9 @@ int mmCalculationServer::Serve()
 {
 	std::auto_ptr<mmImageStructureI> image(mmInterfaceInitializers::CreateDefaultImageStructure(NULL, NULL));
 
-	std::istream& is = std::cin;
-	std::ostream& os = std::cout;
-	std::string input;
+	std::wistream& is = std::wcin;
+	std::wostream& os = std::wcout;
+	std::wstring input;
 	Json::Reader reader;
 	Json::FastWriter fwriter;
 	Json::Value obj_in, obj_out;
@@ -68,16 +48,16 @@ int mmCalculationServer::Serve()
 	{
 		is >> input;
 		reader.parse(input, obj_in);
-		if(obj_in["cmd"].asString() == "finalize")
+		if(obj_in[L"cmd"].asString() == L"finalize")
 			break;
-		else if(obj_in["cmd"].asString() == "getmethods")
+		else if(obj_in[L"cmd"].asString() == L"getmethods")
 			obj_out = this->GetMethods();
-		else if(obj_in["cmd"].asString() == "run")
-			obj_out = this->RunCalculationMethod(obj_in["params"]);
-		else if(obj_in["cmd"].asString() == "getstatus")
+		else if(obj_in[L"cmd"].asString() == L"run")
+			obj_out = this->RunCalculationMethod(obj_in[L"params"]);
+		else if(obj_in[L"cmd"].asString() == L"getstatus")
 			obj_out = this->GetStatus();
 		else 
-			obj_out = FailureResponse("Unknown command.");
+			obj_out = FailureResponse(L"Unknown command.");
 
 		os << fwriter.write(obj_out);
 	}
@@ -95,13 +75,13 @@ Json::Value mmCalculationServer::GetMethods()
 	for(Json::ArrayIndex i=0, n=method_infos.size(); i<n; ++i)
 	{
 		method_info = Json::Value(Json::objectValue);
-		method_info["name"] = mmstr2str(method_infos[i].sShortName);
-		method_info["id"] = mmstr2str(method_infos[i].sIDName);
-		method_info["description"] = mmstr2str(method_infos[i].sDescription);
-		method_info["author"] = "Anonymous"; // TODO: support for author in plugin info
-		method_info["params"] = Json::Value(Json::objectValue); // TODO: either translate params to JSON or switch to JSON in plugins
-		method_info["params"]["in"] = Params_XML2JSON(method_infos[i].sAutoParams.sInParams);
-		method_info["params"]["out"] = Params_XML2JSON(method_infos[i].sAutoParams.sOutParams);
+		method_info[L"name"] = method_infos[i].sShortName;
+		method_info[L"id"] = method_infos[i].sIDName;
+		method_info[L"description"] = method_infos[i].sDescription;
+		method_info[L"author"] = L"Anonymous"; // TODO: support for author in plugin info
+		method_info[L"params"] = Json::Value(Json::objectValue); // TODO: either translate params to JSON or switch to JSON in plugins
+		method_info[L"params"][L"in"] = Params_XML2JSON(method_infos[i].sAutoParams.sInParams);
+		method_info[L"params"][L"out"] = Params_XML2JSON(method_infos[i].sAutoParams.sOutParams);
 		res[i] = method_info;
 	}
 	return res;
@@ -113,33 +93,33 @@ Json::Value mmCalculationServer::GetStatus()
 	{
 		Json::Value response = success_response;
 		if(calc_mgr.IsCalculating())
-			response["status"] = "calculation";
+			response[L"status"] = L"calculation";
 		else
 		{
-			response["status"] = "finished";
+			response[L"status"] = L"finished";
 			Json::Value result(Json::objectValue);
-			result["image_structure"] = Json::Value(Json::arrayValue); // TODO: form output image_structure
-			result["image_structure"].resize(image_structure->GetImageCount());
-			result["params"];// TODO: form output parameters
-			response["result"] = result;
+			result[L"image_structure"] = Json::Value(Json::arrayValue); // TODO: form output image_structure
+			result[L"image_structure"].resize(image_structure->GetImageCount());
+			result[L"params"];// TODO: form output parameters
+			response[L"result"] = result;
 		}
 		return response;
 	}
-	return FailureResponse("Nothing going on.");
+	return FailureResponse(L"Nothing going on.");
 }
 
 Json::Value mmCalculationServer::RunCalculationMethod( Json::Value& params )
 {
-	Json::Value& image_structure_json = params["image_structure"];
-	Json::Value& method_id = params["method"];
+	Json::Value& image_structure_json = params[L"image_structure"];
+	Json::Value& method_id = params[L"method"];
 	Json::Value response = success_response;
 
 	image_structure = mmInterfaceInitializers::CreateDefaultImageStructure(NULL, NULL);
 	utils_factory = mmInterfaceInitializers::CreateUtilsFactory();
-	calculation_method = methods_mgr.InitializeImagesCalculationMethod(str2mmstr(method_id.asString()));
+	calculation_method = methods_mgr.InitializeImagesCalculationMethod(method_id.asString());
 
 	// prep params
-	mmString params_xml = Params_JSON2XML(params["method_params"]);
+	mmString params_xml = Params_JSON2XML(params[L"method_params"]);
 	mmImages::mmImagesCalculationMethodI::sCalculationMethodParams method_info = 
 		calculation_method->GetCalculationMethodInfo();
 	mmImages::mmImagesCalculationMethodI::sCalculationAutomationParams params_struct = 
@@ -150,11 +130,11 @@ Json::Value mmCalculationServer::RunCalculationMethod( Json::Value& params )
 	for(int i=0, n=image_structure_json.size(); i<n; ++i)
 	{
 		Json::Value& image_param = image_structure_json[i];
-		mmUInt width = image_param["image"]["width"].asUInt();
-		mmUInt height = image_param["image"]["height"].asUInt();
-		std::string name = image_param["name"].asString();
+		mmUInt width = image_param[L"image"][L"width"].asUInt();
+		mmUInt height = image_param[L"image"][L"height"].asUInt();
+		std::wstring name = image_param[L"name"].asString();
 
-		mmUInt image_id = image_structure->CreateImage(str2mmstr(name), width, height, mmImages::mmImageI::mmP24);
+		mmUInt image_id = image_structure->CreateImage(name, width, height, mmImages::mmImageI::mmP24);
 		mmImages::mmImageI* image = image_structure->GetImage(image_id);
 		//image->SetPixels(); // TODO: copy the image from JSON array
 	}
@@ -162,7 +142,7 @@ Json::Value mmCalculationServer::RunCalculationMethod( Json::Value& params )
 	// run the plugin
 	calc_mgr.CalculateImages(calculation_method, image_structure, &params_struct);
 
-	response["message"] = "The calculation has been queued.";
+	response[L"message"] = L"The calculation has been queued.";
 	return response;
 }
 
@@ -183,7 +163,7 @@ Json::Value mmCalculationServer::Params_XML2JSON( mmString const & params_xml )
 		v_tValue = (*v_vriI)->FindChild(mmImages::g_pAutoCalcXML_Params_ParamValue_Node)->GetText();
 		v_eDataType = mmXML::GetTypeTransition((*v_vriI)->FindChild( mmImages::g_pAutoCalcXML_Params_ParamType_Node)->GetText());
 
-		std::string type = "unknown";
+		std::wstring type = L"unknown";
 		for(auto it=param_type_lookup.begin(), end=param_type_lookup.end(); it!=end; ++it)
 			if(it->second == v_eDataType)
 			{
@@ -192,30 +172,30 @@ Json::Value mmCalculationServer::Params_XML2JSON( mmString const & params_xml )
 			}
 
 		Json::Value param(Json::objectValue);
-		param["name"] = mmstr2str(v_tName);
-		param["type"] = type;
+		param[L"name"] = v_tName;
+		param[L"type"] = type;
 		switch( v_eDataType ) 
 		{
 		case mmXML::g_eXMLReal:
-			param["value"] = StringToMMReal(v_tValue);
+			param[L"value"] = StringToMMReal(v_tValue);
 			break;
 		case mmXML::g_eXMLInt:
-			param["value"] = StringToMMInt(v_tValue);
+			param[L"value"] = StringToMMInt(v_tValue);
 			break;
 		case mmXML::g_eXMLString:
-			param["value"] = StringToMMReal(v_tValue);
+			param[L"value"] = StringToMMReal(v_tValue);
 			break;
 		case mmXML::g_eXMLBool:
-			param["value"] = v_tValue.compare(g_pAutoCalcXML_Params_ParamType_BoolValue_YES) == 0;
+			param[L"value"] = v_tValue.compare(g_pAutoCalcXML_Params_ParamType_BoolValue_YES) == 0;
 			break;
 		case mmXML::g_eXMLImageName:
-			param["value"] = mmstr2str(v_tValue);
+			param[L"value"] = v_tValue;
 			break;
 		case mmXML::g_eXMLDataLayerName:
-			param["value"] = mmstr2str(v_tValue);
+			param[L"value"] = v_tValue;
 			break;
 		default:
-			param["value"] = mmstr2str(v_tValue);
+			param[L"value"] = v_tValue;
 		}
 		converted.append(param);
 	}
@@ -233,9 +213,9 @@ mmString mmCalculationServer::Params_JSON2XML(Json::Value const & params_json)
 	for(int i=0, n=params_json.size(); i<n; ++i)
 	{
 		Json::Value const & param = params_json[i];
-		std::string name = param["name"].asString();
-		std::string type = param["type"].asString();
-		std::string value = param["value"].asString();
+		std::wstring name = param[L"name"].asString();
+		std::wstring type = param[L"type"].asString();
+		std::wstring value = param[L"value"].asString();
 		mmXML::mmXMLDataType mmtype = param_type_lookup[type];
 
 // 		switch(mmtype)
@@ -261,9 +241,9 @@ mmString mmCalculationServer::Params_JSON2XML(Json::Value const & params_json)
 		mmXML::mmXMLNodeI* _v_sParamType = _v_sParam->AddChild(g_pAutoCalcXML_Params_ParamType_Node);
 		mmXML::mmXMLNodeI* _v_sParamValue = _v_sParam->AddChild(g_pAutoCalcXML_Params_ParamValue_Node);
 
-		_v_sParamName->SetText(str2mmstr(name));
-		_v_sParamType->SetText(str2mmstr(type));
-		_v_sParamValue->SetText(str2mmstr(value));
+		_v_sParamName->SetText(name);
+		_v_sParamType->SetText(type);
+		_v_sParamValue->SetText(value);
 	}
 
 	mmString params_xml = _v_sInputXML->SaveToXMLBuffer();
@@ -271,9 +251,9 @@ mmString mmCalculationServer::Params_JSON2XML(Json::Value const & params_json)
 	return params_xml;
 }
 
-Json::Value mmCalculationServer::FailureResponse( std::string const & error )
+Json::Value mmCalculationServer::FailureResponse( std::wstring const & error )
 {
 	Json::Value result = failure_response;
-	result["error"] = error;
+	result[L"error"] = error;
 	return result;
 }

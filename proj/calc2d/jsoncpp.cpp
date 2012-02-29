@@ -1601,9 +1601,9 @@ duplicateStringValue( const wchar_t *value,
 {
    if ( length == unknown )
       length = (unsigned int)wcslen(value);
-   wchar_t *newString = static_cast<wchar_t *>( malloc( length * sizeof(wchar_t) + 1 ) );
+   wchar_t *newString = static_cast<wchar_t *>( malloc( (length + 1) * sizeof(wchar_t) ) );
    JSON_ASSERT_MESSAGE( newString != 0, "Failed to allocate wstring value buffer" );
-   memcpy( newString, value, length );
+   memcpy( newString, value, length * sizeof(wchar_t) );
    newString[length] = 0;
    return newString;
 }
@@ -2280,7 +2280,7 @@ Value::asUInt() const
    case booleanValue:
       return value_.bool_ ? 1 : 0;
    case stringValue:
-	   return atoi(value_.string_);
+	   return _wtoi(value_.string_);
    case arrayValue:
    case objectValue:
       JSON_FAIL_MESSAGE( "Type is not convertible to uint" );
