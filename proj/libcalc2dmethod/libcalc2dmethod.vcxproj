@@ -22,7 +22,6 @@
     <ClCompile Include="plugin\mmCalcMethod.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\include\interfaces\mmICalcMethod.h" />
     <ClInclude Include="..\..\include\plugin\mmCalcMethod.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">

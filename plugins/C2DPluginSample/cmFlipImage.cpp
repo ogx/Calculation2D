@@ -32,19 +32,19 @@ mmImages::cmFlipImage::cmFlipImage(mmLog::mmLogReceiverI* p_psLogReceiver):
 	UpdateParameters();
 }
 
-void mmImages::cmFlipImage::RetrieveParameters()
-{
-	GetParam(g_UIParam_ImageName, &m_sImageName); 
-	GetParam(g_UIParam_Horizontal, &m_bHorizontal); 
-	GetParam(g_UIParam_Vertical, &m_bVertical); 
-}
+//void mmImages::cmFlipImage::RetrieveParameters()
+//{
+//	GetParam(g_UIParam_ImageName, &m_sImageName); 
+//	GetParam(g_UIParam_Horizontal, &m_bHorizontal); 
+//	GetParam(g_UIParam_Vertical, &m_bVertical); 
+//}
 
 bool mmImages::cmFlipImage::Calculate()
 {
 
 	mmImageI *v_psImage, *v_psNewImage;
 
-	v_psImage = m_psImageStructure->GetImage(m_sImageName);
+	v_psImage = m_psImageStructure->GetImage(0);
 
 	if (!v_psImage) return false;
 
@@ -59,13 +59,11 @@ bool mmImages::cmFlipImage::Calculate()
 	if (m_bHorizontal) m_sNewImageName += L"_H";
 	if (m_bVertical) m_sNewImageName += L"_V";
 
-	mmUInt v_iNewImageID = m_psImageStructure->CreateImage(m_sNewImageName,
+	v_psNewImage = m_psImageStructure->CreateImage(m_sNewImageName,
 																												 v_iWidth,
 																												 v_iHeight,
 																												 v_iPixelType);
-
-	v_psNewImage = m_psImageStructure->GetImage(v_iNewImageID);
-
+	if (!v_psNewImage) return false;
 
 	const mmInt v_iPixelCount = v_iWidth*v_iHeight;
 	const mmRect v_sUselessRect = {0, 0, v_iWidth, v_iHeight};
@@ -125,9 +123,9 @@ bool mmImages::cmFlipImage::Calculate()
 			}
 		}
 
-		mmUInt v_psNewLayerID = v_psNewImage->CreateLayer(v_psLayer->GetName(), v_psLayer->GetDefaultValue());
-		mmLayerI *v_psNewLayer = v_psNewImage->GetLayer(v_psNewLayerID);
+		mmLayerI *v_psNewLayer= v_psNewImage->CreateLayer(v_psLayer->GetName(), v_psLayer->GetDefaultValue());
 
+		if(!v_psNewLayer) return false;
 		// write data layer
 		v_psNewLayer->SetPixels(v_sUselessRect, v_prNewPixels);
 

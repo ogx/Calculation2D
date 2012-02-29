@@ -20,9 +20,6 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\include\interfaces\mmICalcMethod.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\include\plugin\mmCalcMethod.h">
       <Filter>Header Files</Filter>
     </ClInclude>

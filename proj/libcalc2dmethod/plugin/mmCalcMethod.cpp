@@ -157,7 +157,7 @@ void mmImages::mmCalcMethod::ForEachImage(mmCalcKernelI* p_psKernel)
 					v_iBlockHeight = v_iHeight - v_iNextRowIndex;
 				}
 				if (v_iNextRowIndex == 0) {
-					ExecBeforeSingleImageCalc(m_psImageStructure->GetImage(v_iIndex));
+					OnBeforeEachImage(m_psImageStructure->GetImage(v_iIndex));
 					v_bNewImage = true;
 					m_bFinishImage = false;
 				}
@@ -173,7 +173,7 @@ void mmImages::mmCalcMethod::ForEachImage(mmCalcKernelI* p_psKernel)
 				if (v_iNextRowIndex >= v_iHeight && !m_bFinishImage) {
 					v_bFinishImage = true;
 					m_bFinishImage = true;
-					ExecAfterSingleImageCalc(m_psImageStructure->GetImage(v_iIndex));
+					OnAfterEachImage(m_psImageStructure->GetImage(v_iIndex));
 				}
 				else {
 					v_bFinishImage = false;
@@ -298,4 +298,8 @@ std::vector<mmString> mmImages::mmCalcMethod::GetDLNames(mmUInt const p_iImage)
 	//v_psImage->UnlockFromRead();
 
 	return v_sResultDLNames;
+}
+
+void mmImages::mmCalcMethod::RetrieveParameters() {
+		// TODO: JK need to implement
 }

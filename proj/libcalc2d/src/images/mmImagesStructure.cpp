@@ -28,6 +28,18 @@ private:
 	mmString const m_sName;
 };
 
+struct FindByID {
+	FindByID(mmID const & p_sID) : m_sID(p_sID) {}
+	bool operator () (mmImages::mmLayer * const p_psLayer) {
+		return p_psLayer->GetID() == m_sID;
+	}
+	bool operator () (mmImages::mmImage * const p_psImage) {
+		return p_psImage->GetID() == m_sID;
+	}
+private:
+	mmID const m_sID;
+};
+
 mmImages::mmLayer::mmLayer(mmID const & p_sID, mmString const & p_sName, mmUInt const p_iWidth, mmUInt const p_iHeight, mmReal const p_rDefaultValue, mmCallbackI * const p_psCallback) :
 	m_sID(p_sID),
 	m_sName(p_sName),
@@ -223,6 +235,10 @@ mmImages::mmImage::~mmImage(void) {
 
 	if(m_psCallback != NULL)
 		m_psCallback->OnImageDestroy(this);
+}
+
+mmID mmImages::mmImage::GetID(void) const {
+	return m_sID;
 }
 
 mmUInt mmImages::mmImage::GetWidth(void) const {
@@ -598,6 +614,14 @@ mmImages::mmLayerI * mmImages::mmImage::GetLayer(mmUInt const p_iIndex) const {
 		return NULL;
 }
 
+mmImages::mmLayerI * mmImages::mmImage::GetLayer(mmID const & p_sID) const {
+	std::list<mmLayer*>::const_iterator v_sLayer = std::find_if(m_sLayers.begin(), m_sLayers.end(), FindByID(p_sID));
+	if(v_sLayer != m_sLayers.end())
+		return *v_sLayer;
+	else
+		return NULL;
+}
+
 mmImages::mmLayerI * mmImages::mmImage::FindLayer(mmString const & p_sName) const {
 	std::list<mmLayer*>::const_iterator v_sLayer = std::find_if(m_sLayers.begin(), m_sLayers.end(), FindByName(p_sName));
 	if(v_sLayer != m_sLayers.end())
@@ -677,6 +701,14 @@ mmImages::mmImageI * mmImages::mmImageStructure::GetImage(mmUInt const p_iIndex)
 		std::advance(v_sImage, p_iIndex);
 		return *v_sImage;
 	} else
+		return NULL;
+}
+
+mmImages::mmImageI * mmImages::mmImageStructure::GetImage(mmID const & p_sID) const {
+	std::list<mmImage*>::const_iterator v_sImage = std::find_if(m_sImages.begin(), m_sImages.end(), FindByID(p_sID));
+	if(v_sImage != m_sImages.end())
+		return *v_sImage;
+	else
 		return NULL;
 }
 

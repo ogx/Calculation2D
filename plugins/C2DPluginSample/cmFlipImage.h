@@ -14,7 +14,7 @@ namespace mmImages {
 
 		protected:	// mmCalcMethodI implementation
 			bool mmCalcMethod::Calculate();
-			void mmCalcMethod::RetrieveParameters();
+			//void mmCalcMethod::RetrieveParameters();
 
 		private:
 

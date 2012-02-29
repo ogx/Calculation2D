@@ -23,10 +23,10 @@ mmImages::cmGeneric::cmGeneric(mmLog::mmLogReceiverI* p_psLogReceiver):
 	UpdateParameters();
 }
 
-void mmImages::cmGeneric::RetrieveParameters()
-{
-	// TODO: update UI parameters
-}
+//void mmImages::cmGeneric::RetrieveParameters()
+//{
+//	// TODO: update UI parameters
+//}
 
 bool mmImages::cmGeneric::Calculate()
 {

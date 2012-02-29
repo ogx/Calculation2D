@@ -12,8 +12,8 @@ namespace mmImages {
 			virtual ~cmGeneric() {}
 
 		protected:	// mmCalcMethodI implementation
-			bool mmCalcMethodI::Calculate();
-			void mmCalcMethodI::RetrieveParameters();
+			bool mmCalcMethod::Calculate();
+			//void mmCalcMethodI::RetrieveParameters();
 
 		private:
 

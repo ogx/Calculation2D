@@ -10,6 +10,8 @@
 #ifndef mmIImagesInterfacesH
 #define mmIImagesInterfacesH
 
+#include <map>
+
 #include <mmGlobalDefs.h>
 #include <math\mmMath.h>
 #include <mmError.h>
@@ -94,25 +96,27 @@ namespace mmImages
 			///
 			/// @param[in] p_psLayer pointer to layer which ran the callback
 			////////////////////////////////////////////////////////////////////////////////
-			virtual void OnLayerCreate(mmLayerI * p_psLayer) = 0;
+			virtual void OnLayerCreate(mmLayerI * p_psLayer) {}
 			////////////////////////////////////////////////////////////////////////////////
 			/// Run by the layer instance, with which registered, after destruction.
 			///
 			/// @param[in] p_psLayer pointer to layer which ran the callback
 			////////////////////////////////////////////////////////////////////////////////
-			virtual void OnLayerDestroy(mmLayerI * p_psLayer) = 0;
+			virtual void OnLayerDestroy(mmLayerI * p_psLayer) {}
 			////////////////////////////////////////////////////////////////////////////////
 			/// Run by the layer instance, with which registered, when any of its properties are changed (width, height, name).
 			///
 			/// @param[in] p_psLayer pointer to layer which ran the callback
 			////////////////////////////////////////////////////////////////////////////////
-			virtual void OnLayerPropertiesChange(mmLayerI * p_psLayer) = 0;
+			virtual void OnLayerPropertiesChange(mmLayerI * p_psLayer) {}
 			////////////////////////////////////////////////////////////////////////////////
 			/// Run by the layer instance, with which registered, when stored values are changed.
 			///
 			/// @param[in] p_psLayer pointer to layer which ran the callback
 			////////////////////////////////////////////////////////////////////////////////
-			virtual void OnLayerValuesChange(mmLayerI * p_psLayer) = 0;
+			virtual void OnLayerValuesChange(mmLayerI * p_psLayer) {}
+		protected:
+			~mmCallbackI(void) {}
 		};
 	public:
 		////////////////////////////////////////////////////////////////////////////////
@@ -120,6 +124,12 @@ namespace mmImages
 		////////////////////////////////////////////////////////////////////////////////
 		static mmUInt const iInvalid;
 	public:
+		////////////////////////////////////////////////////////////////////////////////
+		/// Returns layer ID. ID is unique for the image it belongs to.  
+		///
+		/// @return layer ID
+		////////////////////////////////////////////////////////////////////////////////
+		virtual mmID GetID(void) const = 0;
 		////////////////////////////////////////////////////////////////////////////////
 		/// Returns layer width, in pixels. 
 		///
@@ -217,25 +227,25 @@ namespace mmImages
 			///
 			/// @param[in] p_psImage pointer to image which ran the callback
 			////////////////////////////////////////////////////////////////////////////////
-			virtual void OnImageCreate(mmImageI * p_psImage) = 0;
+			virtual void OnImageCreate(mmImageI * p_psImage) {}
 			////////////////////////////////////////////////////////////////////////////////
 			/// Run by the image instance, with which registered, after destruction.
 			///
 			/// @param[in] p_psImage pointer to image which ran the callback
 			////////////////////////////////////////////////////////////////////////////////
-			virtual void OnImageDestroy(mmImageI * p_psImage) = 0;
+			virtual void OnImageDestroy(mmImageI * p_psImage) {}
 			////////////////////////////////////////////////////////////////////////////////
 			/// Run by the image instance, with which registered, when any of its properties are changed (width, height, name).
 			///
 			/// @param[in] p_psImage pointer to image which ran the callback
 			////////////////////////////////////////////////////////////////////////////////
-			virtual void OnImagePropertiesChange(mmImageI * p_psImage) = 0;
+			virtual void OnImagePropertiesChange(mmImageI * p_psImage) {}
 			////////////////////////////////////////////////////////////////////////////////
 			/// Run by the image instance, with which registered, when its pixels are changed (not additional layers).
 			///
 			/// @param[in] p_psImage pointer to image which ran the callback
 			////////////////////////////////////////////////////////////////////////////////
-			virtual void OnImagePixelsChange(mmImageI * p_psImage) = 0;
+			virtual void OnImagePixelsChange(mmImageI * p_psImage) {}
 			////////////////////////////////////////////////////////////////////////////////
 			/// Run by the image instance, with which registered, after creation of a layer. 
 			/// Channels of the image are also treated as layers. 
@@ -243,7 +253,7 @@ namespace mmImages
 			/// @param[in] p_psImage pointer to image which ran the callback
 			/// @param[in] p_psLayer pointer to affected layer
 			////////////////////////////////////////////////////////////////////////////////
-			virtual void OnLayerCreate(mmImageI * p_psImage, mmLayerI * p_psLayer) = 0;
+			virtual void OnLayerCreate(mmImageI * p_psImage, mmLayerI * p_psLayer) {}
 			////////////////////////////////////////////////////////////////////////////////
 			/// Run by the image instance, with which registered, after destruction of a layer.
 			/// Channels of the image are also treated as layers. 
@@ -251,7 +261,7 @@ namespace mmImages
 			/// @param[in] p_psImage pointer to image which ran the callback
 			/// @param[in] p_psLayer pointer to affected layer
 			////////////////////////////////////////////////////////////////////////////////
-			virtual void OnLayerDestroy(mmImageI * p_psImage, mmLayerI * p_psLayer) = 0;
+			virtual void OnLayerDestroy(mmImageI * p_psImage, mmLayerI * p_psLayer) {}
 			////////////////////////////////////////////////////////////////////////////////
 			/// Run by the image instance, with which registered, after properties of any of its layers' properties change. 
 			/// Channels of the image are also treated as layers. 
@@ -259,7 +269,7 @@ namespace mmImages
 			/// @param[in] p_psImage pointer to image which ran the callback
 			/// @param[in] p_psLayer pointer to affected layer
 			////////////////////////////////////////////////////////////////////////////////
-			virtual void OnLayerPropertiesChange(mmImageI * p_psImage, mmLayerI * p_psLayer) = 0;
+			virtual void OnLayerPropertiesChange(mmImageI * p_psImage, mmLayerI * p_psLayer) {}
 			////////////////////////////////////////////////////////////////////////////////
 			/// Run by the image instance, with which registered, after any of its layers' values change.
 			/// Channels of the image are also treated as layers. 
@@ -267,7 +277,9 @@ namespace mmImages
 			/// @param[in] p_psImage pointer to image which ran the callback
 			/// @param[in] p_psLayer pointer to affected layer
 			////////////////////////////////////////////////////////////////////////////////
-			virtual void OnLayerValuesChange(mmImageI * p_psImage, mmLayerI * p_psLayer) = 0;
+			virtual void OnLayerValuesChange(mmImageI * p_psImage, mmLayerI * p_psLayer) {}
+		protected:
+			~mmCallbackI(void) {}
 		};
 	public:
 		////////////////////////////////////////////////////////////////////////////////
@@ -293,6 +305,12 @@ namespace mmImages
 		/// @return image height, in pixels
 		////////////////////////////////////////////////////////////////////////////////
 		virtual mmUInt GetHeight(void) const = 0;
+		////////////////////////////////////////////////////////////////////////////////
+		/// Returns image unique ID. 
+		///
+		/// @return image ID
+		////////////////////////////////////////////////////////////////////////////////
+		virtual mmID GetID(void) const = 0;
 		////////////////////////////////////////////////////////////////////////////////
 		/// Resizes the image. Old values are copied to new canvas where possible. 
 		/// If new size is larger, new pixels are filled with (0) and layers with 
@@ -419,9 +437,9 @@ namespace mmImages
 		///
 		/// @param[in] p_sName name of the layer
 		/// @param[in] p_rDefaultValue default value used to fill the layer
-		/// @return index of the layer
+		/// @return pointer to created layer
 		////////////////////////////////////////////////////////////////////////////////
-		virtual mmUInt CreateLayer(mmString const & p_sName, mmReal const p_rDefaultValue) = 0;
+		virtual mmLayerI* CreateLayer(mmString const & p_sName, mmReal const p_rDefaultValue) = 0;
 		////////////////////////////////////////////////////////////////////////////////
 		/// Returns number of layers for the current image. 
 		///
@@ -438,10 +456,17 @@ namespace mmImages
 		////////////////////////////////////////////////////////////////////////////////
 		/// Returns pointer to a layer. 
 		///
+		/// @param[in] p_sID layer ID
+		/// @return pointer to layer or NULL if layer does not exist
+		////////////////////////////////////////////////////////////////////////////////
+		virtual mmLayerI * GetLayer(mmID const & p_sID) const = 0;
+		////////////////////////////////////////////////////////////////////////////////
+		/// Returns pointer to first layer of given name. 
+		///
 		/// @param[in] p_sName layer name
 		/// @return pointer to layer or NULL if layer does not exist
 		////////////////////////////////////////////////////////////////////////////////
-		virtual mmLayerI * GetLayer(mmString const & p_sName) const = 0;
+		virtual mmLayerI * FindLayer(mmString const & p_sName) const = 0;
 		////////////////////////////////////////////////////////////////////////////////
 		/// Deletes a layer. 
 		///
@@ -481,9 +506,9 @@ namespace mmImages
 		/// @param[in] p_iWidth width of the image
 		/// @param[in] p_iHeight height of the image
 		/// @param[in] p_ePixelType pixel type of the image
-		/// @return index of the image
+		/// @return pointer to created image
 		////////////////////////////////////////////////////////////////////////////////
-		virtual mmUInt CreateImage(mmString const & p_sName, mmUInt const p_iWidth, mmUInt const p_iHeight, mmImageI::mmPixelType const p_ePixelType) = 0;
+		virtual mmImageI* CreateImage(mmString const & p_sName, mmUInt const p_iWidth, mmUInt const p_iHeight, mmImageI::mmPixelType const p_ePixelType) = 0;
 		////////////////////////////////////////////////////////////////////////////////
 		/// Returns number of images in the structure. 
 		///
@@ -493,17 +518,24 @@ namespace mmImages
 		////////////////////////////////////////////////////////////////////////////////
 		/// Returns pointer to an image. 
 		///
-		/// @param[in] p_iIndex layer index
+		/// @param[in] p_iIndex image index
 		/// @return pointer to image or NULL if image does not exist
 		////////////////////////////////////////////////////////////////////////////////
 		virtual mmImageI * GetImage(mmUInt const p_iIndex) const = 0;
 		////////////////////////////////////////////////////////////////////////////////
 		/// Returns pointer to an image. 
 		///
+		/// @param[in] p_sID image index 
+		/// @return pointer to image or NULL if image does not exist
+		////////////////////////////////////////////////////////////////////////////////
+		virtual mmImageI * GetImage(mmID const & p_sID) const = 0;
+		////////////////////////////////////////////////////////////////////////////////
+		/// Returns pointer to first image of given name. 
+		///
 		/// @param[in] p_sName image name
 		/// @return pointer to image or NULL if image does not exist
 		////////////////////////////////////////////////////////////////////////////////
-		virtual mmImageI * GetImage(mmString const & p_sName) const = 0;
+		virtual mmImageI * FindImage(mmString const & p_sName) const = 0;
 		////////////////////////////////////////////////////////////////////////////////
 		/// Deletes an image. 
 		///
@@ -532,6 +564,7 @@ namespace mmImages
         extern const wchar_t* g_pAutoCalcXML_Params_ParamType_BoolValue_YES;
         extern const wchar_t* g_pAutoCalcXML_Params_ParamType_BoolValue_NO;
 	extern const wchar_t* g_pAutoCalcXML_Params_ParamType_String;
+	extern const wchar_t* g_pAutoCalcXML_Params_ParamType_FileName;
 
 	extern const wchar_t* g_pAutoCalcXML_INParams_Node;
 	extern const wchar_t* g_pAutoCalcXML_OUTParams_Node;
@@ -645,6 +678,12 @@ namespace mmImages
 			////////////////////////////////////////////////////////////////////////////////
 			virtual std::vector<mmImages::mmImagesCalculationMethodI::sCalculationMethodParams> GetAvailableImagesCalculationMethods(void) = 0;
 
+			////////////////////////////////////////////////////////////////////////////////
+			/// Returns mapping MethodID -> DLL file name.
+			///
+			/// @return mapping MethodID -> DLL file name
+			////////////////////////////////////////////////////////////////////////////////
+			//virtual std::map<mmString, mmString> GetMethodFileMapping(void) = 0;
 			////////////////////////////////////////////////////////////////////////////////
 			/// Initializes selected images calculation method and returns pointer
 			/// into its interface. In case of error it throws

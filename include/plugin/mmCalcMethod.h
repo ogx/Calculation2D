@@ -1,7 +1,7 @@
 #pragma once
 
-#include <interfaces/mmICalcMethod.h>
 #include <log/mmLogSender.h>
+#include <mmXMLIOUtilities.h>
 #include <map>
 
 //******************************************************************************
@@ -24,10 +24,32 @@ namespace mmImages {
 	class mmCMParameter;
 
 	////////////////////////////////////////////////////////////////////////////////
+	/// Interface representing function object for operation on single data block
+	////////////////////////////////////////////////////////////////////////////////
+	class mmCalcKernelI
+	{
+	public:
+		////////////////////////////////////////////////////////////////////////////////
+		/// Virtual destructor
+		////////////////////////////////////////////////////////////////////////////////
+		virtual ~mmCalcKernelI() { }
+
+		////////////////////////////////////////////////////////////////////////////////
+		/// Method executes for every data block in the structure. Internal loop over
+		/// pixels should be placed here.
+		///
+		/// @param[in] p_psCurrentImage pointer to currently processed image,
+		/// @param[in] p_iFirstRow index of the first row of pixels scheduled for calculation
+		/// @param[in] p_iRowsCount number of rows scheduled for calculation
+		////////////////////////////////////////////////////////////////////////////////
+		virtual void operator()(mmImageI* p_psCurrentImage, mmInt p_iFirstRow, mmInt p_iRowsCount) = 0;
+	};
+
+
+	////////////////////////////////////////////////////////////////////////////////
 	/// Implementation of calculation method interface
 	////////////////////////////////////////////////////////////////////////////////
 	class mmCalcMethod: public mmImagesCalculationMethodI, 
-	                    public mmCalcMethodI,
 	                    public mmLog::mmLogSender
 	{
 		public:			// methods
@@ -56,7 +78,7 @@ namespace mmImages {
 
 			////////////////////////////////////////////////////////////////////////////////
 			/// Pointer exclusive lock object. Use to control access to class members in
-			/// multithread implementation. 
+			/// multi-threaded implementation. 
 			////////////////////////////////////////////////////////////////////////////////
 			std::tr1::shared_ptr<mmSynchronize::mmExclusiveLockI> m_psThreadSynchEL;
 
@@ -69,48 +91,49 @@ namespace mmImages {
 
 		protected:
 			////////////////////////////////////////////////////////////////////////////////
-			/// method inherited from mmCalcMethodI interface (see mmICalcMethod.h for documentation)
+			/// Method executes for every working thread. Put pixels manipulations code here
 			////////////////////////////////////////////////////////////////////////////////
-			virtual void ExecBeforeSingleImageCalc(mmImageI* p_psCurrentImage) {}
-			
-			////////////////////////////////////////////////////////////////////////////////
-			/// method inherited from mmCalcMethodI interface (see mmICalcMethod.h for documentation)
-			////////////////////////////////////////////////////////////////////////////////
-			virtual void ExecAfterSingleImageCalc(mmImageI* p_psCurrentImage) {}
+			virtual bool Calculate() = 0;
 
 			////////////////////////////////////////////////////////////////////////////////
-			/// method inherited from mmCalcMethodI interface (see mmICalcMethod.h for documentation)
+			/// Event fired before every single image calculation in ForEachImage calculation. 
+			/// Executed as single-threaded - DO NOT use m_psThreadSynchEL for accessing class 
+			/// members in a multi-threaded configuration.
+			///
+			/// @param[in] p_psCurrentImage pointer to currently processed image
+			////////////////////////////////////////////////////////////////////////////////
+			virtual void OnBeforeEachImage(mmImageI* p_psCurrentImage) {}
+			
+			////////////////////////////////////////////////////////////////////////////////
+			/// Event fired after every single image calculation in ForEachImage calculation. 
+			/// Executed as single-threaded - DO NOT use m_psThreadSynchEL for accessing class 
+			/// members in a multi-threaded configuration.
+			///
+			/// @param[in] p_psCurrentImage pointer to currently processed image
+			////////////////////////////////////////////////////////////////////////////////
+			virtual void OnAfterEachImage(mmImageI* p_psCurrentImage) {}
+
+			////////////////////////////////////////////////////////////////////////////////
+			/// Method iterates through data structure in order to perform specified operation
+			/// on every data block. It works in multi-threaded environment and may be executed
+			/// by multiple threads to manipulate on the same images structure. It should be
+			///	used inside Calculate function.
+			///
+			/// @param[in] p_psKernel pointer to function object which implements operation
+			///												executed for every data block in every image
 			////////////////////////////////////////////////////////////////////////////////
 			virtual void ForEachImage(mmCalcKernelI* p_psKernel);
 
-			////////////////////////////////////////////////////////////////////////////////
-			/// method inherited from mmCalcMethodI interface (see mmICalcMethod.h for documentation)
-			////////////////////////////////////////////////////////////////////////////////
 			virtual void SetParam(mmString p_sName, mmXML::mmXMLDataType p_eType, void* p_psValue, bool p_bIsOutput = false);
 			
-			////////////////////////////////////////////////////////////////////////////////
-			/// method inherited from mmCalcMethodI interface (see mmICalcMethod.h for documentation)
-			////////////////////////////////////////////////////////////////////////////////
 			virtual const void* GetParam(mmString p_sName);
 			
-			////////////////////////////////////////////////////////////////////////////////
-			/// method inherited from mmCalcMethodI interface (see mmICalcMethod.h for documentation)
-			////////////////////////////////////////////////////////////////////////////////
 			virtual void GetParam(mmString p_sName, void* p_pValue);
 
-			////////////////////////////////////////////////////////////////////////////////
-			/// method inherited from mmCalcMethodI interface (see mmICalcMethod.h for documentation)
-			////////////////////////////////////////////////////////////////////////////////
 			virtual void UpdateParameters();
 
-			////////////////////////////////////////////////////////////////////////////////
-			/// method inherited from mmCalcMethodI interface (see mmICalcMethod.h for documentation)
-			////////////////////////////////////////////////////////////////////////////////
 			virtual std::vector<mmString> GetImageNames();
 
-			////////////////////////////////////////////////////////////////////////////////
-			/// method inherited from mmCalcMethodI interface (see mmICalcMethod.h for documentation)
-			////////////////////////////////////////////////////////////////////////////////
 			virtual std::vector<mmString> GetDLNames(mmUInt const p_iImage);
 
 		private:
@@ -153,6 +176,13 @@ namespace mmImages {
 			/// method inherited from mmImagesCalculationMethodI interface (see mmIImages.h for documentation)
 			////////////////////////////////////////////////////////////////////////////////
 			mmReal GetProgress(void);
+
+			////////////////////////////////////////////////////////////////////////////////
+			/// Method executes once before the Calculate method which allows for setting
+			/// new parameters values after their modification by the user. Place initialization
+			/// code here.
+			////////////////////////////////////////////////////////////////////////////////
+			void RetrieveParameters();
 
 		private:		// fields
 			mmReal m_rProgress;
