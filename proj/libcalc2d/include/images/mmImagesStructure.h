@@ -3,9 +3,6 @@
 //
 //  Images implementation
 //
-//  Autor: Maciek Karaszewski
-//  Version: 2009.09.09
-//
 //  Description: This header defines implementation of
 //	mmImages::mmImagesStructure
 //
