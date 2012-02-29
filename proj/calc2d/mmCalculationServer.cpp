@@ -102,6 +102,10 @@ Json::Value mmCalculationServer::GetStatus()
 			result[L"image_structure"].resize(image_structure->GetImageCount());
 			result[L"params"];// TODO: form output parameters
 			response[L"result"] = result;
+
+			delete calculation_method; calculation_method = NULL;
+			delete utils_factory; utils_factory = NULL;
+			delete image_structure; image_structure = NULL;
 		}
 		return response;
 	}
@@ -241,7 +245,7 @@ mmString mmCalculationServer::Params_JSON2XML(Json::Value const & params_json)
 		mmXML::mmXMLNodeI* _v_sParamValue = _v_sParam->AddChild(g_pAutoCalcXML_Params_ParamValue_Node);
 
 		_v_sParamName->SetText(name);
-		_v_sParamType->SetText(type);
+		_v_sParamType->SetText(mmXML::GetTypeTransition(mmtype));
 		_v_sParamValue->SetText(value);
 	}
 

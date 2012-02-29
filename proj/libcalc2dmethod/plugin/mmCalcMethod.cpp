@@ -21,30 +21,14 @@ namespace mmImages {
 			m_sName = p_sName;
 			m_eType = p_eType;
 			m_bIsOutput = p_bIsOutput;
-
-			switch (m_eType) {
-			case mmXML::g_eXMLReal:
-				m_pValue.reset(new mmReal(*reinterpret_cast<mmReal*>(p_psValue)));
-				break;
-			case mmXML::g_eXMLInt:
-				m_pValue.reset(new mmInt(*reinterpret_cast<mmInt*>(p_psValue)));
-				break;
-			case mmXML::g_eXMLString:
-			case mmXML::g_eXMLImageName:
-			case mmXML::g_eXMLDataLayerName:
-				m_pValue.reset(new mmString(*reinterpret_cast<mmString*>(p_psValue)));
-				break;
-			case mmXML::g_eXMLBool:
-				m_pValue.reset(new bool(*reinterpret_cast<bool*>(p_psValue)));
-				break;
-			}
+			m_pValue = p_psValue;
 		}
 		~mmCMParameter() { }
 
 		mmString m_sName;
 		mmXML::mmXMLDataType m_eType;
 		mmXML::mmXMLNodePosition m_sPosition;
-		std::tr1::shared_ptr<void> m_pValue;
+		void* m_pValue;
 		bool m_bIsOutput;
 	};
 }
@@ -98,11 +82,10 @@ void mmImages::mmCalcMethod::SetCalculationMethodParameters(mmImages::mmImageStr
 		std::auto_ptr<mmXML::mmXMLDocI> v_psXMLDoc(mmInterfaceInitializers::CreateXMLDocument());
 		v_psXMLDoc->ParseXMLBuffer(p_psAutomationParams->sInParams);
 		for (mmUInt i = 0; i < m_vParameters.size(); ++i) {
-			mmXML::GetValue(v_psXMLDoc.get(), m_vParameters[i].m_sPosition, m_vParameters[i].m_pValue.get());
+			mmXML::GetValue(v_psXMLDoc.get(), m_vParameters[i].m_sPosition, m_vParameters[i].m_pValue);
 		}
 	}
 
-	RetrieveParameters();
 	m_rProgress = 0.0;
 	//m_iThreadsCount = 0;
 	m_bFinishImage = false;
@@ -250,7 +233,7 @@ const void* mmImages::mmCalcMethod::GetParam(mmString p_sName)
 	std::vector<mmCMParameter>::iterator v_it;
 	for (v_it = m_vParameters.begin(); v_it != m_vParameters.end(); ++v_it) {
 		if (p_sName.compare((*v_it).m_sName) == 0) {
-			return (*v_it).m_pValue.get();
+			return (*v_it).m_pValue;
 		}
 	}
 	return NULL;
@@ -264,18 +247,22 @@ void mmImages::mmCalcMethod::GetParam(mmString p_sName, void* p_pValue)
 		if (p_sName.compare((*v_it).m_sName) == 0) {
 			switch ((*v_it).m_eType) {
 				case mmXML::g_eXMLReal:
-					*(reinterpret_cast<mmReal*>(p_pValue)) = *(reinterpret_cast<mmReal*>((*v_it).m_pValue.get()));
+					*(reinterpret_cast<mmReal*>(p_pValue)) = *reinterpret_cast<mmReal*>((*v_it).m_pValue);
 					return;
 				case mmXML::g_eXMLInt:
-					*(reinterpret_cast<mmInt*>(p_pValue)) = *(reinterpret_cast<mmInt*>((*v_it).m_pValue.get()));
+					*(reinterpret_cast<mmInt*>(p_pValue)) = *reinterpret_cast<mmInt*>((*v_it).m_pValue);
 					return;
 				case mmXML::g_eXMLBool:
-					*(reinterpret_cast<bool*>(p_pValue)) = *(reinterpret_cast<bool*>((*v_it).m_pValue.get()));
+					*(reinterpret_cast<bool*>(p_pValue)) = *reinterpret_cast<bool*>((*v_it).m_pValue);
 					return;
 				case mmXML::g_eXMLString:
 				case mmXML::g_eXMLImageName:
 				case mmXML::g_eXMLDataLayerName:						
-					*(reinterpret_cast<mmString*>(p_pValue)) = *(reinterpret_cast<mmString*>((*v_it).m_pValue.get()));
+					{
+						mmString* src = reinterpret_cast<mmString*>((*v_it).m_pValue);
+						mmString* dst = reinterpret_cast<mmString*>(p_pValue);
+						*(dst) = *(src);
+					}
 					return;
 			}
 		}
@@ -298,13 +285,13 @@ void mmImages::mmCalcMethod::UpdateParameters()
 			(*v_it).m_sPosition = mmXML::AddParam(&v_sXMLOutRootPosNode,
 																						(*v_it).m_sName,
 																						(*v_it).m_eType,
-																						(*v_it).m_pValue.get());
+																						(*v_it).m_pValue);
 		}
 		else {
 			(*v_it).m_sPosition = mmXML::AddParam(&v_sXMLInRootPosNode,
 																						(*v_it).m_sName,
 																						(*v_it).m_eType,
-																						(*v_it).m_pValue.get());
+																						(*v_it).m_pValue);
 		}
 	}
 	
@@ -344,11 +331,4 @@ std::vector<mmString> mmImages::mmCalcMethod::GetDLNames(mmUInt const p_iImage)
 	//v_psImage->UnlockFromRead();
 
 	return v_sResultDLNames;
-}
-
-void mmImages::mmCalcMethod::RetrieveParameters() {
-	for(auto it = m_vParameters.begin(); it != m_vParameters.end(); it++) {
-		GetParam(it->m_sName, it->m_pValue.get());
-	}
-		// TODO: JK need to implement
 }

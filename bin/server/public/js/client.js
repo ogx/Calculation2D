@@ -339,7 +339,7 @@ $(document).ready(function() {
 						{
 							var interval = setInterval(function() {
 								c2d_server.getStatus(function(res){
-									console.log('getStatus returned', res);
+									console.log('getStatus returned', $.extend(true, {}, res));
 									if(res.status === 'finished')
 										clearInterval(interval);
 								});

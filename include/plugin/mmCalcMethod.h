@@ -177,13 +177,6 @@ namespace mmImages {
 			////////////////////////////////////////////////////////////////////////////////
 			mmReal GetProgress(void);
 
-			////////////////////////////////////////////////////////////////////////////////
-			/// Method executes once before the Calculate method which allows for setting
-			/// new parameters values after their modification by the user. Place initialization
-			/// code here.
-			////////////////////////////////////////////////////////////////////////////////
-			void RetrieveParameters();
-
 		private:		// fields
 			mmReal m_rProgress;
 			//mmInt m_iThreadsCount;

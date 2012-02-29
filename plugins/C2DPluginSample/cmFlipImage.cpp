@@ -32,19 +32,12 @@ mmImages::cmFlipImage::cmFlipImage(mmLog::mmLogReceiverI* p_psLogReceiver):
 	UpdateParameters();
 }
 
-//void mmImages::cmFlipImage::RetrieveParameters()
-//{
-//	GetParam(g_UIParam_ImageName, &m_sImageName); 
-//	GetParam(g_UIParam_Horizontal, &m_bHorizontal); 
-//	GetParam(g_UIParam_Vertical, &m_bVertical); 
-//}
-
 bool mmImages::cmFlipImage::Calculate()
 {
 
 	mmImageI *v_psImage, *v_psNewImage;
 
-	v_psImage = m_psImageStructure->GetImage(0);
+	v_psImage = m_psImageStructure->FindImage(m_sImageName);
 
 	if (!v_psImage) return false;
 
