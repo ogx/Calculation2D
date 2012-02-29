@@ -1,0 +1,77 @@
+body {
+	font-size: 12px;
+	padding: 0;
+	margin: 0;
+}
+.header {
+	font-size: 1.3em;
+}
+.preview {
+	background: solid white;
+	border: solid #666 1px;
+}
+.preview-small {
+	width: 480px;
+}
+.preview-fixed {
+	min-height: 320px;
+}
+#content {
+	display: inline-block;
+	padding: 20px;
+}
+fieldset {
+	border: solid #CCC 1px;
+	border-radius: 5px;
+	-webkit-border-radius: 5px;
+	-moz-border-radius: 5px;
+	padding: 20px 30px 20px 30px;
+	margin-top: 20px;
+}
+fieldset legend {
+	font-weight: bold;
+	padding-left: 10px;
+	padding-right: 10px;
+}
+#title {
+	background: #EEE;
+	border-bottom: solid #999 1px;
+	padding: 10px 30px 10px 30px;
+}
+fieldset legend, #title {
+	color: #558;
+}
+
+#input_preview_canvas {
+	border: solid #CCC 1px;
+}
+.image_btn img {
+	margin: 0px 0px 5px 5px;
+	border: 0;
+}
+.not-implemented {
+	opacity: 0.5;
+}
+
+div.buttons {
+	margin: 20px 5px 5px 5px;
+}
+
+#method_details {
+	font-size: 12px;
+	padding: 5px 20px 5px 20px;
+	display: none;
+}
+#method_details .label {
+	font-weight: bold;
+}
+#method_details .value {
+}
+
+#input_parameters_code {
+	display: none;
+}
+#input_parameters_form table, #input_parameters_form option {
+	border: 0px;
+	font-size: 12px;
+}

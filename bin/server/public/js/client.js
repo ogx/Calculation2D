@@ -23,12 +23,13 @@ var c2d_server = {
 			}
 		});
 	},
-	runCalculationMethod: function(method, image_structure, callback) {
+	runCalculationMethod: function(method_id, method_params, image_structure, callback) {
 		$.ajax({
 			url: '/run',
 			type: 'post',
 			data: {
-				method: method,
+				method: method_id,
+				method_params: method_params,
 				image_structure: image_structure
 			},
 			accepts: 'json',
@@ -62,9 +63,10 @@ var c2d_client = {
 	
 	image_structure: [],
 	selected_image: -1,
-	newImage: function(image_data) {
+	newImage: function(image_data, image_name) {
 		this.selected_image = this.image_structure.length;
 		this.image_structure.push({
+			name: image_name,
 			image: this.extractImage(image_data),
 			data_layers: []
 		});
@@ -104,6 +106,121 @@ var c2d_client = {
 	getImage: function(index, ctx) {
 		return flattenImage(this.image_structure[index].image, ctx);
 	},
+	
+	methods_lookup: {},
+};
+
+var param_translator = {
+	// createForm
+	// Create an HTML form for plugin parameters given in JSON. 
+	createForm: function(default_params, parent) {
+		var table = $(document.createElement('table')),
+			createParamInput = this.createParamInput,
+			that = this;
+			
+		default_params.forEach(function(param, i) {
+			var input = that.createParamInput(param, 'param_'+i),
+				label = $(document.createElement('label')).attr({
+					'for': input.id,
+					'class': 'param_label' 
+				}).text(param.name),
+				cell1 = $(document.createElement('td')),
+				cell2 = $(document.createElement('td')),
+				row = $(document.createElement('tr'));
+				
+			table.append(row.append(cell1.append(label)).append(cell2.append(input)));
+			
+			return row;
+		});
+		
+		// display list of images
+		// TODO: enable triggering from outside (onimageloaded)
+		var image_options = c2d_client.image_structure.map(function(im, ind) {
+			return $(document.createElement('option')).text(im.name).attr('image-index', ind)[0];
+		});
+		if(!image_options.length)
+			image_options.push($(document.createElement('option')).text('(no images)').attr('image-index', -1)[0]);
+		var image_lists = $('.image-list');
+		image_lists.empty();
+		image_lists.append(image_options);
+		
+		// TODO: layer-list for selected image
+		
+		return table;
+	},
+	// parseForm
+	// Given the default parameters in JSON, parses the existing HTML form
+	// and extracts parameter values. 
+	// TODO: should validate values
+	parseForm: function(default_params) {
+		var factories = this.factories;
+		return default_params.map(function(default_param, i) {
+				var factory = factories[default_param.type] || factories['default'],
+					parsed_param = $.extend(true, {}, default_param);
+				parsed_param.value = factory.parse($('#param_'+i)[0]);
+				//console.log('Parsed param', default_param, 'and it\'s', parsed_param);
+				return parsed_param;
+			});
+	},
+	
+	factories: new function() {
+		var createEdit = function(param) {
+				return $(document.createElement('input')).attr({
+					type: 'text',
+					value: param.value 
+				})[0];
+			},
+			createCheckbox = function(param) {
+				return $(document.createElement('input')).attr({
+					type: 'checkbox',
+					checked: param.value 
+				})[0];
+			},
+			createCombo = function(cl) {
+				return function(param) {
+					return $(document.createElement('select')).attr({
+						value: param.value,
+						'class': cl
+					})[0];
+				};
+			}, 
+			getValue = function(node) {
+				return $(node).val();
+			},
+			isChecked = function(node) {
+				return node.checked;
+			},
+			getValueFromCombo = function(node) {
+				return $('#'+node.id+' option:selected').text();
+			},
+			edit = {
+				create: createEdit,
+				parse: getValue
+			}, 
+			checkbox = {
+				create: createCheckbox,
+				parse: isChecked
+			}, 
+			combo = function(cl) {
+				return {
+					create: createCombo(cl),
+					parse: getValueFromCombo
+				};
+			};
+		return {
+			'real': edit,
+			'int': edit,
+			'string': edit,
+			'bool': checkbox,
+			'image': combo('image-list'),
+			'layer': combo('layer-list'),
+			'default': edit
+		};
+	},
+	createParamInput: function(param, id) {
+		var factory = this.factories[param.type] || this.factories['default'];
+		return $(factory.create(param, id)).attr('id', id)[0];
+	}
 };
 
 $(document).ready(function() {
@@ -137,15 +254,13 @@ $(document).ready(function() {
 				ctx.drawImage(img, 0, 0);
 				
 				c2d_client.newImage(
-					ctx.getImageData(0, 0, canvas.clientWidth, canvas.clientHeight)
+					ctx.getImageData(0, 0, canvas.clientWidth, canvas.clientHeight),
+					file.name
 				);
 			}
 			img.src = data;
 		};
 		fr.readAsDataURL(file);
-	});
-	$('#input_preview').dblclick(function() {
-		$('#input_path').trigger('click');
 	});
 	
 	
@@ -155,7 +270,6 @@ $(document).ready(function() {
 			c2d_client.setMethods(methods);
 			
 			// populate combo
-			methods_lookup = {};
 			var combo = $('#available_methods');
 			combo.empty();
 			methods.forEach(function(method) {
@@ -163,7 +277,7 @@ $(document).ready(function() {
 					method_text = method.author + ': ' + method.name;
 				option.text(method_text);
 				option.attr('method_id', method.id);
-				methods_lookup[method.id] = method;
+				c2d_client.methods_lookup[method.id] = method;
 				combo.append(option);
 			});
 			
@@ -171,43 +285,75 @@ $(document).ready(function() {
 			combo.change(function() {
 				var option = $('#available_methods option:selected'),
 					method_id = option.attr('method_id'),
-					method = methods_lookup[method_id];
+					method = c2d_client.methods_lookup[method_id];
 				if(!method) {
 					$('#method_details').hide();
 					throw new Exception('Selected method not found!');
 				}
+				
 				var max_params_length = 150;
 				$('#method_details #name').text(method.name);
 				$('#method_details #author').text(method.author);
 				$('#method_details #description').text(method.description);
-				$('#method_details #input_parameters').text(
-					method.params.in.length > max_params_length ? 
-					method.params.in.slice(0, max_params_length)+'...' : 
-					method.params.in);
-				$('#method_details #output_parameters').text(
-					method.params.out.length > max_params_length ? 
-					method.params.out.slice(0, max_params_length)+'...' : 
-					method.params.out);
+				$('#method_details #input_parameters').html(
+					'<div id="input_parameters_code"/><div id="input_parameters_form"/>'
+					);
+				$('#input_parameters_code').text(
+					JSON.stringify(method.params.in, null, " ")
+					);
+				$('#input_parameters_form').empty().append(
+					param_translator.createForm(method.params.in)
+					);
+				$('#method_details #output_parameters').html(
+					'<div id="input_parameters_code"/><div id="input_parameters_form"/>'
+					);
+				$('#output_parameters_code').text(
+					JSON.stringify(method.params.out, null, " ")
+					);
+				$('#output_parameters_form').empty().append(
+					param_translator.createForm(method.params.out)
+					);
 				$('#method_details').show();
 			});
 			combo.trigger('change');
 		});
 	});
 	$('#run_method').click(function() {
-		var option = $('#available_methods option:selected'),
+		var option = $('#available_methods option:selected'), 
 			method_id = option.attr('method_id'),
-			image_structure = [
-				c2d_client.image_structure[c2d_client.selected_image]
-			];
+			method_params = c2d_client.methods_lookup[method_id].params.in,
+			image_structure = $('#input_parameters_form select.image-list').map(function() {
+				return c2d_client.image_structure[$(this).children(':selected').attr('image-index')];
+			}).get(),
+			runMethod = function(method_id, method_params, image_structure) {
+				/*console.log('Launching method', method_id);
+				console.log('  -method_params:', method_params);
+				console.log('  -structure:', image_structure);*/
+				c2d_server.runCalculationMethod(
+					method_id, 
+					method_params,
+					image_structure,
+					function(res){
+						console.log('runCalculationMethod returned', res);
+						if(res.success)
+						{
+							var interval = setInterval(function() {
+								c2d_server.getStatus(function(res){
+									console.log('getStatus returned', res);
+									if(res.status === 'finished')
+										clearInterval(interval);
+								});
+							}, 100);
+						}
+					}
+				);
+			};
+			
+		// parse params
+		method_params = param_translator.parseForm(method_params) || [];
 		
-		console.log('Launching method', method_id, 'on structure', image_structure, '...');	
-		c2d_server.runCalculationMethod(
-			method_id, 
-			image_structure,
-			function(res){
-				console.log(res)
-			}
-		);
+		// launch calculation
+		runMethod(method_id, method_params, image_structure);
 	});
 	$('#get_status').click(function() {
 		c2d_server.getStatus(function(res){
