@@ -27,9 +27,9 @@ private:
 	mmImages::mmImageStructureI* image_structure;
 	mmImages::mmImagesCalculationMethodI* calculation_method;
 
-	std::map<std::string, mmXML::mmXMLDataType> param_type_lookup;
+	std::map<std::wstring, mmXML::mmXMLDataType> param_type_lookup;
 	Json::Value success_response, failure_response;
 
-	Json::Value FailureResponse(std::string const & error);
+	Json::Value FailureResponse(std::wstring const & error);
 };
 
