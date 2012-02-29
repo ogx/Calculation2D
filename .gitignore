@@ -43,6 +43,4 @@
 !node.exe
 !libcalc2dmath.lib
 
-!root.vcpxproj.user
-!calc2d.vcpxproj.user
-!C2DPluginSample.vcxproj.user
+!*.vcxproj.user
