@@ -14,15 +14,18 @@
 *.aps
 *.sdf
 *.opensdf
+*.lastbuildstate
 *.user
 
 *.tl[hi]
 *.log
 *.tlog
 *.manifest
-/proj/*/Win32
+/proj/*/Debug
+/proj/*/Release
 /proj/*/x64
-/plugins/*/Win32
+/plugins/*/Debug
+/plugins/*/Release
 /plugins/*/x64
 
 
@@ -43,4 +46,6 @@
 !node.exe
 !libcalc2dmath.lib
 
-!*.vcxproj.user
+!root.vcxproj.user
+!calc2d.vcxproj.user
+!C2DPluginSample.vcxproj.user

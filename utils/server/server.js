@@ -7,10 +7,25 @@ var http = require('http'),
 	app = bogart.app(),
 	q = bogart.q;
 
+function debug_info() {
+  
+  console.log("\nMalleor, easy... it's just debugging messages\n");
+  // print process.argv
+  process.argv.forEach(function (val, index, array) {
+    console.log('argument ' + index + ': ' + val);
+  });
+
+  console.log('process path: ' + process.execPath);
+  console.log('cwd: ' + process.cwd());
+}
+
+// comment out if you don't want debug
+debug_info();
+
 var config = {
 	serverAddress: 'localhost',
 	serverPort: 8081,
-	exePath: '..\\x64\\Debug\\calc2d.exe', // TODO: parametrize
+	exePath: (process.argv.length > 2) ? process.argv[2] : '..\\..\\x64\\Debug\\calc2d.exe', // DONE: parametrize
 };
 
 
