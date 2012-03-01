@@ -25,7 +25,8 @@ debug_info();
 var config = {
 	serverAddress: 'localhost',
 	serverPort: 8081,
-	exePath: (process.argv.length > 2) ? process.argv[2] : '..\\..\\x64\\Debug\\calc2d.exe', // DONE: parametrize
+	exePath: (process.argv.length > 2) ? 
+		process.argv[2] : '../../bin/x64/Debug/calc2d.exe',
 };
 
 
