@@ -10,10 +10,7 @@
 #ifndef mmIImagesInterfacesH
 #define mmIImagesInterfacesH
 
-#include <map>
-
 #include <mmGlobalDefs.h>
-#include <math\mmMath.h>
 #include <mmError.h>
 #include <mmPixel.h>
 
@@ -449,24 +446,19 @@ namespace mmImages
 		////////////////////////////////////////////////////////////////////////////////
 		/// Returns pointer to a layer. 
 		///
-		/// @param[in] p_iIndex layer index
-		/// @return pointer to layer or NULL if layer does not exist
-		////////////////////////////////////////////////////////////////////////////////
-		virtual mmLayerI * GetLayer(mmUInt const p_iIndex) const = 0;
-		////////////////////////////////////////////////////////////////////////////////
-		/// Returns pointer to a layer. 
-		///
 		/// @param[in] p_sID layer ID
 		/// @return pointer to layer or NULL if layer does not exist
 		////////////////////////////////////////////////////////////////////////////////
 		virtual mmLayerI * GetLayer(mmID const & p_sID) const = 0;
 		////////////////////////////////////////////////////////////////////////////////
-		/// Returns pointer to first layer of given name. 
+		/// Returns ID of first layer of given name occuring after layer with given ID. 
+		/// Can be used to iterate through all layers. 
 		///
 		/// @param[in] p_sName layer name
-		/// @return pointer to layer or NULL if layer does not exist
+		/// @param[in] p_sPreviousLayer only layers after layer with given ID are searched
+		/// @return layer ID or mmID::invalid if layer was not found
 		////////////////////////////////////////////////////////////////////////////////
-		virtual mmLayerI * FindLayer(mmString const & p_sName) const = 0;
+		virtual mmLayerI * FindLayer(mmLayerI const * const p_psPreviousLayer=NULL, mmString const & p_sName=L"") const = 0;
 		////////////////////////////////////////////////////////////////////////////////
 		/// Deletes a layer. 
 		///
@@ -510,18 +502,11 @@ namespace mmImages
 		////////////////////////////////////////////////////////////////////////////////
 		virtual mmImageI* CreateImage(mmString const & p_sName, mmUInt const p_iWidth, mmUInt const p_iHeight, mmImageI::mmPixelType const p_ePixelType) = 0;
 		////////////////////////////////////////////////////////////////////////////////
-		/// Returns number of images in the structure. 
+		/// Returns number of images in structure. 
 		///
 		/// @return number of images
 		////////////////////////////////////////////////////////////////////////////////
 		virtual mmUInt GetImageCount(void) const = 0;
-		////////////////////////////////////////////////////////////////////////////////
-		/// Returns pointer to an image. 
-		///
-		/// @param[in] p_iIndex image index
-		/// @return pointer to image or NULL if image does not exist
-		////////////////////////////////////////////////////////////////////////////////
-		virtual mmImageI * GetImage(mmUInt const p_iIndex) const = 0;
 		////////////////////////////////////////////////////////////////////////////////
 		/// Returns pointer to an image. 
 		///
@@ -530,12 +515,14 @@ namespace mmImages
 		////////////////////////////////////////////////////////////////////////////////
 		virtual mmImageI * GetImage(mmID const & p_sID) const = 0;
 		////////////////////////////////////////////////////////////////////////////////
-		/// Returns pointer to first image of given name. 
+		/// Returns ID of first image of given name occuring after image with given ID. 
+		/// Can be used to iterate through all images. 
 		///
-		/// @param[in] p_sName image name
-		/// @return pointer to image or NULL if image does not exist
+		/// @param[in] p_sName layer name
+		/// @param[in] p_sPreviousImage only images after image with this ID are searched
+		/// @return image ID or mmID::invalid if image was not found
 		////////////////////////////////////////////////////////////////////////////////
-		virtual mmImageI * FindImage(mmString const & p_sName) const = 0;
+		virtual mmImageI * FindImage(mmImageI const * const p_psPreviousImage=NULL, mmString const & p_sName=L"") const = 0;
 		////////////////////////////////////////////////////////////////////////////////
 		/// Deletes an image. 
 		///
@@ -564,7 +551,6 @@ namespace mmImages
         extern const wchar_t* g_pAutoCalcXML_Params_ParamType_BoolValue_YES;
         extern const wchar_t* g_pAutoCalcXML_Params_ParamType_BoolValue_NO;
 	extern const wchar_t* g_pAutoCalcXML_Params_ParamType_String;
-	extern const wchar_t* g_pAutoCalcXML_Params_ParamType_FileName;
 
 	extern const wchar_t* g_pAutoCalcXML_INParams_Node;
 	extern const wchar_t* g_pAutoCalcXML_OUTParams_Node;
@@ -655,44 +641,6 @@ namespace mmImages
 			////////////////////////////////////////////////////////////////////////////////
 			virtual void SetCalculationMethodParameters(mmImages::mmImageStructureI* p_psImagesStructure,
                         	mmImages::mmImagesCalculationMethodI::sCalculationAutomationParams* p_psAutomationParams = NULL) = 0;
-	};
-
-	////////////////////////////////////////////////////////////////////////////////
-	/// Images calculation method container interface. It is responsible for
-	/// searching all available calculation methods, querying them. It also initializes
-	/// calculation method objects and return pointers to them.
-	////////////////////////////////////////////////////////////////////////////////
-	class mmImagesCalculationMethodContainerI
-	{
-		public:			// methods
-			////////////////////////////////////////////////////////////////////////////////
-			/// Virtual destructor.
-			////////////////////////////////////////////////////////////////////////////////
-			virtual ~mmImagesCalculationMethodContainerI() {};
-
-			////////////////////////////////////////////////////////////////////////////////
-			/// Returns list with available images calculation methods.
-			///
-			/// @return vector with mmImages::mmImagesCalculationMethodI::sCalculationMethodParams
-			///				  structures defining available exporters and their functionality.
-			////////////////////////////////////////////////////////////////////////////////
-			virtual std::vector<mmImages::mmImagesCalculationMethodI::sCalculationMethodParams> GetAvailableImagesCalculationMethods(void) = 0;
-
-			////////////////////////////////////////////////////////////////////////////////
-			/// Returns mapping MethodID -> DLL file name.
-			///
-			/// @return mapping MethodID -> DLL file name
-			////////////////////////////////////////////////////////////////////////////////
-			//virtual std::map<mmString, mmString> GetMethodFileMapping(void) = 0;
-			////////////////////////////////////////////////////////////////////////////////
-			/// Initializes selected images calculation method and returns pointer
-			/// into its interface. In case of error it throws
-			/// mmError(mmeImagesStructureUnknownImagesCalculationMethod).
-			///
-			/// @param[in] p_sCalculationMethodName name of images calculation method to initialize,
-			/// @return pointer to initialized mmImages::mmImagesCalculationMethodI object.
-			////////////////////////////////////////////////////////////////////////////////
-			virtual mmImages::mmImagesCalculationMethodI* InitializeImagesCalculationMethod(mmString p_sCalculationMethodName) = 0;
 	};
 };
 

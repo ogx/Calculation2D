@@ -2,6 +2,7 @@
 
 #include <stdio.h>
 
+#include <algorithm>
 #include <locale>
 
 mmString mmStringUtilities::BoolToString(bool p_bInput)
@@ -215,8 +216,8 @@ mmString mmStringUtilities::MMCharStringToMMString(const std::string p_sInputStr
 
 	const std::ctype<wchar_t>& v_sCtfacet = std::use_facet< std::ctype<wchar_t> >(v_sStream.getloc());
 
-	mmInt v_iCSize = p_sInputString.size();
-	for(mmInt v_iC=0;v_iC<v_iCSize;v_iC++)
+	std::size_t v_iCSize = p_sInputString.size();
+	for(std::size_t v_iC=0;v_iC<v_iCSize;v_iC++)
 	{
 		v_sStream << v_sCtfacet.widen(p_sInputString[v_iC]);
 	};
@@ -230,8 +231,8 @@ std::string mmStringUtilities::MMStringToCharString(const mmString p_sInputStrin
 
 	const std::ctype<char>& v_sCtfacet = std::use_facet< std::ctype<char> >(v_sStream.getloc());
 
-	mmInt v_iCSize = p_sInputString.size();
-	for(mmInt v_iC=0;v_iC<v_iCSize;v_iC++)
+	std::size_t v_iCSize = p_sInputString.size();
+	for(std::size_t v_iC=0;v_iC<v_iCSize;v_iC++)
 	{
 		v_sStream << v_sCtfacet.narrow(static_cast<std::ctype<char>::_Elem>(p_sInputString[v_iC]),0);
 	};
@@ -243,8 +244,8 @@ std::vector<mmInt> mmStringUtilities::MMStringToVectorOfInt(const mmString p_sIn
 {
 	std::vector<mmInt> v_vOutVector;
 
-	mmInt v_iInt,v_iStart,v_iStop;
-	mmInt v_iLen = p_sInputString.size();
+	std::size_t v_iInt,v_iStart,v_iStop;
+	std::size_t v_iLen = p_sInputString.size();
 
 	v_iStart = 0;
 	v_iStop = -1;
@@ -269,7 +270,7 @@ std::vector<mmInt> mmStringUtilities::MMStringToVectorOfInt(const mmString p_sIn
 			mmString v_sTempInt = p_sInputString.substr(v_iStart,v_iStop-v_iStart);
 
 			swscanf_s(v_sTempInt.c_str(),L"%d",&v_iInt);
-			v_vOutVector.push_back(v_iInt);
+			v_vOutVector.push_back(static_cast<mmInt>(v_iInt));
 		};
 	};
 
@@ -280,8 +281,8 @@ std::vector<mmString> mmStringUtilities::MMStringToVectorOfMMString(const mmStri
 {
 	std::vector<mmString> v_vOutVector;
 
-	mmInt v_iStart,v_iStop;
-	mmInt v_iLen = p_sInputString.size();
+	std::size_t v_iStart,v_iStop;
+	std::size_t v_iLen = p_sInputString.size();
 
 	v_iStart = 0;
 	v_iStop = -1;
@@ -310,17 +311,18 @@ std::vector<mmString> mmStringUtilities::MMStringToVectorOfMMString(const mmStri
 	return v_vOutVector;
 }
 
-mmString mmStringUtilities::MMStringToUpper(const mmString p_sInputString)
+mmString mmStringUtilities::MMStringToLower(mmString p_sInputString)
 {
-	mmString v_sOutString = p_sInputString;
+	std::transform(p_sInputString.begin(), p_sInputString.end(), p_sInputString.begin(), ::towlower);
 
-	mmInt v_iCSize = p_sInputString.size();
-	for(mmInt v_iC=0;v_iC<v_iCSize;v_iC++)
-	{
-		v_sOutString[v_iC] = towupper(p_sInputString[v_iC]);
-	};
+	return p_sInputString;
+}
 
-	return v_sOutString;
+mmString mmStringUtilities::MMStringToUpper(mmString p_sInputString)
+{
+	std::transform(p_sInputString.begin(), p_sInputString.end(), p_sInputString.begin(), ::towupper);
+
+	return p_sInputString;
 }
 
 mmString mmStringUtilities::PixelFormatToString(mmImageProcessing::ePixelType p_ePixelType)

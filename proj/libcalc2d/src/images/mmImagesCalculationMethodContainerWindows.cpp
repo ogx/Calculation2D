@@ -36,9 +36,9 @@ std::vector<mmImages::mmImagesCalculationMethodI::sCalculationMethodParams> mmIm
 
 	std::vector<mmImages::mmImagesCalculationMethodI::sCalculationMethodParams> v_vDefsOfKnownImagesCalculationMethods;
 
-	mmInt v_iDLL,v_iImp,v_iImpCount;
-	mmInt v_iDLLCount = m_vAvailableDLLs.size();
-	for(v_iDLL=0;v_iDLL<v_iDLLCount;v_iDLL++)
+	std::size_t v_iDLL,v_iImp,v_iImpCount;
+	std::size_t v_iDLLCount = m_vAvailableDLLs.size();
+	for(v_iDLL=0; v_iDLL<v_iDLLCount; v_iDLL++)
 	{
 		v_iImpCount = m_vAvailableDLLs[v_iDLL].vImagesCalculationMethodDefs.size();
 
@@ -53,14 +53,14 @@ std::vector<mmImages::mmImagesCalculationMethodI::sCalculationMethodParams> mmIm
 	return v_vDefsOfKnownImagesCalculationMethods;
 }
 
-mmImages::mmImagesCalculationMethodI* mmImages::mmImagesCalculationMethodContainerForWindows::InitializeImagesCalculationMethod(mmString p_sCalculationMethodName)
+mmImages::mmImagesCalculationMethodI* mmImages::mmImagesCalculationMethodContainerForWindows::InitializeImagesCalculationMethod(mmString const & p_sCalculationMethodName)
 {
 	SendLogMessage(mmLog::debug,mmString(L"Start InitializeImagesCalculationMethod"));
 
 	mmImages::mmImagesCalculationMethodI* v_psInitializedImagesCalculationMethod = NULL;
 
-	mmInt v_iDLL,v_iImp,v_iImpCount;
-	mmInt v_iDLLCount = m_vAvailableDLLs.size();
+	std::size_t v_iDLL,v_iImp,v_iImpCount;
+	std::size_t v_iDLLCount = m_vAvailableDLLs.size();
 	for(v_iDLL=0;v_iDLL<v_iDLLCount;v_iDLL++)
 	{
 		v_iImpCount = m_vAvailableDLLs[v_iDLL].vImagesCalculationMethodDefs.size();
@@ -99,8 +99,8 @@ void mmImages::mmImagesCalculationMethodContainerForWindows::SearchForDLLLibrari
 		v_vApplicationDirElements = v_psFileUtils->GetDirElements(v_sAppDir,L"*.dll");
 	} catch(mmError &) {}
 
-	mmInt v_iTemp;
-	mmInt v_iDirElementsCount = v_vApplicationDirElements.size();
+	std::size_t v_iTemp;
+	std::size_t v_iDirElementsCount = v_vApplicationDirElements.size();
 	for(v_iTemp=0;v_iTemp<v_iDirElementsCount;v_iTemp++)
 	{
 		v_sDLLDef.sDLLName = v_sAppDir + mmString(L"\\") + v_vApplicationDirElements[v_iTemp].sName;
@@ -112,12 +112,22 @@ void mmImages::mmImagesCalculationMethodContainerForWindows::SearchForDLLLibrari
 	SendLogMessage(mmLog::debug,mmString(L"End SearchForDLLLibraries"));
 }
 
+std::map<mmString, mmString> mmImages::mmImagesCalculationMethodContainerForWindows::GetMethodFileMapping(void) const {
+	std::map<mmString, mmString> v_sFileMapping;
+
+	for(std::size_t v_iI = 0; v_iI < m_vAvailableDLLs.size(); ++v_iI)
+		for(std::size_t v_iJ = 0; v_iJ < m_vAvailableDLLs[v_iI].vImagesCalculationMethodDefs.size(); ++v_iJ)
+			v_sFileMapping[m_vAvailableDLLs[v_iI].vImagesCalculationMethodDefs[v_iJ].sIDName] = m_vAvailableDLLs[v_iI].sDLLName;
+
+	return v_sFileMapping;
+}
+
 void mmImages::mmImagesCalculationMethodContainerForWindows::SearchForImagesCalculationMethodsInDLLLibraries(void)
 {
 	SendLogMessage(mmLog::debug,mmString(L"Start SearchForImagesCalculationMethodsInDLLLibraries"));
 
-	mmInt v_iTemp;
-	mmInt v_iDirElementsCount = m_vAvailableDLLs.size();
+	std::size_t v_iTemp;
+	std::size_t v_iDirElementsCount = m_vAvailableDLLs.size();
 	for(v_iTemp=0;v_iTemp<v_iDirElementsCount;v_iTemp++)
 	{
 		mmString v_sSymbolDLL_ImagesCalculationMethodsCount = mmDLLSupport::FindSymbolInDLLExportTable(m_vAvailableDLLs[v_iTemp].sDLLName,

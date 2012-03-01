@@ -91,9 +91,8 @@ namespace mmImages
 		
 		virtual mmLayerI * CreateLayer(mmString const & p_sName, mmReal const p_rDefaultValue);
 		virtual mmUInt GetLayerCount(void) const;
-		virtual mmLayerI * GetLayer(mmUInt const p_iIndex) const;
 		virtual mmLayerI * GetLayer(mmID const & p_sID) const;
-		virtual mmLayerI * FindLayer(mmString const & p_sName) const;
+		virtual mmLayerI * FindLayer(mmLayerI const * const p_psPreviousLayer=NULL, mmString const & p_sName=L"") const;
 		virtual bool DeleteLayer(mmUInt const p_iIndex);
 		virtual bool DeleteLayer(mmString const & p_sName);
 		
@@ -125,9 +124,8 @@ namespace mmImages
 	public: // mmImageStructureI implementation
 		virtual mmImageI * CreateImage(mmString const & p_sName, mmUInt const p_iWidth, mmUInt const p_iHeight, mmImageI::mmPixelType const p_ePixelType);
 		virtual mmUInt GetImageCount(void) const;
-		virtual mmImageI * GetImage(mmUInt const p_iIndex) const;
 		virtual mmImageI * GetImage(mmID const & p_sID) const;
-		virtual mmImageI * FindImage(mmString const & p_sName) const;
+		virtual mmImageI * FindImage(mmImageI const * const p_psPreviousImage=NULL, mmString const & p_sName=L"") const;
 		virtual bool DeleteImage(mmUInt const p_iIndex);
 		virtual bool DeleteImage(mmString const & p_sName);		
 	private: 

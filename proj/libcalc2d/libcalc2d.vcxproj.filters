@@ -141,6 +141,9 @@
     <ClInclude Include="include\factories\mmUtilsFactory.h">
       <Filter>Header Files\Interfaces</Filter>
     </ClInclude>
+    <ClInclude Include="include\interfaces\mmICalculationMethodContainer.h">
+      <Filter>Header Files\Interfaces</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\mmError.cpp">
@@ -205,6 +208,9 @@
     </ClCompile>
     <ClCompile Include="src\factories\mmUtilsFactory.cpp">
       <Filter>Source Files\Interfaces</Filter>
+    </ClCompile>
+    <ClCompile Include="src\mmGlobalDefs.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

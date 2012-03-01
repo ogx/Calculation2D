@@ -92,9 +92,9 @@ void mmImages::mmCalcMethod::SetCalculationMethodParameters(mmImages::mmImageStr
 	
 	// prepare map with first available row for each image
 	m_mNextRows.clear();
-	std::vector<mmString> v_sImageNames = GetImageNames();
-	for (mmUInt i = 0; i < v_sImageNames.size(); ++i) {
-		m_mNextRows[v_sImageNames[i]] = 0;
+	std::vector<mmID> v_sImageIDs = GetImageIDs();
+	for (mmUInt i = 0; i < v_sImageIDs.size(); ++i) {
+		m_mNextRows[v_sImageIDs[i]] = 0;
 	}
 
 	SendLogMessage(mmLog::debug,mmString(L"End SetCalculationMethodParameters"));
@@ -159,7 +159,7 @@ void mmImages::mmCalcMethod::ForEachImage(mmCalcKernelI* p_psKernel)
 	mmInt v_iBlockHeight = 0;
 	mmInt v_iNextRowIndex = 0;
 	mmInt v_iHeight = 0;
-	std::vector<mmString> v_sImageNames = GetImageNames();
+	mmReal const v_rImageCount = static_cast<mmReal>(m_psImageStructure->GetImageCount());
 	bool v_bNewImage = false;
 	bool v_bFinishImage = false;
 
@@ -168,41 +168,43 @@ void mmImages::mmCalcMethod::ForEachImage(mmCalcKernelI* p_psKernel)
 		v_iBlockHeight = m_iRowsCountInBlock;
 	m_psThreadSynchEL->Unlock();
 	
-	for (mmUInt v_iIndex = 0; v_iIndex < m_psImageStructure->GetImageCount(); ++v_iIndex) {
+	mmImageI * v_psImage;
+	mmInt v_iIndex;
+	for (v_psImage = m_psImageStructure->FindImage(), v_iIndex = 0; NULL != v_psImage; v_psImage = m_psImageStructure->FindImage(v_psImage), ++v_iIndex ) {
 
-		v_iHeight = m_psImageStructure->GetImage(v_iIndex)->GetHeight();
+		v_iHeight = v_psImage->GetHeight();
 
 		m_psThreadSynchEL->Lock();
-			v_iNextRowIndex = m_mNextRows[v_sImageNames[v_iIndex]];
+			v_iNextRowIndex = m_mNextRows[v_psImage->GetID()];
 		m_psThreadSynchEL->Unlock();
 
 		while (v_iNextRowIndex < v_iHeight) {
 			m_psThreadSynchEL->Lock();
-				v_iNextRowIndex = m_mNextRows[v_sImageNames[v_iIndex]];
-				m_mNextRows[v_sImageNames[v_iIndex]] += v_iBlockHeight;
-				m_rProgress = 100.0*((mmReal)v_iNextRowIndex/(mmReal)v_iHeight)*((mmReal)(v_iIndex + 1)/(mmReal)v_sImageNames.size());
-				if (m_mNextRows[v_sImageNames[v_iIndex]] > v_iHeight) {
-					m_mNextRows[v_sImageNames[v_iIndex]] = v_iHeight;
+				v_iNextRowIndex = m_mNextRows[v_psImage->GetID()];
+				m_mNextRows[v_psImage->GetID()] += v_iBlockHeight;
+				m_rProgress = 100.0 * (static_cast<mmReal>(v_iNextRowIndex) / static_cast<mmReal>(v_iHeight)) * (static_cast<mmReal>(v_iIndex + 1) / v_rImageCount);
+				if (m_mNextRows[v_psImage->GetID()] > v_iHeight) {
+					m_mNextRows[v_psImage->GetID()] = v_iHeight;
 					v_iBlockHeight = v_iHeight - v_iNextRowIndex;
 				}
 				if (v_iNextRowIndex == 0) {
-					OnBeforeEachImage(m_psImageStructure->GetImage(v_iIndex));
+					OnBeforeEachImage(v_psImage);
 					v_bNewImage = true;
 					m_bFinishImage = false;
 				}
 				else v_bNewImage = false;
 			m_psThreadSynchEL->Unlock();
 
-			(*p_psKernel)(m_psImageStructure->GetImage(v_iIndex), 
+			(*p_psKernel)(v_psImage, 
 				v_iNextRowIndex,
 				v_iBlockHeight);
 			
 			m_psThreadSynchEL->Lock();
-				v_iNextRowIndex = m_mNextRows[v_sImageNames[v_iIndex]];
+				v_iNextRowIndex = m_mNextRows[v_psImage->GetID()];
 				if (v_iNextRowIndex >= v_iHeight && !m_bFinishImage) {
 					v_bFinishImage = true;
 					m_bFinishImage = true;
-					OnAfterEachImage(m_psImageStructure->GetImage(v_iIndex));
+					OnAfterEachImage(v_psImage);
 				}
 				else {
 					v_bFinishImage = false;
@@ -299,6 +301,20 @@ void mmImages::mmCalcMethod::UpdateParameters()
 	mmXML::CopyOutputParams(v_psXMLOutDoc.get(), &m_sCMParams.sAutoParams);
 }
 
+std::vector<mmID> mmImages::mmCalcMethod::GetImageIDs()
+{
+	std::vector<mmID> v_vResultCloudIDs;
+
+	// TODO: to trzeba zrobic jakos ladniej jesli uzupelniona zostanie funkcja GetXMLParameters()
+
+	//m_psImageStructure->LockForRead();
+	for(mmImageI * v_psImage = m_psImageStructure->FindImage(); NULL != v_psImage; v_psImage = m_psImageStructure->FindImage(v_psImage))
+		v_vResultCloudIDs.push_back(v_psImage->GetID());
+	//m_psImageStructure->UnlockFromRead();
+
+	return v_vResultCloudIDs;
+}
+
 std::vector<mmString> mmImages::mmCalcMethod::GetImageNames()
 {
 	std::vector<mmString> v_vResultCloudNames;
@@ -306,28 +322,23 @@ std::vector<mmString> mmImages::mmCalcMethod::GetImageNames()
 	// TODO: to trzeba zrobic jakos ladniej jesli uzupelniona zostanie funkcja GetXMLParameters()
 
 	//m_psImageStructure->LockForRead();
-		mmUInt v_iImageCount = m_psImageStructure->GetImageCount();
-		for(mmUInt i = 0; i < v_iImageCount; ++i) {
-			v_vResultCloudNames.push_back(m_psImageStructure->GetImage(i)->GetName());
-		}
+		for(mmImageI * v_psImage = m_psImageStructure->FindImage(); NULL != v_psImage; v_psImage = m_psImageStructure->FindImage(v_psImage))
+			v_vResultCloudNames.push_back(v_psImage->GetName());
 	//m_psImageStructure->UnlockFromRead();
 
 	return v_vResultCloudNames;
 }
 
-std::vector<mmString> mmImages::mmCalcMethod::GetDLNames(mmUInt const p_iImage)
+std::vector<mmString> mmImages::mmCalcMethod::GetDLNames(mmImageI const * const p_psImage)
 {
 	std::vector<mmString> v_sResultDLNames;
 
-	mmImageI* v_psImage = m_psImageStructure->GetImage(p_iImage);
-	if(! v_psImage)
+	if(! p_psImage)
 		return v_sResultDLNames;
 
 	//v_psImage->LockForRead();
-		mmUInt v_iDLCount = v_psImage->GetLayerCount();
-		for(mmUInt i = 0; i < v_iDLCount; ++i) {
-			v_sResultDLNames.push_back(v_psImage->GetLayer(i)->GetName());
-		}
+		for(mmLayerI * v_psLayer = p_psImage->FindLayer(); NULL != v_psLayer; v_psLayer = p_psImage->FindLayer(v_psLayer))
+			v_sResultDLNames.push_back(v_psLayer->GetName());
 	//v_psImage->UnlockFromRead();
 
 	return v_sResultDLNames;

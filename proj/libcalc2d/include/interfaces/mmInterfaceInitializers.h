@@ -18,6 +18,7 @@
 
 #include <interfaces\mmIThread.h>
 #include <interfaces\mmIImages.h>
+#include <interfaces\mmICalculationMethodContainer.h>
 #include <interfaces\mmIUtilsFactory.h>
 
 ////////////////////////////////////////////////////////////////////////////////

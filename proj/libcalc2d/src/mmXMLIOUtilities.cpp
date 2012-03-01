@@ -80,7 +80,7 @@ void mmXML::mmXMLNodePath::Reverse( void ) {
 //---------------------------------------------------------------------------
 
 void mmXML::mmXMLNodePath::AddString( mmString const & p_usPath ) {
-	int v_iPosI;
+	std::size_t v_iPosI;
 	mmXMLNodeID v_sNode;
 
 	std::vector<mmString> v_vcNodeNames;
@@ -195,14 +195,14 @@ void mmXML::UpdateOutputParam( mmXML::mmXMLDocI * _p_xDoc, mmImages::mmImagesCal
 
 void mmXML::CopyInputParams( mmXML::mmXMLDocI * _p_xDoc, mmImages::mmImagesCalculationMethodI::sCalculationAutomationParams * _p_sAutomationParams ) {
 	mmString v_tInParams = _p_xDoc->SaveToXMLBuffer();
-	mmInt v_iStrSize = v_tInParams._Copy_s( _p_sAutomationParams->sInParams, INOUT_PARAMS_SIZE, INOUT_PARAMS_SIZE, 0 );
+	std::size_t v_iStrSize = v_tInParams._Copy_s( _p_sAutomationParams->sInParams, INOUT_PARAMS_SIZE, INOUT_PARAMS_SIZE, 0 );
 	_p_sAutomationParams->sInParams[ v_iStrSize ] = 0;
 }
 //----------------------------------------------------------------------------------
 
 void mmXML::CopyOutputParams( mmXML::mmXMLDocI * _p_xDoc, mmImages::mmImagesCalculationMethodI::sCalculationAutomationParams * _p_sAutomationParams ) {
 	mmString v_tOutParams = _p_xDoc->SaveToXMLBuffer();
-	mmInt v_iStrSize = v_tOutParams._Copy_s( _p_sAutomationParams->sOutParams, INOUT_PARAMS_SIZE, INOUT_PARAMS_SIZE, 0 );
+	std::size_t v_iStrSize = v_tOutParams._Copy_s( _p_sAutomationParams->sOutParams, INOUT_PARAMS_SIZE, INOUT_PARAMS_SIZE, 0 );
 	_p_sAutomationParams->sOutParams[ v_iStrSize ] = 0;
 }
 //----------------------------------------------------------------------------------

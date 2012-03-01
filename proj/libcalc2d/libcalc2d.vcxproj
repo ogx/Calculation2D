@@ -181,6 +181,7 @@
     <ClInclude Include="include\images\mmImagesCalculationMethodContainerWindows.h" />
     <ClInclude Include="include\images\mmImagesCalculationMethodDLLBroker.h" />
     <ClInclude Include="include\images\mmImagesStructure.h" />
+    <ClInclude Include="include\interfaces\mmICalculationMethodContainer.h" />
     <ClInclude Include="include\interfaces\mmInterfaceInitializers.h" />
     <ClInclude Include="include\log\mmLogFile.h" />
     <ClInclude Include="include\log\mmLogRedirector.h" />
@@ -194,6 +195,7 @@
     <ClCompile Include="src\factories\mmUtilsFactory.cpp" />
     <ClCompile Include="src\interfaces\mmInterfaceInitializers.cpp" />
     <ClCompile Include="src\mmError.cpp" />
+    <ClCompile Include="src\mmGlobalDefs.cpp" />
     <ClCompile Include="src\mmStringUtilities.cpp" />
     <ClCompile Include="src\images\mmImagesStructure.cpp" />
     <ClCompile Include="src\mmPixel.cpp" />
