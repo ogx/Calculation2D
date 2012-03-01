@@ -59,7 +59,7 @@ bool mmImages::cmFlipImage::Calculate()
 	if (!v_psNewImage) return false;
 
 	const mmInt v_iPixelCount = v_iWidth*v_iHeight;
-	const mmRect v_sUselessRect = {0, 0, v_iWidth, v_iHeight};
+	const mmRect v_sUselessRect(0, 0, v_iWidth, v_iHeight);
 
 	// create pixel array for reading
 	mmReal *v_prPixels = new mmReal[v_iPixelCount];
