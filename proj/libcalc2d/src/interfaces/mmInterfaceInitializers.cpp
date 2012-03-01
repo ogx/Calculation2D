@@ -107,18 +107,6 @@ mmThread::mmThreadI* mmInterfaceInitializers::CreateDefaultThread(mmLog::mmLogRe
 	};
 }
 
-mmImages::mmImageStructureI* mmInterfaceInitializers::CreateDefaultImageStructure(mmImages::mmImageI::mmCallbackI * p_psCallback, mmLog::mmLogReceiverI* p_psLogReceiver)
-{
-	try
-	{
-		return (new mmImages::mmImageStructure(p_psCallback));
-	}
-	catch(std::bad_alloc)
-	{
-		throw mmError(mmeBadAlloc);
-	};
-}
-
 mmImages::mmImagesCalculationMethodContainerI* mmInterfaceInitializers::CreateDefaultImagesCalculationMethodContainer(mmLog::mmLogReceiverI* p_psLogReceiver)
 {
 	try

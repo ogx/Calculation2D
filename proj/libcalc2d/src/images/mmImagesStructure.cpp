@@ -606,15 +606,6 @@ mmUInt mmImages::mmImage::GetLayerCount(void) const {
 	return static_cast<mmUInt>(m_sLayers.size());
 }
 
-mmImages::mmLayerI * mmImages::mmImage::GetLayer(mmUInt const p_iIndex) const {
-	if(p_iIndex < m_sLayers.size()) {
-		std::list<mmLayer*>::const_iterator v_sLayer = m_sLayers.begin();
-		std::advance(v_sLayer, p_iIndex);
-		return *v_sLayer;
-	} else
-		return NULL;
-}
-
 mmImages::mmLayerI * mmImages::mmImage::GetLayer(mmID const & p_sID) const {
 	std::list<mmLayer*>::const_iterator v_sLayer = std::find_if(m_sLayers.begin(), m_sLayers.end(), FindByID(p_sID));
 	if(v_sLayer != m_sLayers.end())
@@ -623,8 +614,19 @@ mmImages::mmLayerI * mmImages::mmImage::GetLayer(mmID const & p_sID) const {
 		return NULL;
 }
 
-mmImages::mmLayerI * mmImages::mmImage::FindLayer(mmString const & p_sName) const {
-	std::list<mmLayer*>::const_iterator v_sLayer = std::find_if(m_sLayers.begin(), m_sLayers.end(), FindByName(p_sName));
+mmImages::mmLayerI * mmImages::mmImage::FindLayer(mmLayerI const * const p_psPreviousLayer, mmString const & p_sName) const {
+	std::list<mmLayer*>::const_iterator v_sLayer;
+
+	// set iterator to next layer or first layer if NULL is passed
+	if(p_psPreviousLayer == NULL)
+		v_sLayer = m_sLayers.begin();
+	else if((v_sLayer = std::find(m_sLayers.begin(), m_sLayers.end(), p_psPreviousLayer)) != m_sLayers.end())
+		++v_sLayer;
+		
+	// find first layer of given name if provided
+	if(p_sName != L"")
+		v_sLayer = std::find_if(v_sLayer, m_sLayers.end(), FindByName(p_sName));
+
 	if(v_sLayer != m_sLayers.end())
 		return *v_sLayer;
 	else
@@ -696,15 +698,6 @@ mmUInt mmImages::mmImageStructure::GetImageCount(void) const {
 	return static_cast<mmUInt>(m_sImages.size());
 }
 
-mmImages::mmImageI * mmImages::mmImageStructure::GetImage(mmUInt const p_iIndex) const {
-	if(p_iIndex < m_sImages.size()) {
-		std::list<mmImage*>::const_iterator v_sImage = m_sImages.begin();
-		std::advance(v_sImage, p_iIndex);
-		return *v_sImage;
-	} else
-		return NULL;
-}
-
 mmImages::mmImageI * mmImages::mmImageStructure::GetImage(mmID const & p_sID) const {
 	std::list<mmImage*>::const_iterator v_sImage = std::find_if(m_sImages.begin(), m_sImages.end(), FindByID(p_sID));
 	if(v_sImage != m_sImages.end())
@@ -713,8 +706,19 @@ mmImages::mmImageI * mmImages::mmImageStructure::GetImage(mmID const & p_sID) co
 		return NULL;
 }
 
-mmImages::mmImageI * mmImages::mmImageStructure::FindImage(mmString const & p_sName) const {
-	std::list<mmImage*>::const_iterator v_sImage = std::find_if(m_sImages.begin(), m_sImages.end(), FindByName(p_sName));
+mmImages::mmImageI * mmImages::mmImageStructure::FindImage(mmImageI const * const p_psPreviousImage, mmString const & p_sName) const {
+	std::list<mmImage*>::const_iterator v_sImage;
+
+	// set iterator to next image or first image if NULL is passed
+	if(p_psPreviousImage == NULL)
+		v_sImage = m_sImages.begin();
+	else if((v_sImage = std::find(m_sImages.begin(), m_sImages.end(), p_psPreviousImage)) != m_sImages.end())
+		++v_sImage;
+		
+	// find first image of given name if provided
+	if(p_sName != L"")
+		v_sImage = std::find_if(v_sImage, m_sImages.end(), FindByName(p_sName));
+
 	if(v_sImage != m_sImages.end())
 		return *v_sImage;
 	else

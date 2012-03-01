@@ -13,7 +13,7 @@
 #ifndef mmImagesCalculationMethodContainerForWindowsOSH
 #define mmImagesCalculationMethodContainerForWindowsOSH
 
-#include <interfaces\mmIImages.h>
+#include <interfaces\mmICalculationMethodContainer.h>
 #include <log\mmLogSender.h>
 
 
@@ -36,8 +36,7 @@ namespace mmImages
 	/// Implementation of mmImages::mmImagesCalculationMethodContainerI interface for
 	/// windows operating system with using of dll loading.
 	////////////////////////////////////////////////////////////////////////////////
-	class mmImagesCalculationMethodContainerForWindows: public mmImagesCalculationMethodContainerI,
-																																		mmLog::mmLogSender
+	class mmImagesCalculationMethodContainerForWindows: public mmImagesCalculationMethodContainerI, mmLog::mmLogSender
 	{
 		private:		// definitions
 			////////////////////////////////////////////////////////////////////////////////
@@ -87,7 +86,8 @@ namespace mmImages
 			~mmImagesCalculationMethodContainerForWindows();
 
 			std::vector<mmImages::mmImagesCalculationMethodI::sCalculationMethodParams> GetAvailableImagesCalculationMethods(void);
-			mmImages::mmImagesCalculationMethodI* InitializeImagesCalculationMethod(mmString p_sCalculationMethodName);
+			std::map<mmString, mmString> GetMethodFileMapping(void) const;
+			mmImages::mmImagesCalculationMethodI* InitializeImagesCalculationMethod(mmString const & p_sCalculationMethodName);
 	};
 };
 

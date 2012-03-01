@@ -132,9 +132,11 @@ namespace mmImages {
 
 			virtual void UpdateParameters();
 
+			virtual std::vector<mmID> GetImageIDs();
+
 			virtual std::vector<mmString> GetImageNames();
 
-			virtual std::vector<mmString> GetDLNames(mmUInt const p_iImage);
+			virtual std::vector<mmString> GetDLNames(mmImageI const * const p_psImage);
 
 		private:
 			////////////////////////////////////////////////////////////////////////////////
@@ -184,6 +186,6 @@ namespace mmImages {
 			bool m_bStopExecution;
 			bool m_bFinishImage;
 			std::vector<mmCMParameter> m_vParameters;
-			std::map<mmString, mmInt> m_mNextRows;		// next available row for each image in structure which is identified by name
+			std::map<mmID, mmInt> m_mNextRows;		// next available row for each image in structure which is identified by ID
 	};
 };

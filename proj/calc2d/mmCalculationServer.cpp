@@ -36,7 +36,7 @@ mmCalculationServer::~mmCalculationServer(void)
 
 int mmCalculationServer::Serve()
 {
-	std::auto_ptr<mmImageStructureI> image(mmInterfaceInitializers::CreateDefaultImageStructure(NULL, NULL));
+	std::auto_ptr<mmImageStructure> image(new mmImages::mmImageStructure(NULL));
 
 	std::wistream& is = std::wcin;
 	std::wostream& os = std::wcout;
@@ -118,7 +118,7 @@ Json::Value mmCalculationServer::RunCalculationMethod( Json::Value& params )
 	Json::Value& method_id = params[L"method"];
 	Json::Value response = success_response;
 
-	image_structure = mmInterfaceInitializers::CreateDefaultImageStructure(NULL, NULL);
+	image_structure = new mmImages::mmImageStructure(NULL);
 	utils_factory = mmInterfaceInitializers::CreateUtilsFactory();
 	calculation_method = methods_mgr.InitializeImagesCalculationMethod(method_id.asString());
 

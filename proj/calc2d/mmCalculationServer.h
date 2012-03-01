@@ -1,4 +1,5 @@
 #pragma once
+#include <images\mmImagesStructure.h>
 #include <images\mmImagesCalculationManagement.h>
 #include <images\mmImagesCalculationMethodContainerWindows.h>
 #include <mmXMLIOUtilities.h>
@@ -24,7 +25,7 @@ private:
 	mmImages::mmImagesCalculationManagement calc_mgr;
 	mmImages::mmImagesCalculationMethodContainerForWindows methods_mgr;
 	mmFactories::mmUtilsFactoryI* utils_factory;
-	mmImages::mmImageStructureI* image_structure;
+	mmImages::mmImageStructure* image_structure;
 	mmImages::mmImagesCalculationMethodI* calculation_method;
 
 	std::map<std::wstring, mmXML::mmXMLDataType> param_type_lookup;

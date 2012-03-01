@@ -69,7 +69,7 @@ void mmImages::mmImagesCalculationMethodDLLBroker::UserAction(mmString p_sXMLPar
 {
 	SendLogMessage(mmLog::debug,mmString(L"Start UserAction"));
 
-	UserAction(const_cast<wchar_t*>(p_sXMLParams.c_str()),p_sXMLParams.size());
+	UserAction(const_cast<wchar_t*>(p_sXMLParams.c_str()),static_cast<mmInt>(p_sXMLParams.size()));
 
 	SendLogMessage(mmLog::debug,mmString(L"End UserAction"));
 }

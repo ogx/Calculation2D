@@ -15,7 +15,7 @@ namespace mmXML {
 	typedef std::size_t mmUInt;
 	typedef struct { mmInt iGroupIndex; mmInt iLeafIndex; } mmXMLNodePosition;
 	typedef struct { mmXMLNodeI * _v_xNode; mmXMLNodePosition sPosition; } mmXMLPositionedNode;
-	enum mmXMLDataType { g_eXMLReal = 0x00, g_eXMLInt=0x01, g_eXMLString=0x02, g_eXMLBool=0x03, g_eXMLImageName=0x04, g_eXMLDataLayerName=0x05, g_eXMLUnknownDataType=0x07 };
+	enum mmXMLDataType { g_eXMLReal = 0x00, g_eXMLInt=0x01, g_eXMLString=0x02, g_eXMLBool=0x03, g_eXMLImageName=0x04, g_eXMLDataLayerName=0x05, g_eXMLUnknownDataType=0x06 };
 	enum mmXMLAutoType { g_eXMLAutoInput=0x00, g_eXMLAutoOutput=0x01 };
 
 	class mmXMLNodePath {

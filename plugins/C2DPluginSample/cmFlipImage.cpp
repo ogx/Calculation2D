@@ -35,7 +35,7 @@ bool mmImages::cmFlipImage::Calculate()
 
 	mmImageI *v_psImage, *v_psNewImage;
 
-	v_psImage = m_psImageStructure->FindImage(m_sImageName);
+	v_psImage = m_psImageStructure->FindImage(NULL, m_sImageName);
 
 	if (!v_psImage) return false;
 

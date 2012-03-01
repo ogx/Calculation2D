@@ -53,7 +53,6 @@ const wchar_t* mmImages::g_pAutoCalcXML_Params_ParamType_BoolValue = L"Yes/No va
 const wchar_t* mmImages::g_pAutoCalcXML_Params_ParamType_BoolValue_YES = L"YES";
 const wchar_t* mmImages::g_pAutoCalcXML_Params_ParamType_BoolValue_NO = L"NO";
 const wchar_t* mmImages::g_pAutoCalcXML_Params_ParamType_String = L"String value...";
-const wchar_t* mmImages::g_pAutoCalcXML_Params_ParamType_FileName = L"File name...";
 
 const wchar_t* mmImages::g_pAutoCalcXML_INParams_Node = L"AutoINParams";
 const wchar_t* mmImages::g_pAutoCalcXML_OUTParams_Node = L"AutoOUTParams";

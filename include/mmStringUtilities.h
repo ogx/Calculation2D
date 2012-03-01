@@ -134,13 +134,20 @@ namespace mmStringUtilities
 	std::vector<mmString> MMStringToVectorOfMMString(const mmString p_sInputString);
 
 	////////////////////////////////////////////////////////////////////////////////
-	/// Uppers input mmString.
+	/// Converts input mmString to upper case.
 	///
 	/// @param[in] p_sInputString mmString string,
-	/// @return uppered string.
+	/// @return converted string.
 	////////////////////////////////////////////////////////////////////////////////
-	mmString MMStringToUpper(const mmString p_sInputString);
+	mmString MMStringToUpper(mmString p_sInputString);
 	////////////////////////////////////////////////////////////////////////////////
+	/// Converts input mmString to lower case.
+	///
+	/// @param[in] p_sInputString mmString string,
+	/// @return converted string.
+	////////////////////////////////////////////////////////////////////////////////
+	mmString MMStringToLower(mmString p_sInputString);
+	///////////////////////////////////////////////////////////////////////////////
 	/// Tokenizes input string.
 	///
 	/// @param[in] p_sInputString mmString string,

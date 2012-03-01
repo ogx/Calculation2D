@@ -47,8 +47,8 @@ void mmImages::mmImagesCalculationManagement::StopRunningThreads(void)
 {
 	SendLogMessage(mmLog::debug,mmString(L"Start StopRunningThreads"));
 
-	mmInt v_iActiveThreadCount = m_vRunningThreads.size();
-	for(mmInt v_iT=0;v_iT<v_iActiveThreadCount;v_iT++)
+	std::size_t v_iActiveThreadCount = m_vRunningThreads.size();
+	for(std::size_t v_iT=0;v_iT<v_iActiveThreadCount;v_iT++)
 	{
 		m_vRunningThreads[v_iT]->Stop();
 	};
@@ -122,15 +122,15 @@ bool mmImages::mmImagesCalculationManagement::Execute(void)
 	{
 		if(m_bIsActiveCalculation)
 		{
-			mmInt v_iActiveThreadCount = m_vRunningThreads.size();
-			mmInt v_iWorkingThreadCount = 0;
+			std::size_t v_iActiveThreadCount = m_vRunningThreads.size();
+			std::size_t v_iWorkingThreadCount = 0;
 
 			// check working threads
 			if(v_iActiveThreadCount > 0)
 			{
 				mmReal v_rProgress = 0.0;
 				bool v_bIsCalculating = false;
-				for(mmInt v_iT=0;v_iT<v_iActiveThreadCount;v_iT++)
+				for(std::size_t v_iT=0;v_iT<v_iActiveThreadCount;v_iT++)
 				{
 					mmThread::mmThreadI::eStatus v_eTS = m_vRunningThreads[v_iT]->GetStatus();
 

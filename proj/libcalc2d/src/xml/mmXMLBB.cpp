@@ -229,8 +229,8 @@ void mmXML::mmXMLNodeBB::AddChildWithStructure(mmXMLNodeI* p_psChildNode)
 	v_psNode->m_sAttributes = p_psChildNode->GetAttributes();
 
 	std::vector<mmXML::mmXMLNodeI*> v_vChildren = p_psChildNode->GetChildren();
-	mmInt v_iChildrenCount = v_vChildren.size();
-	for(mmInt v_iC=0;v_iC<v_iChildrenCount;v_iC++)
+	std::size_t v_iChildrenCount = v_vChildren.size();
+	for(std::size_t v_iC=0;v_iC<v_iChildrenCount;v_iC++)
 	{
 		v_psNode->AddChildWithStructure(v_vChildren[v_iC]);
 	};
@@ -487,16 +487,16 @@ void mmXML::mmXMLDocBB::CopyXMLRootNodeStructure(mmXMLNodeI* p_psNode)
 	CreateXMLRootNode(p_psNode->GetName());
 
 	std::vector<mmXML::sXMLAttribute> v_vRootAttributes = p_psNode->GetAttributes();
-	mmInt v_iAttrCount = v_vRootAttributes.size();
-	for(mmInt v_iA=0;v_iA<v_iAttrCount;v_iA++)
+	std::size_t v_iAttrCount = v_vRootAttributes.size();
+	for(std::size_t v_iA=0;v_iA<v_iAttrCount;v_iA++)
 	{
 		m_sRootNode.AddAttribute(v_vRootAttributes[v_iA].sName,
 														 v_vRootAttributes[v_iA].sValue);
 	};
 
 	std::vector<mmXML::mmXMLNodeI*> v_vChildren = p_psNode->GetChildren();
-	mmInt v_iChildrenCount = v_vChildren.size();
-	for(mmInt v_iC=0;v_iC<v_iChildrenCount;v_iC++)
+	std::size_t v_iChildrenCount = v_vChildren.size();
+	for(std::size_t v_iC=0;v_iC<v_iChildrenCount;v_iC++)
 	{
 		m_sRootNode.AddChildWithStructure(v_vChildren[v_iC]);
 	};
@@ -507,7 +507,7 @@ void mmXML::mmXMLDocBB::CopyXMLRootNodeStructure(mmXMLNodeI* p_psNode)
 void mmXML::mmXMLDocBB::FillXMLNodeIntoXMLDocument(MSXML2::IXMLDOMNodePtr p_sBBNode,mmXMLNodeI* p_psMMNode)
 {
 	// adding attributes
-	mmInt v_i,v_iCount;
+	std::size_t v_i,v_iCount;
 
 	std::vector<mmXML::sXMLAttribute> v_sAttribs = p_psMMNode->GetAttributes();
 	v_iCount = v_sAttribs.size();
