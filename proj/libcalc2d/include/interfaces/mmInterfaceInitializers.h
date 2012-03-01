@@ -101,16 +101,6 @@ namespace mmInterfaceInitializers
 	mmThread::mmThreadI* CreateDefaultThread(mmLog::mmLogReceiverI* p_psLogReceiver = NULL);
 
 	////////////////////////////////////////////////////////////////////////////////
-	/// Initializes interface mmImages::mmImagesStructureI. In case of
-	/// bad alloc error throws mmError(mmeBadAlloc).
-	///
-	/// @param[in] p_psLogReceiver pointer to log object
-	/// @return pointer to initialized object
-	////////////////////////////////////////////////////////////////////////////////
-	mmImages::mmImageStructureI* CreateDefaultImageStructure(mmImages::mmImageI::mmCallbackI * p_psCallback, 
-																mmLog::mmLogReceiverI* p_psLogReceiver);
-
-	////////////////////////////////////////////////////////////////////////////////
 	/// Initializes interface mmImages::mmImagesCalculationMethodContainerI.
 	/// In case of bad alloc error throws mmError(mmeBadAlloc).
 	///

@@ -205,7 +205,7 @@ namespace mmImages
 		///			than layer's dimensions, in this case no changes to the layer are made
 		////////////////////////////////////////////////////////////////////////////////
 		virtual bool SetPixels(mmRect const & p_sRect, mmReal const p_prValues[]) = 0;
-
+	protected:
 		virtual ~mmLayerI(void) {};
 	};
 
@@ -485,7 +485,7 @@ namespace mmImages
 		/// @return stored metadata string
 		////////////////////////////////////////////////////////////////////////////////
 		virtual mmString GetMetadata(void) = 0;
-
+	protected:
 		virtual ~mmImageI(void) {};
 	};
 
@@ -537,7 +537,7 @@ namespace mmImages
 		/// @return true if the call succeeded, false if image does not exist
 		////////////////////////////////////////////////////////////////////////////////
 		virtual bool DeleteImage(mmString const & p_sName) = 0;
-		
+	protected:
 		virtual ~mmImageStructureI(void) {};
 	};
 
