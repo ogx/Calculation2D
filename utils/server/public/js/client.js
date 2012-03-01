@@ -366,8 +366,13 @@ $(document).ready(function() {
 		for(var i=0; i<ch.length; i++)
 			ch[i] /= 2;
 		var ctx = $('canvas')[0].getContext('2d');
-			image_data = c2d_client.flattenImage(image, ctx);
+		image_data = c2d_client.flattenImage(image, ctx);
 		ctx.putImageData(image_data, 0, 0);
+	});
+	$('#test2').click(function() {
+		var canvas = $('canvas')[0],
+			url = canvas.toDataURL();
+		console.log('Currently displayed image\'s URL-encoded content:', url);
 	});
 	$('#load_btn').click(function() {
 		$('#input_path').trigger('click');
