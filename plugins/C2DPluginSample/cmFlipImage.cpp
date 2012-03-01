@@ -6,7 +6,9 @@ static mmImages::mmImagesCalculationMethodI::sCalculationMethodParams cmFlipImag
 	L"{BA728F54-6D6B-4478-AFAC-C4367BDB494F}",
 	L"flips selected image horizontally and/or vertically to a new image",
 	false,
-	{0, 0}
+	{0, 0},
+	{0, L"John", L"Doe", L"j.doe@example.com"},
+	L"cmFlipImage"
 };
 
 static const wchar_t* g_UIParam_ImageName = L"Image:";
@@ -14,9 +16,7 @@ static const wchar_t* g_UIParam_Horizontal = L"Horizontally?";
 static const wchar_t* g_UIParam_Vertical = L"Vertically?";
 
 mmImages::cmFlipImage::cmFlipImage(mmLog::mmLogReceiverI* p_psLogReceiver):
-                                   mmCalcMethod(p_psLogReceiver, 
-                                                L"cmFlipImage")
-
+mmCalcMethod(p_psLogReceiver, L"cmFlipImage")
 {
 	m_sCMParams = cmFlipImageParams;
 
@@ -28,8 +28,6 @@ mmImages::cmFlipImage::cmFlipImage(mmLog::mmLogReceiverI* p_psLogReceiver):
 	SetParam(g_UIParam_ImageName,mmXML::g_eXMLImageName, &m_sImageName); 
 	SetParam(g_UIParam_Horizontal,mmXML::g_eXMLBool, &m_bHorizontal); 
 	SetParam(g_UIParam_Vertical,mmXML::g_eXMLBool, &m_bVertical); 
-
-	UpdateParameters();
 }
 
 bool mmImages::cmFlipImage::Calculate()
@@ -59,7 +57,7 @@ bool mmImages::cmFlipImage::Calculate()
 	if (!v_psNewImage) return false;
 
 	const mmInt v_iPixelCount = v_iWidth*v_iHeight;
-	const mmRect v_sUselessRect(0, 0, v_iWidth, v_iHeight);
+	const mmRect v_sROI = v_psImage->GetRegionOfInterest();
 
 	// create pixel array for reading
 	mmReal *v_prPixels = new mmReal[v_iPixelCount];
@@ -75,7 +73,7 @@ bool mmImages::cmFlipImage::Calculate()
 		mmLayerI *v_psChannel = v_psImage->GetChannel(v_iChannel);
 
 		// read channel
-		v_psChannel->GetPixels(v_sUselessRect, v_prPixels);
+		v_psChannel->GetPixels(v_prPixels, v_sROI);
 
 		// loop over all pixels
 		for (mmUInt j = 0; j < v_iHeight; j++) {
@@ -92,7 +90,7 @@ bool mmImages::cmFlipImage::Calculate()
 		mmLayerI *v_psNewChannel = v_psNewImage->GetChannel(v_iChannel);
 
 		// write channel
-		v_psNewChannel->SetPixels(v_sUselessRect, v_prNewPixels);
+		v_psNewChannel->SetPixels(v_sROI, v_prNewPixels);
 	}
 
 	const mmUInt v_iDataLayerCount = v_psImage->GetLayerCount();
@@ -102,7 +100,7 @@ bool mmImages::cmFlipImage::Calculate()
 
 		// read data layer
 		mmLayerI *v_psLayer = v_psImage->GetChannel(v_iDataLayer);
-		v_psLayer->GetPixels(v_sUselessRect, v_prPixels);
+		v_psLayer->GetPixels(v_prPixels, v_sROI);
 
 		// loop over all pixels
 		for (mmUInt j = 0; j < v_iHeight; j++) {
@@ -120,7 +118,7 @@ bool mmImages::cmFlipImage::Calculate()
 
 		if(!v_psNewLayer) return false;
 		// write data layer
-		v_psNewLayer->SetPixels(v_sUselessRect, v_prNewPixels);
+		v_psNewLayer->SetPixels(v_sROI, v_prNewPixels);
 
 	}
 

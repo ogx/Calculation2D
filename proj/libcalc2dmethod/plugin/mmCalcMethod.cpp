@@ -67,6 +67,8 @@ mmImages::mmImagesCalculationMethodI::sCalculationMethodParams mmImages::mmCalcM
 {
 	SendLogMessage(mmLog::debug,mmString(L"Start GetCalculationMethodInfo"));
 
+	UpdateParameters();
+
 	SendLogMessage(mmLog::debug,mmString(L"End GetCalculationMethodInfo"));
 
 	return m_sCMParams;

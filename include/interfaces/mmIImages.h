@@ -24,6 +24,7 @@
 /// automation.
 ////////////////////////////////////////////////////////////////////////////////
 #define INOUT_PARAMS_SIZE	4096
+#define CREDENTIAL_SIZE	0xff
 
 ////////////////////////////////////////////////////////////////////////////////
 /// Namespace for images storage, calculation and manipulation.
@@ -197,7 +198,7 @@ namespace mmImages
 		/// @return true if the call succeeded, false if the supplied rectangle is larger
 		///			than layer dimensions, in this case no changes to the layer are made
 		////////////////////////////////////////////////////////////////////////////////
-		virtual bool GetPixels(mmRect const & p_sRect, mmReal p_prValues[]) const = 0;
+		virtual bool GetPixels(mmReal p_prValues[], mmRect const & p_sRect) const = 0;
 		////////////////////////////////////////////////////////////////////////////////
 		/// Fills a pixel rectangle of the layer with values from the array. 
 		/// Use SetRows instead this function to increase efficiency. 
@@ -399,9 +400,9 @@ namespace mmImages
 		///			than image dimensions or pixel type is not supported, in this case no 
 		///			changes to the image are made
 		////////////////////////////////////////////////////////////////////////////////
-		virtual bool GetPixels(mmRect const & p_sRect, mmPixel8 p_psValues[]) const = 0;
-		virtual bool GetPixels(mmRect const & p_sRect, mmPixel24 p_psValues[]) const = 0;
-		virtual bool GetPixels(mmRect const & p_sRect, mmPixel32 p_psValues[]) const = 0;
+		virtual bool GetPixels(mmPixel8 p_psValues[], mmRect const & p_sRect = mmRect()) const = 0;
+		virtual bool GetPixels(mmPixel24 p_psValues[], mmRect const & p_sRect = mmRect()) const = 0;
+		virtual bool GetPixels(mmPixel32 p_psValues[], mmRect const & p_sRect = mmRect()) const = 0;
 		////////////////////////////////////////////////////////////////////////////////
 		/// Fills a pixel rectangle of the layer with values from the array. 
 		/// Use SetRows instead this function to increase efficiency and GetChannel for best efficiency. 
@@ -417,9 +418,9 @@ namespace mmImages
 		///			than image dimensions or pixel type is not supported, in this case no 
 		///			changes to the image are made
 		////////////////////////////////////////////////////////////////////////////////
-		virtual bool SetPixels(mmRect const & p_sRect, mmPixel8 const p_psValues[]) = 0;
-		virtual bool SetPixels(mmRect const & p_sRect, mmPixel24 const p_psValues[]) = 0;
-		virtual bool SetPixels(mmRect const & p_sRect, mmPixel32 const p_psValues[]) = 0;
+		virtual bool SetPixels(mmPixel8 const p_psValues[], mmRect const & p_sRect = mmRect()) = 0;
+		virtual bool SetPixels(mmPixel24 const p_psValues[], mmRect const & p_sRect = mmRect()) = 0;
+		virtual bool SetPixels(mmPixel32 const p_psValues[], mmRect const & p_sRect = mmRect()) = 0;
 		////////////////////////////////////////////////////////////////////////////////
 		///	Sets the region of interest for an image. Does not affect any other properties. 
 		///
@@ -598,6 +599,30 @@ namespace mmImages
 			} sCalculationAutomationParams;
 
 			////////////////////////////////////////////////////////////////////////////////
+			/// This structure is for author information to ease the process of calculation
+			/// method identification in GUI.
+			////////////////////////////////////////////////////////////////////////////////
+			typedef struct  
+			{
+				////////////////////////////////////////////////////////////////////////////////
+				/// Author's identifier for future usage. Should resolve to -1.
+				////////////////////////////////////////////////////////////////////////////////
+				mmInt iID;
+				////////////////////////////////////////////////////////////////////////////////
+				/// Author's first name.
+				////////////////////////////////////////////////////////////////////////////////
+				wchar_t sFirstName[CREDENTIAL_SIZE];
+				////////////////////////////////////////////////////////////////////////////////
+				/// Author's last name.
+				////////////////////////////////////////////////////////////////////////////////
+				wchar_t sLastName[CREDENTIAL_SIZE];
+				////////////////////////////////////////////////////////////////////////////////
+				/// Author's e-mail address. Not required.
+				////////////////////////////////////////////////////////////////////////////////
+				wchar_t sEmail[CREDENTIAL_SIZE];
+			} sAuthorInformation;
+
+			////////////////////////////////////////////////////////////////////////////////
 			/// This structure defines calculation method params defining its functionality and
 			/// description.
 			////////////////////////////////////////////////////////////////////////////////
@@ -606,11 +631,11 @@ namespace mmImages
 				////////////////////////////////////////////////////////////////////////////////
 				/// Short name for calculation method.
 				////////////////////////////////////////////////////////////////////////////////
-				wchar_t sShortName[128];
+				wchar_t sShortName[CREDENTIAL_SIZE];
 				////////////////////////////////////////////////////////////////////////////////
 				/// Unique name for calculation method.
 				////////////////////////////////////////////////////////////////////////////////
-				wchar_t sIDName[128];
+				wchar_t sIDName[CREDENTIAL_SIZE];
 				////////////////////////////////////////////////////////////////////////////////
 				/// Description of calculation method functionality.
 				////////////////////////////////////////////////////////////////////////////////
@@ -626,7 +651,18 @@ namespace mmImages
 				/// See mmImages::mmImagesCalculationMethodI::sCalculationAutomationParams
 				/// structure description.
 				////////////////////////////////////////////////////////////////////////////////
-				sCalculationAutomationParams sAutoParams;
+				sCalculationAutomationParams	sAutoParams;
+				////////////////////////////////////////////////////////////////////////////////
+				/// Author information definition.
+				/// See mmImages::mmImagesCalculationMethodI::sAuthorInformation
+				/// structure description.
+				////////////////////////////////////////////////////////////////////////////////
+				sAuthorInformation						sAuthorInfo;
+				////////////////////////////////////////////////////////////////////////////////
+				/// Calculation method command name to be used in scripting. 
+				/// Should be a 'safe designator' and default to method's class name.
+				////////////////////////////////////////////////////////////////////////////////
+				wchar_t sCommand[CREDENTIAL_SIZE];
 			} sCalculationMethodParams;
 		public:		// methods
 			////////////////////////////////////////////////////////////////////////////////
