@@ -27,8 +27,8 @@ namespace base64 {
 	/// but should NULL terminate the output string.
 	/// Throws if string is not padded correctly with equal signs.
 	///
-	/// @param[in] input - Base64 filled string - padding is mandatory.
-	/// @param[out] output - vector containing the decoded binary stream
+	/// @param[in] input Base64 filled string - padding is mandatory.
+	/// @return    vector containing the decoded binary stream
 	////////////////////////////////////////////////////////////////////////////////
 	byte_vect decode(const std::string& input); //throws
 
@@ -37,8 +37,8 @@ namespace base64 {
 	/// Warning! Function may alter the input vector if its size is not a 
 	/// multiple of three by appending up to two bytes.
 	///
-	/// @param[in,out] input - a Base64 filled string. Padding is mandatory.
-	/// @param[out] output - a vector containing the decoded binary stream
+	/// @param[in,out] input vector of binary block to be encoded, may get modified.
+	/// @return        a Base64 coded string (padded)
 	////////////////////////////////////////////////////////////////////////////////
 	std::string encode(byte_vect& input);
 }
