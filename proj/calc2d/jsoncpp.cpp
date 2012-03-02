@@ -2392,6 +2392,7 @@ Value::asDouble() const
    case booleanValue:
       return value_.bool_ ? 1.0 : 0.0;
    case stringValue:
+	   return _wtof(value_.string_);
    case arrayValue:
    case objectValue:
       JSON_FAIL_MESSAGE( "Type is not convertible to double" );
@@ -3465,7 +3466,7 @@ std::wstring valueToString( double value )
 {
    wchar_t buffer[32];
 #if defined(_MSC_VER) && defined(__STDC_SECURE_LIB__) // Use secure version with visual studio 2005 to avoid warning. 
-   swprintf_s(buffer, sizeof(buffer), L"%#.16g", value); 
+   swprintf_s(buffer, sizeof(buffer)/sizeof(*buffer), L"%#.16g", value); 
 #else	
    swprintf(buffer, L"%#.16g", value); 
 #endif

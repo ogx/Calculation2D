@@ -62,14 +62,24 @@ var c2d_client = {
 	},
 	
 	image_structure: [],
-	selected_image: -1,
 	newImage: function(image_data, image_name) {
-		this.selected_image = this.image_structure.length;
-		this.image_structure.push({
-			name: image_name,
-			image: this.extractImage(image_data),
-			data_layers: []
-		});
+		var image;
+		if(image_data instanceof ImageData)
+			image = {
+				name: image_name,
+				image: this.extractImage(image_data),
+				data_layers: []
+			};
+		else
+			image = {
+				name: image_data.name,
+				image: image_data.image,
+				data_layers: image_data.data_layers || []
+			};
+		this.image_structure.push(image);
+		
+		surface.populateLists();
+		surface.selectImage(this.image_structure.length-1);
 	},
 	extractImage: function(image_data) { // ImageData -> {w,h,r,g,b}
 		var input = image_data.data,
@@ -84,17 +94,32 @@ var c2d_client = {
 		return {
 			width: image_data.width,
 			height: image_data.height,
-			red: r,
-			green: g,
-			blue: b
+			red: {
+				name: 'red', 
+				width: image_data.width, 
+				height: image_data.height, 
+				values: r
+			},
+			green: {
+				name: 'green', 
+				width: image_data.width, 
+				height: image_data.height, 
+				values: g
+			},
+			blue: {
+				name: 'blue', 
+				width: image_data.width, 
+				height: image_data.height, 
+				values: b
+			},
 		};
 	},
 	flattenImage: function(image, ctx) { // {w,h,r,g,b} -> ImageData
 		var image_data = ctx.createImageData(image.width, image.height),
 			output = image_data.data,
-			r = image.red,
-			g = image.green,
-			b = image.blue;
+			r = image.values || image.red.values,
+			g = image.values || image.green.values,
+			b = image.values || image.blue.values;
 		for(var i=0, j=0, n=output.length/4; i<n; i++) {
 			output[j++] = r[i]*255;
 			output[j++] = g[i]*255;
@@ -110,7 +135,7 @@ var c2d_client = {
 	methods_lookup: {},
 };
 
-var param_translator = {
+var surface = {
 	// createForm
 	// Create an HTML form for plugin parameters given in JSON. 
 	createForm: function(default_params, parent) {
@@ -134,20 +159,13 @@ var param_translator = {
 		});
 		
 		// display list of images
-		// TODO: enable triggering from outside (onimageloaded)
-		var image_options = c2d_client.image_structure.map(function(im, ind) {
-			return $(document.createElement('option')).text(im.name).attr('image-index', ind)[0];
-		});
-		if(!image_options.length)
-			image_options.push($(document.createElement('option')).text('(no images)').attr('image-index', -1)[0]);
-		var image_lists = $('.image-list');
-		image_lists.empty();
-		image_lists.append(image_options);
+		this.populateLists($('#input_parameters_form select.image-list'));
 		
 		// TODO: layer-list for selected image
 		
 		return table;
 	},
+	
 	// parseForm
 	// Given the default parameters in JSON, parses the existing HTML form
 	// and extracts parameter values. 
@@ -158,9 +176,42 @@ var param_translator = {
 				var factory = factories[default_param.type] || factories['default'],
 					parsed_param = $.extend(true, {}, default_param);
 				parsed_param.value = factory.parse($('#param_'+i)[0]);
-				//console.log('Parsed param', default_param, 'and it\'s', parsed_param);
 				return parsed_param;
 			});
+	},
+	
+	// populateLists
+	// ...
+	populateLists: function(list) {
+		// image lists
+		var image_options = c2d_client.image_structure.map(function(im, ind) {
+			return $(document.createElement('option')).attr({
+				'image-index': ind,
+				value: ind
+			}).text(im.name)[0];
+		});
+		if(!image_options.length)
+			image_options.push($(document.createElement('option')).text('(no images)').attr('image-index', -1)[0]);
+		var image_lists = $(list || 'select.image-list');
+		image_lists.empty();
+		image_lists.append(image_options);
+		image_lists.change();
+		
+		// TODO: layer lists (for current image?)
+	},
+	
+	selectImage: function(index) {
+		$('#main_image_list').val(index.toString()).change();
+	},
+	
+	// drawImageOnCanvas
+	// ...
+	drawImageOnCanvas: function(image) {
+		var ctx = $('#input_preview_canvas')[0].getContext('2d');
+		image_data = c2d_client.flattenImage(image, ctx);
+		ctx.canvas.width = image.width;
+		ctx.canvas.height = image.height;
+		ctx.putImageData(image_data, 0, 0);
 	},
 	
 	factories: new function() {
@@ -220,7 +271,7 @@ var param_translator = {
 	createParamInput: function(param, id) {
 		var factory = this.factories[param.type] || this.factories['default'];
 		return $(factory.create(param, id)).attr('id', id)[0];
-	}
+	},
 };
 
 $(document).ready(function() {
@@ -254,7 +305,7 @@ $(document).ready(function() {
 				ctx.drawImage(img, 0, 0);
 				
 				c2d_client.newImage(
-					ctx.getImageData(0, 0, canvas.clientWidth, canvas.clientHeight),
+					ctx.getImageData(0, 0, img.width, img.height),
 					file.name
 				);
 			}
@@ -302,7 +353,7 @@ $(document).ready(function() {
 					JSON.stringify(method.params.in, null, " ")
 					);
 				$('#input_parameters_form').empty().append(
-					param_translator.createForm(method.params.in)
+					surface.createForm(method.params.in)
 					);
 				$('#method_details #output_parameters').html(
 					'<div id="input_parameters_code"/><div id="input_parameters_form"/>'
@@ -311,7 +362,7 @@ $(document).ready(function() {
 					JSON.stringify(method.params.out, null, " ")
 					);
 				$('#output_parameters_form').empty().append(
-					param_translator.createForm(method.params.out)
+					surface.createForm(method.params.out)
 					);
 				$('#method_details').show();
 			});
@@ -322,7 +373,7 @@ $(document).ready(function() {
 		var option = $('#available_methods option:selected'), 
 			method_id = option.attr('method_id'),
 			method_params = c2d_client.methods_lookup[method_id].params.in,
-			image_structure = $('#input_parameters_form select.image-list').map(function() {
+			image_structure = $('#input_parameters_form select.image-list').map(function() { // get all images selected by user as input parameters
 				return c2d_client.image_structure[$(this).children(':selected').attr('image-index')];
 			}).get(),
 			runMethod = function(method_id, method_params, image_structure) {
@@ -337,11 +388,18 @@ $(document).ready(function() {
 						console.log('runCalculationMethod returned', res);
 						if(res.success)
 						{
+							// calculation launched.
 							var interval = setInterval(function() {
 								c2d_server.getStatus(function(res){
-									console.log('getStatus returned', $.extend(true, {}, res));
 									if(res.status === 'finished')
 										clearInterval(interval);
+										
+									// results arrived.
+									console.log('getStatus returned', $.extend(true, {}, res));
+									
+									res.result.image_structure.forEach(function(image) {
+										c2d_client.newImage(image);
+									});
 								});
 							}, 100);
 						}
@@ -350,7 +408,7 @@ $(document).ready(function() {
 			};
 			
 		// parse params
-		method_params = param_translator.parseForm(method_params) || [];
+		method_params = surface.parseForm(method_params) || [];
 		
 		// launch calculation
 		runMethod(method_id, method_params, image_structure);
@@ -365,7 +423,7 @@ $(document).ready(function() {
 			ch = image.blue;
 		for(var i=0; i<ch.length; i++)
 			ch[i] /= 2;
-		var ctx = $('canvas')[0].getContext('2d');
+		var ctx = $('#input_preview_canvas')[0].getContext('2d');
 		image_data = c2d_client.flattenImage(image, ctx);
 		ctx.putImageData(image_data, 0, 0);
 	});
@@ -377,4 +435,15 @@ $(document).ready(function() {
 	$('#load_btn').click(function() {
 		$('#input_path').trigger('click');
 	});
+	
+	$('#main_image_list').change(function() {
+		var option = $(this).children('option:selected'),
+			image_index = parseInt(option.attr('image-index')),
+			image = c2d_client.image_structure[image_index];
+		//console.log(option, '-> index', image_index, '-> image', image);
+		if(image)
+			surface.drawImageOnCanvas(image.image);
+	});
+	
+	surface.populateLists();
 });

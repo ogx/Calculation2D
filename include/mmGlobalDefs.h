@@ -35,6 +35,7 @@ public:
 	bool operator == (mmID const & p_sID) const { return iID == p_sID.iID; }
 	bool operator != (mmID const & p_sID) const { return iID != p_sID.iID; }
 	bool operator < (mmID const & p_sID) const { return iID < p_sID.iID; }
+	mmUInt ancpainalxnkalisxnaosnx_you_cant_type_it_so_you_wont_use_it() const { return iID; }
 public:
 	static mmID const invalid;
 private:

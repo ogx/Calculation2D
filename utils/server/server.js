@@ -43,13 +43,26 @@ var c2d = {
 		//if(this.child_busy) another task...
 		
 		this.child_busy = true;
-		var deferred = q.defer();
-		this.child.stdout.once('data', function(str) {
-			// TODO: it's likely the stream buffer can overflow and we should 
-			// accumulate the response till, say, crlf
-			deferred.resolve(JSON.parse(str));
-			this.child_busy = false;
-		});
+		var deferred = q.defer(),
+			accu_str = '',
+			stdOut = this.child.stdout,
+			onStdoutData = function(str) {
+				//console.log('buffer length:', str.length);
+				str = str.toString('ascii');
+				var n = str.lastIndexOf('\n');
+				if(n == str.length-1) {
+					accu_str += str;
+					//console.log('accu_str is now ', accu_str.length, 'and flushed.');
+					deferred.resolve(JSON.parse(accu_str));
+					this.child_busy = false;
+					accu_str = '';
+					stdOut.removeListener('data', onStdoutData);
+				} else {
+					//console.log('accu_str is now ', accu_str.length);
+					accu_str += str;
+				}
+			};
+		stdOut.on('data', onStdoutData);
 		if(params && params.method) {
 			params.method = params.method.replace(/ /g, '_');
 			//console.log('sent exactly:', JSON.stringify(params.method));

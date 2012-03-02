@@ -97,11 +97,34 @@ Json::Value mmCalculationServer::GetStatus()
 		else
 		{
 			response[L"status"] = L"finished";
-			Json::Value result(Json::objectValue);
-			result[L"image_structure"] = Json::Value(Json::arrayValue); // TODO: form output image_structure
-			result[L"image_structure"].resize(image_structure->GetImageCount());
-			result[L"params"];// TODO: form output parameters
-			response[L"result"] = result;
+			Json::Value& result = response[L"result"];
+
+			// send image structure
+			Json::Value& isr = result[L"image_structure"] = Json::Value(Json::arrayValue);
+			mmImages::mmImageI* image = NULL;
+			while(image = image_structure->FindImage(image))
+			{
+				Json::Value image_json(Json::objectValue);
+				image_json[L"name"] = image->GetName();
+				Json::Value& image_json_image = image_json[L"image"] = Json::Value(Json::objectValue);
+				Json::Value& image_json_layers = image_json[L"data_layers"] = Json::Value(Json::arrayValue);
+
+				image_json_image[L"width"] = image->GetWidth();
+				image_json_image[L"height"] = image->GetHeight();
+				image_json_image[L"red"] = LayerToJSON(image->GetChannel(0));
+				if(image->GetPixelType() >= mmImageI::mmP24)
+				{
+					image_json_image[L"green"] = LayerToJSON(image->GetChannel(1));
+					image_json_image[L"blue"] = LayerToJSON(image->GetChannel(2));
+				}
+				else // TODO: doing small steps - remove this overhead!
+					image_json_image[L"green"] = image_json_image[L"blue"] = image_json_image[L"red"];
+
+				isr.append(image_json);
+			}
+
+			// TODO: send output parameters some day
+			//result[L"params"];
 
 			delete calculation_method; calculation_method = NULL;
 			delete utils_factory; utils_factory = NULL;
@@ -134,12 +157,15 @@ Json::Value mmCalculationServer::RunCalculationMethod( Json::Value& params )
 	for(int i=0, n=image_structure_json.size(); i<n; ++i)
 	{
 		Json::Value& image_param = image_structure_json[i];
-		mmUInt width = image_param[L"image"][L"width"].asUInt();
-		mmUInt height = image_param[L"image"][L"height"].asUInt();
+		Json::Value& image_param_image = image_param[L"image"];
+		mmUInt width = image_param_image[L"width"].asUInt();
+		mmUInt height = image_param_image[L"height"].asUInt();
 		std::wstring name = image_param[L"name"].asString();
 
 		mmImages::mmImageI* image = image_structure->CreateImage(name, width, height, mmImages::mmImageI::mmP24);
-		//image->SetPixels(); // TODO: copy the image from JSON array
+		LayerFromJSON(image_param_image[L"red"], image->GetChannel(0));
+		LayerFromJSON(image_param_image[L"green"], image->GetChannel(1));
+		LayerFromJSON(image_param_image[L"blue"], image->GetChannel(2));
 	}
 
 	// run the plugin
@@ -221,24 +247,6 @@ mmString mmCalculationServer::Params_JSON2XML(Json::Value const & params_json)
 		std::wstring value = param[L"value"].asString();
 		mmXML::mmXMLDataType mmtype = param_type_lookup[type];
 
-// 		switch(mmtype)
-// 		{
-// 		case mmXML::g_eXMLReal:
-// 			break;
-// 		case mmXML::g_eXMLInt:
-// 			break;
-// 		case mmXML::g_eXMLString:
-// 			break;
-// 		case mmXML::g_eXMLBool:
-// 			break;
-// 		case mmXML::g_eXMLImageName:
-// 			break;
-// 		case mmXML::g_eXMLDataLayerName:
-// 			break;
-// 		default:
-// 			;
-// 		};
-
 		mmXML::mmXMLNodeI* _v_sParam = _v_sRootNode->AddChild(g_pAutoCalcXML_Params_Param_Node);
 		mmXML::mmXMLNodeI* _v_sParamName = _v_sParam->AddChild(g_pAutoCalcXML_Params_ParamName_Node);
 		mmXML::mmXMLNodeI* _v_sParamType = _v_sParam->AddChild(g_pAutoCalcXML_Params_ParamType_Node);
@@ -259,4 +267,43 @@ Json::Value mmCalculationServer::FailureResponse( std::wstring const & error )
 	Json::Value result = failure_response;
 	result[L"error"] = error;
 	return result;
+}
+
+Json::Value mmCalculationServer::LayerToJSON( mmImages::mmLayerI const * layer )
+{
+	Json::Value json(Json::objectValue);
+
+	json[L"name"] = layer->GetName();
+	json[L"id"] = layer->GetID().ancpainalxnkalisxnaosnx_you_cant_type_it_so_you_wont_use_it();
+	json[L"default"] = layer->GetDefaultValue();
+
+	mmUInt width = (json[L"width"] = layer->GetWidth()).asUInt();
+	mmUInt height = (json[L"height"] = layer->GetHeight()).asUInt();
+
+	std::vector<mmReal> buf(width*height);
+	mmRect rect(0, 0, width, height);
+	layer->GetPixels(&buf[0], rect);
+
+	Json::Value& values = json[L"values"] = Json::Value(Json::arrayValue);
+	values.resize(width*height);
+	for(mmUInt i=0, n=width*height; i<n; ++i)
+		values[i] = buf[i]; // TODO: fix performance
+
+	return json;
+}
+
+void mmCalculationServer::LayerFromJSON( Json::Value const & json, mmImages::mmLayerI * layer )
+{
+	layer->SetName(json[L"name"].asString());
+
+	mmUInt width = layer->GetWidth();
+	mmUInt height = layer->GetHeight();
+	Json::Value const & values = json[L"values"];
+
+	std::vector<mmReal> buf(width*height);
+	for(mmUInt i=0, n=width*height; i<n; ++i)
+		buf[i] = values[i].asDouble(); // TODO: fix performance
+
+	mmRect rect(0, 0, width, height);
+	layer->SetPixels(rect, &buf[0]);
 }

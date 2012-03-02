@@ -201,7 +201,7 @@ namespace mmImages
 		/// Use SetRows instead this function to increase efficiency. 
 		///
 		/// @param[in] p_sRect region rectangle
-		/// @param[out] p_prValues array with values
+		/// @param[in] p_prValues array with values
 		/// @return true if the call succeeded, false if the supplied row range is larger
 		///			than layer's dimensions, in this case no changes to the layer are made
 		////////////////////////////////////////////////////////////////////////////////
