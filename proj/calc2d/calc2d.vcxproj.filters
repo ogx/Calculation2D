@@ -9,9 +9,11 @@
       <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
       <Extensions>h;hpp;hxx;hm;inl;inc;xsd</Extensions>
     </Filter>
-    <Filter Include="Resource Files">
-      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
-      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    <Filter Include="json">
+      <UniqueIdentifier>{d7039edd-86bc-4ccc-b8d9-c53a06a61dfc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="base64">
+      <UniqueIdentifier>{2ae58455-e54a-455d-9287-3631232317cb}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -24,31 +26,28 @@
     <ClInclude Include="mmCalculationServer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="mmCodecBase64.h">
+      <Filter>base64</Filter>
+    </ClInclude>
     <ClInclude Include="json\json-forwards.h">
-      <Filter>Header Files</Filter>
+      <Filter>json</Filter>
     </ClInclude>
     <ClInclude Include="json\json.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="mmCodecBase64.h">
-      <Filter>Header Files</Filter>
+      <Filter>json</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="stdafx.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="calc2d.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="mmCalculationServer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="jsoncpp.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="mmCodecBase64.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>base64</Filter>
+    </ClCompile>
+    <ClCompile Include="jsoncpp.cpp">
+      <Filter>json</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

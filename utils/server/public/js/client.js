@@ -62,24 +62,39 @@ var c2d_client = {
 	},
 	
 	image_structure: [],
-	newImage: function(image_data, image_name) {
+	newImage: function(image_data_or_image, image_name_if_image_data) {
 		var image;
-		if(image_data instanceof ImageData)
+		if(image_data_or_image instanceof ImageData)
 			image = {
-				name: image_name,
-				image: this.extractImage(image_data),
+				name: image_name_if_image_data,
+				image: this.extractImage(image_data_or_image),
 				data_layers: []
 			};
-		else
+		else 
 			image = {
-				name: image_data.name,
-				image: image_data.image,
-				data_layers: image_data.data_layers || []
+				name: image_data_or_image.name,
+				image: this.decodeBase64(image_data_or_image.image),
+				data_layers: image_data_or_image.data_layers || []
 			};
 		this.image_structure.push(image);
 		
 		surface.populateLists();
 		surface.selectImage(this.image_structure.length-1);
+	},
+	decodeBase64: function(image_or_layer) {
+		if(image_or_layer.values) { // layer
+			var w = image_or_layer.width,
+				h = image_or_layer.height,
+				decoded_str = atob(image_or_layer.values);
+			image_or_layer.values = [];
+			for(var i=0; i<w*h; i++)
+				image_or_layer.values[i] = decoded_str.charCodeAt(i)/255;
+		} else { // image
+			image_or_layer.red = this.decodeBase64(image_or_layer.red);
+			image_or_layer.green = this.decodeBase64(image_or_layer.green);
+			image_or_layer.blue = this.decodeBase64(image_or_layer.blue);
+		}
+		return image_or_layer;
 	},
 	extractImage: function(image_data) { // ImageData -> {w,h,r,g,b}
 		var input = image_data.data,
@@ -368,7 +383,7 @@ $(document).ready(function() {
 			});
 			combo.trigger('change');
 		});
-	});
+	}).click();
 	$('#run_method').click(function() {
 		var option = $('#available_methods option:selected'), 
 			method_id = option.attr('method_id'),
@@ -391,6 +406,8 @@ $(document).ready(function() {
 							// calculation launched.
 							var interval = setInterval(function() {
 								c2d_server.getStatus(function(res){
+									if(!res.success)
+										return;
 									if(res.status === 'finished')
 										clearInterval(interval);
 										

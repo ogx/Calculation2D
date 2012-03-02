@@ -5,8 +5,14 @@
 #include <iostream>
 #include <sstream>
 #include <stdlib.h>
+#include "mmCodecBase64.h"
 
 using namespace mmImages;
+
+
+#define LAYER_TRANSPORT__TEXT_ARRAY 1
+#define LAYER_TRANSPORT__BASE64 2
+#define LAYER_TRANSPORT LAYER_TRANSPORT__BASE64
 
 
 mmCalculationServer::mmCalculationServer(void) :
@@ -284,10 +290,23 @@ Json::Value mmCalculationServer::LayerToJSON( mmImages::mmLayerI const * layer )
 	mmRect rect(0, 0, width, height);
 	layer->GetPixels(&buf[0], rect);
 
+#if LAYER_TRANSPORT == LAYER_TRANSPORT__TEXT_ARRAY
+
 	Json::Value& values = json[L"values"] = Json::Value(Json::arrayValue);
 	values.resize(width*height);
 	for(mmUInt i=0, n=width*height; i<n; ++i)
 		values[i] = buf[i]; // TODO: fix performance
+
+#elif LAYER_TRANSPORT == LAYER_TRANSPORT__BASE64
+
+	base64::byte_vect byte_buf(width*height);
+	for(size_t i=0, n=width*height; i<n; ++i)
+		byte_buf[i] = (unsigned char)(buf[i]*255.0 + 0.5);
+	std::string base64_buf = base64::encode(byte_buf);
+
+	json[L"values"] = std::wstring(base64_buf.begin(), base64_buf.end());
+
+#endif
 
 	return json;
 }

@@ -164,7 +164,6 @@
     <ClCompile Include="jsoncpp.cpp" />
     <ClCompile Include="mmCalculationServer.cpp" />
     <ClCompile Include="mmCodecBase64.cpp" />
-    <ClCompile Include="stdafx.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
