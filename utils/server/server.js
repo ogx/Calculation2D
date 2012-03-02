@@ -20,7 +20,7 @@ function debug_info() {
 }
 
 // comment out if you don't want debug
-debug_info();
+//debug_info();
 
 var config = {
 	serverAddress: 'localhost',
@@ -29,6 +29,8 @@ var config = {
 		process.argv[2] : '../../bin/x64/Debug/calc2d.exe',
 };
 
+console.log("\nFor Calculation2D GUI\nenter this in your browser: " +
+			"http://" + config.serverAddress + ":" + config.serverPort + "\n");
 
 // Calculation2D inter-process API
 var c2d = {

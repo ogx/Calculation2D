@@ -30,6 +30,9 @@
     <ClInclude Include="json\json.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="mmCodecBase64.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -42,6 +45,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="jsoncpp.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="mmCodecBase64.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
