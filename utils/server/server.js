@@ -51,7 +51,13 @@ var c2d = {
 				if(n == str.length-1) {
 					accu_str += str;
 					//console.log('accu_str is now ', accu_str.length, 'and flushed.');
-					deferred.resolve(JSON.parse(accu_str));
+					try {
+						deferred.resolve(JSON.parse(accu_str));
+					} catch(e) {
+						var accu_str_ws = accu_str.replace(/\s/g, '.');
+						console.error('Caught error \'', e, '\'.\n'+
+							'The object being parsed is:\n', accu_str_ws);
+					}
 					this.child_busy = false;
 					accu_str = '';
 					stdOut.removeListener('data', onStdoutData);

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="windows-1250"?>
+<VisualStudioPropertySheet
+	ProjectType="Visual C++"
+	Version="8.00"
+	Name="C2DPlugin"
+	OutputDirectory="$(C2DSdkDir)bin\$(IntDir)"
+	>
+	<Tool
+		Name="VCCLCompilerTool"
+		AdditionalIncludeDirectories="$(C2DSdkDir)include"
+	/>
+	<Tool
+		Name="VCLinkerTool"
+		AdditionalDependencies="libcalc2dmethod.lib"
+		AdditionalLibraryDirectories="$(C2DSdkDir)lib\$(IntDir)"
+	/>
+	<UserMacro
+		Name="C2DSdkDir"
+		Value="$(SolutionDir)"
+	/>
+</VisualStudioPropertySheet>

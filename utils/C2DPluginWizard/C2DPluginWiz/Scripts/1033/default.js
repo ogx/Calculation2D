@@ -110,9 +110,15 @@ function OnFinish(selProj, selObj)
 function CreatePropertyPage(strPluginsFolder) {
 
   var strProjTemplatePath = wizard.FindSymbol('TEMPLATES_PATH');
+  
+  var strProjectExtension = wizard.FindSymbol('PROJECT_EXT');
+  var strName = "\\C2DPlugin.props";
+  
+  if (strProjectExtension == "vcproj")
+	strName = "\\C2DPlugin.vsprops"
 
-  var strPropPageTemplate = strProjTemplatePath + "\\C2DPlugin.props";
-  var strPropPagePath = strPluginsFolder + "\\C2DPlugin.props";
+  var strPropPageTemplate = strProjTemplatePath + strName;
+  var strPropPagePath = strPluginsFolder + strName;
 
   DebugTest(strPropPageTemplate + " = strPropPageTemplate");
   DebugTest(strPropPagePath + " = strPropPagePath");
@@ -123,31 +129,34 @@ function CreatePropertyPage(strPluginsFolder) {
     fso.CopyFile(strPropPageTemplate, strPropPagePath, false);
 }
 
-function CreateProjUserFile(strProjectPath) {
+// done by template inf
+// function CreateProjUserFile(strProjectPath) {
 
-  var strProjTemplatePath = wizard.FindSymbol('TEMPLATES_PATH');
+  // var strProjTemplatePath = wizard.FindSymbol('TEMPLATES_PATH');
 
-  var strProjUserTemplate = strProjTemplatePath + "\\root.vcxproj.user";
-  var strProjUserPath = strProjectPath + ".user";
+  // var strProjUserTemplate = strProjTemplatePath + "\\root.vcxproj.user";
+  // var strProjUserPath = strProjectPath + ".user";
 
-  DebugTest(strProjUserTemplate + " = strProjUserTemplate");
-  DebugTest(strProjUserPath + " = strProjUserPath");
+  // DebugTest(strProjUserTemplate + " = strProjUserTemplate");
+  // DebugTest(strProjUserPath + " = strProjUserPath");
 
-  var fso = new ActiveXObject("Scripting.FileSystemObject");
+  // var fso = new ActiveXObject("Scripting.FileSystemObject");
 
-  if ((!fso.FileExists(strProjUserPath)) && fso.FileExists(strProjUserTemplate)) {
-    DebugTest("About to copy .vcxproj.user file");
-    fso.CopyFile(strProjUserTemplate, strProjUserPath, false);
-  }
-}
+  // if ((!fso.FileExists(strProjUserPath)) && fso.FileExists(strProjUserTemplate)) {
+    // DebugTest("About to copy .vcxproj.user file");
+    // fso.CopyFile(strProjUserTemplate, strProjUserPath, false);
+  // }
+// }
 
 function CreateCustomProject(strProjectName, strProjectPath, strSolutionName, strSolutionPath)
 {
 	try
 	{
 	  var strProjTemplatePath = wizard.FindSymbol('TEMPLATES_PATH');
+	  var strProjectExtension = wizard.FindSymbol('PROJECT_EXT');
+	  
 		var strProjTemplate = '';
-		strProjTemplate = strProjTemplatePath + '\\root.vcxproj';
+		strProjTemplate = strProjTemplatePath + '\\root.' + strProjectExtension;
 
 		var Solution = dte.Solution;
 //		var strSolutionName = "";
@@ -164,7 +173,7 @@ function CreateCustomProject(strProjectName, strProjectPath, strSolutionName, st
 		}
 
 		var strProjectNameWithExt = '';
-		strProjectNameWithExt = strProjectName + '.vcxproj';
+		strProjectNameWithExt = strProjectName + '.' + strProjectExtension;
 
 		var oTarget = wizard.FindSymbol("TARGET");
 		var prj;

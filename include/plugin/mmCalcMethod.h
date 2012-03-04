@@ -122,62 +122,59 @@ namespace mmImages {
 			/// @param[in] p_psKernel pointer to function object which implements operation
 			///												executed for every data block in every image
 			////////////////////////////////////////////////////////////////////////////////
-			virtual void ForEachImage(mmCalcKernelI* p_psKernel);
+			void ForEachImage(mmCalcKernelI* p_psKernel);
 
-			virtual void SetParam(mmString p_sName, mmXML::mmXMLDataType p_eType, void* p_psValue, bool p_bIsOutput = false);
-			
-			virtual const void* GetParam(mmString p_sName);
-			
-			virtual void GetParam(mmString p_sName, void* p_pValue);
+			////////////////////////////////////////////////////////////////////////////////
+			/// Method registers a derived class member as a parameter to be retrieved from the 
+			/// user prior to execution.
+			///
+			/// @param[in] p_sName unique name for the parameter
+			/// @param[in] p_eType type name defined by mmXMLDataType (int, real, bool, etc.)
+			/// @param[in] p_psValue pointer to the appropriate member field
+			/// @param[in] p_bIsOutput optional, default is a user input parameter
+			////////////////////////////////////////////////////////////////////////////////
+			void SetParam(mmString p_sName, mmXML::mmXMLDataType p_eType, void* p_psValue, bool p_bIsOutput = false);			
 
-			virtual void UpdateParameters();
+			std::vector<mmID> GetImageIDs();
 
-			virtual std::vector<mmID> GetImageIDs();
+			std::vector<mmString> GetImageNames();
 
-			virtual std::vector<mmString> GetImageNames();
+			std::vector<mmString> GetDLNames(mmImageI const * const p_psImage);
 
-			virtual std::vector<mmString> GetDLNames(mmImageI const * const p_psImage);
+		private:
+
+			void UpdateParameters();
 
 		private:
 			////////////////////////////////////////////////////////////////////////////////
 			/// method inherited from mmImagesCalculationMethodI interface (see mmIImages.h for documentation)
 			////////////////////////////////////////////////////////////////////////////////
-			mmImages::mmImagesCalculationMethodI::sCalculationMethodParams GetCalculationMethodInfo(void);
+			mmImages::mmImagesCalculationMethodI::sCalculationMethodParams mmImagesCalculationMethodI::GetCalculationMethodInfo(void);
 
 			////////////////////////////////////////////////////////////////////////////////
 			/// method inherited from mmImagesCalculationMethodI interface (see mmIImages.h for documentation)
 			////////////////////////////////////////////////////////////////////////////////
-			void SetCalculationMethodParameters(mmImages::mmImageStructureI* p_psImageStructure, mmImages::mmImagesCalculationMethodI::sCalculationAutomationParams* p_psAutomationParams = NULL);
+			void mmImagesCalculationMethodI::SetCalculationMethodParameters(mmImages::mmImageStructureI* p_psImageStructure, mmImages::mmImagesCalculationMethodI::sCalculationAutomationParams* p_psAutomationParams = NULL);
 
 			////////////////////////////////////////////////////////////////////////////////
 			/// method inherited from mmImagesCalculationMethodI interface (see mmIImages.h for documentation)
 			////////////////////////////////////////////////////////////////////////////////
-			void UserAction(mmString p_sXMLParams);
+			bool mmThreadExecutionI::Execute(void);
 
 			////////////////////////////////////////////////////////////////////////////////
 			/// method inherited from mmImagesCalculationMethodI interface (see mmIImages.h for documentation)
 			////////////////////////////////////////////////////////////////////////////////
-			void UserAction(wchar_t* p_pcXMLParamsBuffer, mmInt p_iXMLParamsBufferSize);
+			void mmThreadExecutionI::StopExecution(void);
 
 			////////////////////////////////////////////////////////////////////////////////
 			/// method inherited from mmImagesCalculationMethodI interface (see mmIImages.h for documentation)
 			////////////////////////////////////////////////////////////////////////////////
-			bool Execute(void);
+			bool mmThreadExecutionI::IsExecuting(void);
 
 			////////////////////////////////////////////////////////////////////////////////
 			/// method inherited from mmImagesCalculationMethodI interface (see mmIImages.h for documentation)
 			////////////////////////////////////////////////////////////////////////////////
-			void StopExecution(void);
-
-			////////////////////////////////////////////////////////////////////////////////
-			/// method inherited from mmImagesCalculationMethodI interface (see mmIImages.h for documentation)
-			////////////////////////////////////////////////////////////////////////////////
-			bool IsExecuting(void);
-
-			////////////////////////////////////////////////////////////////////////////////
-			/// method inherited from mmImagesCalculationMethodI interface (see mmIImages.h for documentation)
-			////////////////////////////////////////////////////////////////////////////////
-			mmReal GetProgress(void);
+			mmReal mmThreadExecutionI::GetProgress(void);
 
 		private:		// fields
 			mmReal m_rProgress;
