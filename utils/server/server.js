@@ -7,26 +7,21 @@ var http = require('http'),
 	app = bogart.app(),
 	q = bogart.q;
 
-function debug_info() {
-  
-  console.log("\nMalleor, easy... it's just debugging messages\n");
-  // print process.argv
+function print_debug_info() {
+  console.log('process path: ' + process.execPath);
+  console.log('cwd: ' + process.cwd());
   process.argv.forEach(function (val, index, array) {
     console.log('argument ' + index + ': ' + val);
   });
-
-  console.log('process path: ' + process.execPath);
-  console.log('cwd: ' + process.cwd());
 }
 
 // comment out if you don't want debug
-//debug_info();
+//print_debug_info();
 
 var config = {
 	serverAddress: 'localhost',
 	serverPort: 8081,
-	exePath: (process.argv.length > 2) ? 
-		process.argv[2] : '../../bin/x64/Debug/calc2d.exe',
+	exePath: process.argv[2] || '../../bin/x64/Debug/calc2d.exe',
 };
 
 console.log("\nFor Calculation2D GUI\nenter this in your browser: " +
@@ -88,6 +83,9 @@ var c2d = {
 	getStatus: function() {
 		return this.sendCommand('getstatus');
 	},
+	finalize: function() {
+		return this.sendCommand('finalize');
+	},
 };
 c2d.spawnProcess();
 
@@ -97,10 +95,12 @@ router.get('/', function() {
 	return viewEngine.respond('index.htm');
 });
 
-var promiseJson = function(obj_promise) {
+var promiseJson = function(obj_promise, opt_callback) {
 		var json_promise = q.defer();
 		q.when(obj_promise).then(function(obj_value) { 
 			json_promise.resolve(bogart.json(obj_value));
+			if(opt_callback)
+				opt_callback();
 		});
 		return json_promise;
 	};
@@ -112,6 +112,14 @@ router.get('/getstatus', function(req) {
 });
 router.post('/run', function(req) {
 	return promiseJson(c2d.runCalculationMethod(req.params));
+});
+router.post('/finalize', function(req) {
+	console.log('Being finalized by the client-side...');
+	console.log('  Finalizing the child...');
+	return promiseJson(c2d.finalize(), function() {
+		console.log('  ...child finalized. Exiting myself.');
+		process.exit(0);
+	});
 });
 	
 var errorHandler = function(req) {

@@ -55,7 +55,10 @@ int mmCalculationServer::Serve()
 		is >> input;
 		reader.parse(input, obj_in);
 		if(obj_in[L"cmd"].asString() == L"finalize")
+		{
+			os << fwriter.write(success_response);
 			break;
+		}
 		else if(obj_in[L"cmd"].asString() == L"getmethods")
 			obj_out = this->GetMethods();
 		else if(obj_in[L"cmd"].asString() == L"run")

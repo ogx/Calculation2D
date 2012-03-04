@@ -401,7 +401,7 @@ mmString mmXML::ConvertToString( mmXML::mmXMLDataType p_eType, void * _p_Data ) 
 			case g_eXMLDataLayerName:
 				return *static_cast<mmString*>( _p_Data );
 			case g_eXMLBool:
-				return mmStringUtilities::BoolToString( *static_cast<bool*>( _p_Data ) );
+				return *static_cast<bool*>( _p_Data ) ? mmImages::g_pAutoCalcXML_Params_ParamType_BoolValue_YES : mmImages::g_pAutoCalcXML_Params_ParamType_BoolValue_NO;
 			default:
 				return L"";
 		}

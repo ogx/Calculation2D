@@ -48,7 +48,22 @@ var c2d_server = {
 				callback(response);
 			}
 		});
-	}
+	},
+	finalize: function() {
+		$.ajax({
+			url: '/finalize',
+			async: true,
+			type: 'post',
+			data: { reason: 'The user wishes so.' },
+			accepts: 'json',
+			success: function(response, statusText, xhr) {
+				if(!response.success)
+					alert('Server could not finalize.');
+				else
+					alert('Server finalized.');
+			}
+		});
+	},
 };
 
 // client object contains client-side stored data 
@@ -462,5 +477,12 @@ $(document).ready(function() {
 			surface.drawImageOnCanvas(image.image);
 	});
 	
+	$('#finalize_btn').click(function() {
+		c2d_server.finalize();
+	});
+	
 	surface.populateLists();
+	
+	// DEBUG
+	//$('.debug').show();
 });

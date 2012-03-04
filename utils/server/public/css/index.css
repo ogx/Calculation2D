@@ -75,3 +75,7 @@ div.buttons {
 	border: 0px;
 	font-size: 12px;
 }
+
+.debug {
+	display: none;
+}
