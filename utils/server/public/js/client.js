@@ -374,7 +374,10 @@ $(document).ready(function() {
 				
 				var max_params_length = 150;
 				$('#method_details #name').text(method.name);
-				$('#method_details #author').text(method.author);
+				$('#method_details #author').text(
+					method.author.first_name+' '+method.author.last_name+
+					' ('+method.author.email+')'
+				);
 				$('#method_details #description').text(method.description);
 				$('#method_details #input_parameters').html(
 					'<div id="input_parameters_code"/><div id="input_parameters_form"/>'

@@ -87,8 +87,12 @@ Json::Value mmCalculationServer::GetMethods()
 		method_info[L"name"] = method_infos[i].sShortName;
 		method_info[L"id"] = method_infos[i].sIDName;
 		method_info[L"description"] = method_infos[i].sDescription;
-		method_info[L"author"] = L"Anonymous"; // TODO: support for author in plugin info
-		method_info[L"params"] = Json::Value(Json::objectValue); // TODO: either translate params to JSON or switch to JSON in plugins
+		method_info[L"author"] = Json::Value(Json::objectValue);
+		method_info[L"author"][L"first_name"] = method_infos[i].sAuthorInfo.sFirstName;
+		method_info[L"author"][L"last_name"] = method_infos[i].sAuthorInfo.sLastName;
+		method_info[L"author"][L"id"] = method_infos[i].sAuthorInfo.iID;
+		method_info[L"author"][L"email"] = method_infos[i].sAuthorInfo.sEmail;
+		method_info[L"params"] = Json::Value(Json::objectValue);
 		method_info[L"params"][L"in"] = Params_XML2JSON(method_infos[i].sAutoParams.sInParams);
 		method_info[L"params"][L"out"] = Params_XML2JSON(method_infos[i].sAutoParams.sOutParams);
 		res[i] = method_info;
