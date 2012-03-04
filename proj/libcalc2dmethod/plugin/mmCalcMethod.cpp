@@ -102,22 +102,6 @@ void mmImages::mmCalcMethod::SetCalculationMethodParameters(mmImages::mmImageStr
 	SendLogMessage(mmLog::debug,mmString(L"End SetCalculationMethodParameters"));
 }
 //---------------------------------------------------------------------------
-void mmImages::mmCalcMethod::UserAction(mmString p_sXMLParams)
-{
-	SendLogMessage(mmLog::debug,mmString(L"Start UserAction"));
-
-	SendLogMessage(mmLog::debug,mmString(L"End UserAction"));
-}
-//---------------------------------------------------------------------------
-void mmImages::mmCalcMethod::UserAction(wchar_t* p_pcXMLParamsBuffer, mmInt p_iXMLParamsBufferSize)
-{
-	SendLogMessage(mmLog::debug,mmString(L"Start UserAction"));
-
-	UserAction(p_pcXMLParamsBuffer);
-
-	SendLogMessage(mmLog::debug,mmString(L"End UserAction"));
-}
-//---------------------------------------------------------------------------
 bool mmImages::mmCalcMethod::Execute(void)
 {
 	SendLogMessage(mmLog::debug,mmString(L"Start Execute"));
@@ -230,47 +214,6 @@ void mmImages::mmCalcMethod::SetParam(mmString p_sName, mmXML::mmXMLDataType p_e
 	}
 	mmCMParameter v_sParam(p_sName, p_eType, p_psValue, p_bIsOutput);
 	m_vParameters.push_back(v_sParam);
-}
-
-const void* mmImages::mmCalcMethod::GetParam(mmString p_sName)
-{
-	std::vector<mmCMParameter>::iterator v_it;
-	for (v_it = m_vParameters.begin(); v_it != m_vParameters.end(); ++v_it) {
-		if (p_sName.compare((*v_it).m_sName) == 0) {
-			return (*v_it).m_pValue;
-		}
-	}
-	return NULL;
-}
-
-void mmImages::mmCalcMethod::GetParam(mmString p_sName, void* p_pValue)
-{
-	std::vector<mmCMParameter>::iterator v_it;
-
-	for (v_it = m_vParameters.begin(); v_it != m_vParameters.end(); ++v_it) {
-		if (p_sName.compare((*v_it).m_sName) == 0) {
-			switch ((*v_it).m_eType) {
-				case mmXML::g_eXMLReal:
-					*(reinterpret_cast<mmReal*>(p_pValue)) = *reinterpret_cast<mmReal*>((*v_it).m_pValue);
-					return;
-				case mmXML::g_eXMLInt:
-					*(reinterpret_cast<mmInt*>(p_pValue)) = *reinterpret_cast<mmInt*>((*v_it).m_pValue);
-					return;
-				case mmXML::g_eXMLBool:
-					*(reinterpret_cast<bool*>(p_pValue)) = *reinterpret_cast<bool*>((*v_it).m_pValue);
-					return;
-				case mmXML::g_eXMLString:
-				case mmXML::g_eXMLImageName:
-				case mmXML::g_eXMLDataLayerName:						
-					{
-						mmString* src = reinterpret_cast<mmString*>((*v_it).m_pValue);
-						mmString* dst = reinterpret_cast<mmString*>(p_pValue);
-						*(dst) = *(src);
-					}
-					return;
-			}
-		}
-	}
 }
 
 void mmImages::mmCalcMethod::UpdateParameters()
