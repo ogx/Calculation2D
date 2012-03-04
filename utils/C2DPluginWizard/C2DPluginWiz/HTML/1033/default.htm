@@ -9,8 +9,10 @@
 	<!-- The SYMBOL tag is used to set the default values for the user-defined symbols.-->
 	<!--  -->
 	                         
-	<SYMBOL NAME='STUDENT_FIRSTNAME' TYPE=text VALUE='Jan'></SYMBOL>
-	<SYMBOL NAME='STUDENT_LASTNAME' TYPE=text VALUE='Kowalski'></SYMBOL>
+	<SYMBOL NAME='STUDENT_FIRSTNAME' TYPE=text VALUE='John'></SYMBOL>
+	<SYMBOL NAME='STUDENT_LASTNAME' TYPE=text VALUE='Doe'></SYMBOL>
+	<SYMBOL NAME='STUDENT_ID' TYPE=text VALUE='0'></SYMBOL>
+	<SYMBOL NAME='STUDENT_EMAIL' TYPE=text VALUE='email@example.com'></SYMBOL>
 	<SYMBOL NAME='STUDENT_GROUP' TYPE=select-one VALUE='other'></SYMBOL>
 	<SYMBOL NAME='STUDENT_PART' TYPE=select-one VALUE='all'></SYMBOL>
 	
@@ -181,9 +183,9 @@
 		  <TD HEIGHT="100%">
 	   	  <!--OPEN OF CONTENT//-->
 		  
-		  <TABLE CLASS="CONTENT" BORDER="0" CELLPADDING="0" CELLSPACING="10">
+		  <TABLE CLASS="CONTENT" BORDER="0" CELLPADDING="0" CELLSPACING="10"  VALIGN="TOP">
  			  <TR>
-          <TD HEIGHT="40" COLSPAN="5">&nbsp;</TD>
+          <TD HEIGHT="20" COLSPAN="5">&nbsp;</TD>
         </TR>
         
         <TR>
@@ -201,6 +203,15 @@
        		</TD>
        		<TD COLSPAN="4">
        			 <INPUT SIZE="40" ID="STUDENT_LASTNAME" ACCESSKEY="S" TITLE="Enter your last name" TYPE="text">
+       	  </TD>
+       	</TR>
+	  	
+        <TR>
+  			  <TD ALIGN="RIGHT" COLSPAN="1">			  
+            <LABEL FOR="STUDENT_EMAIL" ID="STUDENT_EMAIL_LABEL"><U>e</U>-mail:</LABEL>
+       		</TD>
+       		<TD COLSPAN="4">
+       			 <INPUT SIZE="40" ID="STUDENT_EMAIL" ACCESSKEY="E" TITLE="Enter your email address (optional)" TYPE="text">
        	  </TD>
        	</TR>
 	  	
