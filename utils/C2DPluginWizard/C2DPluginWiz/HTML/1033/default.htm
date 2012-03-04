@@ -13,7 +13,7 @@
 	<SYMBOL NAME='STUDENT_LASTNAME' TYPE=text VALUE='Doe'></SYMBOL>
 	<SYMBOL NAME='STUDENT_ID' TYPE=text VALUE='0'></SYMBOL>
 	<SYMBOL NAME='STUDENT_EMAIL' TYPE=text VALUE='email@example.com'></SYMBOL>
-	<SYMBOL NAME='STUDENT_GROUP' TYPE=select-one VALUE='other'></SYMBOL>
+	<SYMBOL NAME='STUDENT_GROUP' TYPE=text VALUE='other'></SYMBOL>
 	<SYMBOL NAME='STUDENT_PART' TYPE=select-one VALUE='all'></SYMBOL>
 	
 	<SYMBOL NAME='CALCMETHOD_NAME' TYPE=text VALUE='cmGeneric'></SYMBOL>
@@ -220,14 +220,7 @@
             <LABEL FOR="STUDENT_GROUP" TITLE="" ID="STUDENT_GROUP_LABEL" ><U>G</u>roup:</LABEL>
           </TD>
           <TD COLSPAN="4">
-            <SELECT ID="STUDENT_GROUP" SIZE="6" ACCESSKEY="G" TITLE="Select your student group (choose 'other' if doesn't apply)">
-              <OPTION VALUE="" disabled="disabled">-------------------</OPTION>
-              <OPTION VALUE="other" SELECTED>other</OPTION>
-              <OPTION VALUE="41">41</OPTION>
-              <OPTION VALUE="49">49</OPTION>
-              <OPTION VALUE="61">61</OPTION>
-              <OPTION VALUE="71">71</OPTION>
-            </SELECT>
+            <INPUT ID="STUDENT_GROUP" SIZE="6" ACCESSKEY="G" TITLE="Select your student group (choose 'other' if doesn't apply)">
 			    </TD>  
         </TR>  
  		  	 
