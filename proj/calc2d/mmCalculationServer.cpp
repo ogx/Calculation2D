@@ -224,7 +224,7 @@ Json::Value mmCalculationServer::Params_XML2JSON( mmString const & params_xml )
 			param[L"value"] = StringToMMInt(v_tValue);
 			break;
 		case mmXML::g_eXMLString:
-			param[L"value"] = StringToMMReal(v_tValue);
+			param[L"value"] = v_tValue;
 			break;
 		case mmXML::g_eXMLBool:
 			param[L"value"] = v_tValue.compare(g_pAutoCalcXML_Params_ParamType_BoolValue_YES) == 0;
