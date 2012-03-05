@@ -3,6 +3,8 @@
 #include <interfaces/mmInterfaceInitializers.h>
 #include <interfaces/mmIImages.h>
 
+#include <cstdlib>
+
 template<>
 inline mmString mmImages::FromString<mmString>(mmString const & p_sString) {
 	return p_sString;
@@ -24,6 +26,20 @@ inline bool mmImages::FromString<bool>(mmString const & p_sString) {
 }
 
 template<>
+inline mmRect mmImages::FromString<mmRect>(mmString const & p_sString) {
+	mmRect v_sRect;
+	::swscanf_s(p_sString.c_str(), L"%d|%d|%d|%d", &v_sRect.iLeft, &v_sRect.iTop, &v_sRect.iWidth, &v_sRect.iHeight);
+	return v_sRect;
+}
+
+template<>
+inline mmMath::sPoint2D mmImages::FromString<mmMath::sPoint2D>(mmString const & p_sString) {
+	mmMath::sPoint2D v_sPoint = {0.0, 0.0};
+	::swscanf_s(p_sString.c_str(), L"%lf|%lf", &v_sPoint.rX, &v_sPoint.rY);
+	return v_sPoint;
+}
+
+template<>
 inline mmString mmImages::ToString<mmString>(mmString const & p_sValue) {
 	return p_sValue;
 }
@@ -41,6 +57,16 @@ inline mmString mmImages::ToString<mmReal>(mmReal const & p_sValue) {
 template<>
 inline mmString mmImages::ToString<bool>(bool const & p_sValue) {
 	return p_sValue ? g_pAutoCalcXML_Params_ParamType_BoolValue_YES : g_pAutoCalcXML_Params_ParamType_BoolValue_NO;
+}
+
+template<>
+inline mmString mmImages::ToString<mmRect>(mmRect const & p_sValue) {
+	return mmStringUtilities::MMIntToString(p_sValue.iLeft) + L"|" + mmStringUtilities::MMIntToString(p_sValue.iTop) + L"|" + mmStringUtilities::MMIntToString(p_sValue.iWidth) + L"|" + mmStringUtilities::MMIntToString(p_sValue.iHeight);
+}
+
+template<>
+inline mmString mmImages::ToString<mmMath::sPoint2D>(mmMath::sPoint2D const & p_sValue) {
+	return mmStringUtilities::MMRealToString(p_sValue.rX) + L"|" + mmStringUtilities::MMRealToString(p_sValue.rY);
 }
 
 inline mmXML::mmXMLNodeI* FindOrCreateChild(mmXML::mmXMLNodeI * const p_psParent, mmString const & p_sName) {

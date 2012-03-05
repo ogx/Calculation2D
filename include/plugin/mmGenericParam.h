@@ -12,6 +12,8 @@
 namespace mmImages {
 	class mmGenericParamI {
 	public:
+		enum mmType {mmIntType, mmRealType, mmBoolType, mmStringType, mmImageType, mmImageNameType, mmLayerType, mmLayerNameType, mmRectType, mmPointType};
+	public:
 		struct FindByName {
 			FindByName(mmString const & p_sName) : sName(p_sName) {}
 			bool operator () (mmGenericParamI const * const p_psParam) const {
@@ -39,6 +41,10 @@ namespace mmImages {
 	extern mmReal FromString<mmReal>(mmString const & p_sString);
 	template<>
 	extern bool FromString<bool>(mmString const & p_sString);
+	template<>
+	extern mmRect FromString<mmRect>(mmString const & p_sString);
+	template<>
+	extern mmMath::sPoint2D FromString<mmMath::sPoint2D>(mmString const & p_sString);
 
 	template<class param_t>
 	inline mmString ToString(param_t const & p_sValue);
@@ -51,6 +57,10 @@ namespace mmImages {
 	extern mmString ToString<mmReal>(mmReal const & p_sValue);
 	template<>
 	extern mmString ToString<bool>(bool const & p_sValue);
+	template<>
+	extern mmString ToString<mmRect>(mmRect const & p_sValue);
+	template<>
+	extern mmString ToString<mmMath::sPoint2D>(mmMath::sPoint2D const & p_sValue);
 
 	template<class param_t>
 	class mmGenericParam_base : public mmGenericParamI {

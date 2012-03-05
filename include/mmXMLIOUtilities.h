@@ -11,6 +11,8 @@
 
 using namespace mmStringUtilities;
 
+// DEPRECATED
+// use mmGenericParam instead
 namespace mmXML {
 	typedef std::size_t mmUInt;
 	typedef struct { mmInt iGroupIndex; mmInt iLeafIndex; } mmXMLNodePosition;
