@@ -3440,7 +3440,7 @@ std::wstring valueToString( LargestInt value )
 std::wstring valueToString( LargestUInt value )
 {
    UIntToStringBuffer buffer;
-   wchar_t *current = buffer + sizeof(buffer);
+   wchar_t *current = buffer + sizeof(buffer)/sizeof(*buffer);
    uintToString( value, current );
    assert( current >= buffer );
    return current;

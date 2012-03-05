@@ -7,16 +7,6 @@ var http = require('http'),
 	app = bogart.app(),
 	q = bogart.q;
 
-function print_debug_info() {
-  console.log('process path: ' + process.execPath);
-  console.log('cwd: ' + process.cwd());
-  process.argv.forEach(function (val, index, array) {
-    console.log('argument ' + index + ': ' + val);
-  });
-}
-
-// comment out if you don't want debug
-//print_debug_info();
 
 var config = {
 	serverAddress: 'localhost',
@@ -24,8 +14,20 @@ var config = {
 	exePath: process.argv[2] || '../../bin/x64/Debug/calc2d.exe',
 };
 
-console.log("\nFor Calculation2D GUI\nenter this in your browser: " +
-			"http://" + config.serverAddress + ":" + config.serverPort + "\n");
+process.nextTick(function() {
+	console.log("\n Calculation2D server functional. \n Go to the browser and type: " +
+		"http://" + config.serverAddress + ":" + config.serverPort + "\n");
+		
+	var print_debug_info = function() {
+		console.log('process path: ' + process.execPath);
+		console.log('cwd: ' + process.cwd());
+		process.argv.forEach(function (val, index, array) {
+			console.log('argument ' + index + ': ' + val);
+		});
+	};
+	//print_debug_info();
+});
+
 
 // Calculation2D inter-process API
 var c2d = {

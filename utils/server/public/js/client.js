@@ -24,6 +24,9 @@ var c2d_server = {
 		});
 	},
 	runCalculationMethod: function(method_id, method_params, image_structure, callback) {
+		/*console.log('Launching method', method_id);
+		console.log('  -method_params:', method_params);
+		console.log('  -structure:', image_structure);*/
 		$.ajax({
 			url: '/run',
 			type: 'post',
@@ -89,7 +92,9 @@ var c2d_client = {
 			image = {
 				name: image_data_or_image.name,
 				image: this.decodeBase64(image_data_or_image.image),
-				data_layers: image_data_or_image.data_layers || []
+				data_layers: image_data_or_image.data_layers ? 
+				             image_data_or_image.data_layers.map(function (dl) { return this.decodeBase64(dl); }) : 
+							 []
 			};
 		this.image_structure.push(image);
 		
@@ -110,6 +115,38 @@ var c2d_client = {
 			image_or_layer.blue = this.decodeBase64(image_or_layer.blue);
 		}
 		return image_or_layer;
+	},
+	encodeBase64: function(image_or_layer) {
+		if(image_or_layer.values) { // layer
+			var layer = image_or_layer,
+				w = layer.width,
+				h = layer.height,
+				encoded_str = btoa(layer.values.reduce(function(pv, cv) { return pv + String.fromCharCode(cv*255); }, '')),
+				output = {
+					name: layer.name,
+					width: w,
+					height: h,
+					values: encoded_str
+				};
+			console.log('converting layer', image_or_layer, 'to base64:', output);
+			return output;
+		} else { // image
+			var image = image_or_layer,
+				output = {
+					name: image.name,
+					image: {
+						width: image.image.width,
+						height: image.image.height,
+						red: this.encodeBase64(image.image.red),
+						green: this.encodeBase64(image.image.green),
+						blue: this.encodeBase64(image.image.blue),
+					},
+					data_layers: image.data_layers ? 
+				                 image.data_layers.map(function (dl) { return this.decodeBase64(dl); }) : 
+							     []
+				};
+			return output;
+		}
 	},
 	extractImage: function(image_data) { // ImageData -> {w,h,r,g,b}
 		var input = image_data.data,
@@ -344,6 +381,44 @@ $(document).ready(function() {
 		fr.readAsDataURL(file);
 	});
 	
+	// method details handling
+	$('#available_methods').change(function() {
+		var option = $('#available_methods option:selected'),
+			method_id = option.attr('method_id'),
+			method = c2d_client.methods_lookup[method_id];
+		if(!method) {
+			$('#method_details').hide();
+			throw new Exception('Selected method not found!');
+		}
+		
+		var max_params_length = 150;
+		$('#method_details #name').text(method.name);
+		$('#method_details #author').text(
+			method.author.first_name+' '+method.author.last_name+
+			' ('+method.author.email+')'
+		);
+		$('#method_details #description').text(method.description);
+		$('#method_details #input_parameters').html(
+			'<div id="input_parameters_code"/><div id="input_parameters_form"/>'
+			);
+		$('#input_parameters_code').text(
+			JSON.stringify(method.params.in, null, " ")
+			);
+		$('#input_parameters_form').empty().append(
+			surface.createForm(method.params.in)
+			);
+		$('#method_details #output_parameters').html(
+			'<div id="input_parameters_code"/><div id="input_parameters_form"/>'
+			);
+		$('#output_parameters_code').text(
+			JSON.stringify(method.params.out, null, " ")
+			);
+		$('#output_parameters_form').empty().append(
+			surface.createForm(method.params.out)
+			);
+		$('#method_details').show();
+	});
+	
 	
 	// plug in server's API
 	$('#get_methods').click(function() {
@@ -355,7 +430,10 @@ $(document).ready(function() {
 			combo.empty();
 			methods.forEach(function(method) {
 				var option = $(document.createElement('option')),
-					method_text = method.author + ': ' + method.name;
+					author = (method.author.first_name || method.author.last_name) ? 
+					         method.author.first_name + ' ' + method.author.last_name :
+					         'Anonymous',
+					method_text = author + ': ' + method.name;
 				option.text(method_text);
 				option.attr('method_id', method.id);
 				c2d_client.methods_lookup[method.id] = method;
@@ -363,43 +441,7 @@ $(document).ready(function() {
 			});
 			
 			// handle detailed view
-			combo.change(function() {
-				var option = $('#available_methods option:selected'),
-					method_id = option.attr('method_id'),
-					method = c2d_client.methods_lookup[method_id];
-				if(!method) {
-					$('#method_details').hide();
-					throw new Exception('Selected method not found!');
-				}
-				
-				var max_params_length = 150;
-				$('#method_details #name').text(method.name);
-				$('#method_details #author').text(
-					method.author.first_name+' '+method.author.last_name+
-					' ('+method.author.email+')'
-				);
-				$('#method_details #description').text(method.description);
-				$('#method_details #input_parameters').html(
-					'<div id="input_parameters_code"/><div id="input_parameters_form"/>'
-					);
-				$('#input_parameters_code').text(
-					JSON.stringify(method.params.in, null, " ")
-					);
-				$('#input_parameters_form').empty().append(
-					surface.createForm(method.params.in)
-					);
-				$('#method_details #output_parameters').html(
-					'<div id="input_parameters_code"/><div id="input_parameters_form"/>'
-					);
-				$('#output_parameters_code').text(
-					JSON.stringify(method.params.out, null, " ")
-					);
-				$('#output_parameters_form').empty().append(
-					surface.createForm(method.params.out)
-					);
-				$('#method_details').show();
-			});
-			combo.trigger('change');
+			combo.change();
 		});
 	}).click();
 	$('#run_method').click(function() {
@@ -410,13 +452,12 @@ $(document).ready(function() {
 				return c2d_client.image_structure[$(this).children(':selected').attr('image-index')];
 			}).get(),
 			runMethod = function(method_id, method_params, image_structure) {
-				/*console.log('Launching method', method_id);
-				console.log('  -method_params:', method_params);
-				console.log('  -structure:', image_structure);*/
 				c2d_server.runCalculationMethod(
 					method_id, 
 					method_params,
-					image_structure,
+					image_structure.map(function encodeImage(image) {
+						return c2d_client.encodeBase64(image);
+					}),
 					function(res){
 						console.log('runCalculationMethod returned', res);
 						if(res.success)

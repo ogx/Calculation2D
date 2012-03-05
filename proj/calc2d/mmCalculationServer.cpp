@@ -305,13 +305,13 @@ Json::Value mmCalculationServer::LayerToJSON( mmImages::mmLayerI const * layer )
 	Json::Value& values = json[L"values"] = Json::Value(Json::arrayValue);
 	values.resize(width*height);
 	for(mmUInt i=0, n=width*height; i<n; ++i)
-		values[i] = buf[i]; // TODO: fix performance
+		values[i] = buf[i];
 
 #elif LAYER_TRANSPORT == LAYER_TRANSPORT__BASE64
 
 	base64::byte_vect byte_buf(width*height);
 	for(size_t i=0, n=width*height; i<n; ++i)
-		byte_buf[i] = (unsigned char)(buf[i]*255.0 + 0.5);
+		byte_buf[i] = (unsigned char)(buf[i]*255.0 + 0.5 - 1e-6);
 	std::string base64_buf = base64::encode(byte_buf);
 
 	json[L"values"] = std::wstring(base64_buf.begin(), base64_buf.end());
@@ -325,13 +325,26 @@ void mmCalculationServer::LayerFromJSON( Json::Value const & json, mmImages::mmL
 {
 	layer->SetName(json[L"name"].asString());
 
-	mmUInt width = layer->GetWidth();
-	mmUInt height = layer->GetHeight();
+	mmUInt width = json[L"width"].asUInt();
+	mmUInt height = json[L"height"].asUInt();
 	Json::Value const & values = json[L"values"];
 
 	std::vector<mmReal> buf(width*height);
+
+#if LAYER_TRANSPORT == LAYER_TRANSPORT__TEXT_ARRAY
+
 	for(mmUInt i=0, n=width*height; i<n; ++i)
-		buf[i] = values[i].asDouble(); // TODO: fix performance
+		buf[i] = values[i].asDouble();
+
+#elif LAYER_TRANSPORT == LAYER_TRANSPORT__BASE64
+
+	std::wstring base64_buf = values.asString();
+	base64::byte_vect byte_buf = base64::decode(std::string(base64_buf.begin(), base64_buf.end()));
+	std::string test = base64::encode(byte_buf);
+	for(size_t i=0, n=width*height; i<n; ++i)
+		buf[i] = (mmReal)(byte_buf[i])/255.0;
+
+#endif
 
 	mmRect rect(0, 0, width, height);
 	layer->SetPixels(rect, &buf[0]);
