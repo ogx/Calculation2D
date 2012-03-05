@@ -91,11 +91,11 @@ void mmImages::mmLayer::Resize(mmUInt const p_iWidth, mmUInt const p_iHeight) {
 		mmReal * const v_prValues = new mmReal[p_iWidth * p_iHeight];
 		
 		if(p_iWidth > m_iHeight || p_iWidth > m_iWidth)
-			std::fill(m_prValues, m_prValues + p_iWidth * p_iHeight, m_rDefaultValue);
+			std::fill(v_prValues, v_prValues + p_iWidth * p_iHeight, m_rDefaultValue);
 
 		mmUInt const v_iCopyWidth = std::min(p_iWidth, m_iWidth), v_iCopyHeight = std::min(p_iHeight, m_iHeight);
 		for(mmUInt v_iY = 0; v_iY < v_iCopyHeight; ++v_iY)
-			::memcpy(v_prValues + v_iY * v_iCopyWidth, m_prValues + v_iY * m_iWidth, v_iCopyWidth * sizeof(mmReal));
+			::memcpy(v_prValues + v_iY * p_iWidth, m_prValues + v_iY * m_iWidth, v_iCopyWidth * sizeof(mmReal));
 
 		delete [] m_prValues;
 
@@ -253,6 +253,9 @@ mmUInt mmImages::mmImage::GetHeight(void) const {
 void mmImages::mmImage::Resize(mmUInt const p_iWidth, mmUInt const p_iHeight) {
 	for(std::list<mmLayer*>::iterator v_iI = m_sChannels.begin(); v_iI != m_sChannels.end(); ++v_iI)
 		(*v_iI)->Resize(p_iWidth, p_iHeight);
+
+	m_iWidth = p_iWidth;
+	m_iHeight = p_iHeight;
 
 	if(m_psCallback != NULL)
 		m_psCallback->OnImagePropertiesChange(this);
@@ -633,19 +636,8 @@ mmImages::mmLayerI * mmImages::mmImage::FindLayer(mmLayerI const * const p_psPre
 		return NULL;
 }
 
-bool mmImages::mmImage::DeleteLayer(mmUInt const p_iIndex) {
-	if(p_iIndex < m_sLayers.size()) {
-		std::list<mmLayer*>::iterator v_sLayer = m_sLayers.begin();
-		std::advance(v_sLayer, p_iIndex);
-		delete *v_sLayer;
-		m_sLayers.erase(v_sLayer);
-		return true;
-	} else
-		return false;
-}
-
-bool mmImages::mmImage::DeleteLayer(mmString const & p_sName) {
-	std::list<mmLayer*>::iterator v_sLayer = std::find_if(m_sLayers.begin(), m_sLayers.end(), FindByName(p_sName));
+bool mmImages::mmImage::DeleteLayer(mmID const & p_sID) {
+	std::list<mmLayer*>::iterator v_sLayer = std::find_if(m_sLayers.begin(), m_sLayers.end(), FindByID(p_sID));
 	if(v_sLayer != m_sLayers.end()) {
 		delete *v_sLayer;
 		m_sLayers.erase(v_sLayer);
@@ -725,19 +717,8 @@ mmImages::mmImageI * mmImages::mmImageStructure::FindImage(mmImageI const * cons
 		return NULL;
 }
 
-bool mmImages::mmImageStructure::DeleteImage(mmUInt const p_iIndex) {
-	if(p_iIndex < m_sImages.size()) {
-		std::list<mmImage*>::iterator v_sImage = m_sImages.begin();
-		std::advance(v_sImage, p_iIndex);
-		delete *v_sImage;
-		m_sImages.erase(v_sImage);
-		return true;
-	} else
-		return false;
-}
-
-bool mmImages::mmImageStructure::DeleteImage(mmString const & p_sName) {
-	std::list<mmImage*>::iterator v_sImage = std::find_if(m_sImages.begin(), m_sImages.end(), FindByName(p_sName));
+bool mmImages::mmImageStructure::DeleteImage(mmID const & p_sID) {
+	std::list<mmImage*>::iterator v_sImage = std::find_if(m_sImages.begin(), m_sImages.end(), FindByID(p_sID));
 	if(v_sImage != m_sImages.end()) {
 		delete *v_sImage;
 		m_sImages.erase(v_sImage);

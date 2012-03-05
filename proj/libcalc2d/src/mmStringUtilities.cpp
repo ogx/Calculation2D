@@ -5,6 +5,9 @@
 #include <algorithm>
 #include <locale>
 
+#undef min
+#undef max
+
 mmString mmStringUtilities::BoolToString(bool p_bInput)
 {
 	if(p_bInput)
@@ -374,4 +377,25 @@ mmImageProcessing::ePixelType mmStringUtilities::StringToPixelFormat(mmString p_
 	else if (p_sStr.compare(L"48bit Red(16 bits)Green(16 bits)Blue(16 bits)") == 0)
 		return mmImageProcessing::pixel_R16G16B16;
 	else return mmImageProcessing::pixel_AnyType;
+}
+
+mmString mmStringUtilities::GetCommonSubstring(std::vector<mmString>::iterator p_sBegin, std::vector<mmString>::iterator p_sEnd, std::size_t const p_iStart) {
+	if(p_sBegin == p_sEnd)
+		return L"";
+	
+	std::size_t v_iMinLength = std::numeric_limits<std::size_t>::max();
+	for(std::vector<std::wstring>::iterator v_sString = p_sBegin; v_sString != p_sEnd; ++v_sString)
+		v_iMinLength = std::min(v_iMinLength, v_sString->length());
+
+	bool v_bBreak = false;
+	std::size_t v_iLastCommonChar;
+	for(v_iLastCommonChar = std::min(p_iStart, v_iMinLength); v_iLastCommonChar < v_iMinLength && ! v_bBreak; ++v_iLastCommonChar) {
+		for(std::vector<std::wstring>::iterator v_sString = p_sBegin + 1; v_sString != p_sEnd; ++v_sString)
+			if((*v_sString)[v_iLastCommonChar] != (*p_sBegin)[v_iLastCommonChar]) {
+				v_bBreak = true;
+				break;
+			}
+	}
+
+	return p_sBegin->substr(0, v_iLastCommonChar);
 }

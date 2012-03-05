@@ -463,17 +463,10 @@ namespace mmImages
 		////////////////////////////////////////////////////////////////////////////////
 		/// Deletes a layer. 
 		///
-		/// @param[in] p_iIndex layer index
+		/// @param[in] p_sID layer index
 		/// @return true if the call succeeded, false if layer does not exist
 		////////////////////////////////////////////////////////////////////////////////
-		virtual bool DeleteLayer(mmUInt const p_iIndex) = 0;
-		////////////////////////////////////////////////////////////////////////////////
-		/// Deletes a layer. 
-		///
-		/// @param[in] p_sName layer name
-		/// @return true if the call succeeded, false if layer does not exist
-		////////////////////////////////////////////////////////////////////////////////
-		virtual bool DeleteLayer(mmString const & p_sName) = 0;
+		virtual bool DeleteLayer(mmID const & p_sID) = 0;
 		////////////////////////////////////////////////////////////////////////////////
 		/// Set image metadata in the form of a string. Format of the metadata is arbitrary. 
 		///
@@ -527,17 +520,10 @@ namespace mmImages
 		////////////////////////////////////////////////////////////////////////////////
 		/// Deletes an image. 
 		///
-		/// @param[in] p_iIndex image index
+		/// @param[in] p_sID image index
 		/// @return true if the call succeeded, false if image does not exist
 		////////////////////////////////////////////////////////////////////////////////
-		virtual bool DeleteImage(mmUInt const p_iIndex) = 0;
-		////////////////////////////////////////////////////////////////////////////////
-		/// Deletes an image. 
-		///
-		/// @param[in] p_sName image name
-		/// @return true if the call succeeded, false if image does not exist
-		////////////////////////////////////////////////////////////////////////////////
-		virtual bool DeleteImage(mmString const & p_sName) = 0;
+		virtual bool DeleteImage(mmID const & p_sID) = 0;
 	protected:
 		virtual ~mmImageStructureI(void) {};
 	};

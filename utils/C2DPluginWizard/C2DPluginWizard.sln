@@ -1,0 +1,54 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Studio 2010
+Project("{E24C65DC-7377-472B-9ABA-BC803B73C61A}") = "C2DPluginWiz", "C2DPluginWiz\", "{C67BC18A-5CF3-4BA3-86BB-A38846691850}"
+	ProjectSection(WebsiteProperties) = preProject
+		TargetFrameworkMoniker = ".NETFramework,Version%3Dv4.0"
+		Debug.AspNetCompiler.VirtualPath = "/C2DPluginWiz"
+		Debug.AspNetCompiler.PhysicalPath = "C2DPluginWiz\"
+		Debug.AspNetCompiler.TargetPath = "PrecompiledWeb\C2DPluginWiz\"
+		Debug.AspNetCompiler.Updateable = "true"
+		Debug.AspNetCompiler.ForceOverwrite = "true"
+		Debug.AspNetCompiler.FixedNames = "false"
+		Debug.AspNetCompiler.Debug = "True"
+		Release.AspNetCompiler.VirtualPath = "/C2DPluginWiz"
+		Release.AspNetCompiler.PhysicalPath = "C2DPluginWiz\"
+		Release.AspNetCompiler.TargetPath = "PrecompiledWeb\C2DPluginWiz\"
+		Release.AspNetCompiler.Updateable = "true"
+		Release.AspNetCompiler.ForceOverwrite = "true"
+		Release.AspNetCompiler.FixedNames = "false"
+		Release.AspNetCompiler.Debug = "False"
+		VWDPort = "51384"
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "VCProjects2010", "VCProjects2010", "{074B411A-F502-4913-AA8C-8A3D655A7417}"
+	ProjectSection(SolutionItems) = preProject
+		VCProjects2010\C2DPluginWiz.ico = VCProjects2010\C2DPluginWiz.ico
+		VCProjects2010\C2DPluginWiz.vsdir = VCProjects2010\C2DPluginWiz.vsdir
+		VCProjects2010\C2DPluginWiz.vsz = VCProjects2010\C2DPluginWiz.vsz
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "VCProjects2008", "VCProjects2008", "{32F3CB2E-67C9-4068-98D5-0EDCFC0BF1CD}"
+	ProjectSection(SolutionItems) = preProject
+		VCProjects2008\C2DPluginWiz.ico = VCProjects2008\C2DPluginWiz.ico
+		VCProjects2008\C2DPluginWiz.vsdir = VCProjects2008\C2DPluginWiz.vsdir
+		VCProjects2008\C2DPluginWiz.vsz = VCProjects2008\C2DPluginWiz.vsz
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{2B69BF6A-0E3B-448D-82CC-DC7EDA5D5A2D}"
+	ProjectSection(SolutionItems) = preProject
+		..\C2DPluginWizardSetup.vbs = ..\C2DPluginWizardSetup.vbs
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{C67BC18A-5CF3-4BA3-86BB-A38846691850}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C67BC18A-5CF3-4BA3-86BB-A38846691850}.Debug|Any CPU.Build.0 = Debug|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
