@@ -147,6 +147,15 @@ namespace mmStringUtilities
 	/// @return converted string.
 	////////////////////////////////////////////////////////////////////////////////
 	mmString MMStringToLower(mmString p_sInputString);
+	////////////////////////////////////////////////////////////////////////////////
+	/// Retrieves largest common substring in a collection of strings.
+	///
+	/// @param[in] p_sBegin vector begin
+	/// @param[in] p_sEnd vector end
+	/// @param[in] p_iStart assume that p_iStart first characters are common
+	/// @return found substring.
+	////////////////////////////////////////////////////////////////////////////////
+	mmString GetCommonSubstring(std::vector<mmString>::iterator p_sBegin, std::vector<mmString>::iterator p_sEnd, std::size_t const p_iStart);
 	///////////////////////////////////////////////////////////////////////////////
 	/// Tokenizes input string.
 	///

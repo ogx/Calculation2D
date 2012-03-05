@@ -93,8 +93,7 @@ namespace mmImages
 		virtual mmUInt GetLayerCount(void) const;
 		virtual mmLayerI * GetLayer(mmID const & p_sID) const;
 		virtual mmLayerI * FindLayer(mmLayerI const * const p_psPreviousLayer=NULL, mmString const & p_sName=L"") const;
-		virtual bool DeleteLayer(mmUInt const p_iIndex);
-		virtual bool DeleteLayer(mmString const & p_sName);
+		virtual bool DeleteLayer(mmID const & p_sID);
 		
 		virtual void SetMetadata(mmString const & p_sMetadata);
 		virtual mmString GetMetadata(void);
@@ -126,8 +125,7 @@ namespace mmImages
 		virtual mmUInt GetImageCount(void) const;
 		virtual mmImageI * GetImage(mmID const & p_sID) const;
 		virtual mmImageI * FindImage(mmImageI const * const p_psPreviousImage=NULL, mmString const & p_sName=L"") const;
-		virtual bool DeleteImage(mmUInt const p_iIndex);
-		virtual bool DeleteImage(mmString const & p_sName);		
+		virtual bool DeleteImage(mmID const & p_sID);
 	private: 
 		mmID m_sLastImageID;
 		std::list<mmImage*> m_sImages;

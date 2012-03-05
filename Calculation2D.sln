@@ -26,6 +26,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libcalc2dmethod", "proj\lib
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libcalc2d", "proj\libcalc2d\libcalc2d.vcxproj", "{81764A51-4B0F-4310-ACD1-059BFC9BEDDE}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "calc2dcmd", "proj\calc2dcmd\calc2dcmd.vcxproj", "{D07C7E58-E714-49B2-82B2-5F58102A418C}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -66,6 +68,14 @@ Global
 		{81764A51-4B0F-4310-ACD1-059BFC9BEDDE}.Release|Win32.Build.0 = Release|Win32
 		{81764A51-4B0F-4310-ACD1-059BFC9BEDDE}.Release|x64.ActiveCfg = Release|x64
 		{81764A51-4B0F-4310-ACD1-059BFC9BEDDE}.Release|x64.Build.0 = Release|x64
+		{D07C7E58-E714-49B2-82B2-5F58102A418C}.Debug|Win32.ActiveCfg = Debug|Win32
+		{D07C7E58-E714-49B2-82B2-5F58102A418C}.Debug|Win32.Build.0 = Debug|Win32
+		{D07C7E58-E714-49B2-82B2-5F58102A418C}.Debug|x64.ActiveCfg = Debug|x64
+		{D07C7E58-E714-49B2-82B2-5F58102A418C}.Debug|x64.Build.0 = Debug|x64
+		{D07C7E58-E714-49B2-82B2-5F58102A418C}.Release|Win32.ActiveCfg = Release|Win32
+		{D07C7E58-E714-49B2-82B2-5F58102A418C}.Release|Win32.Build.0 = Release|Win32
+		{D07C7E58-E714-49B2-82B2-5F58102A418C}.Release|x64.ActiveCfg = Release|x64
+		{D07C7E58-E714-49B2-82B2-5F58102A418C}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
