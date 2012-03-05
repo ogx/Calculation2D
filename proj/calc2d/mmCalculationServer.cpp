@@ -267,7 +267,10 @@ mmString mmCalculationServer::Params_JSON2XML(Json::Value const & params_json)
 
 		_v_sParamName->SetText(name);
 		_v_sParamType->SetText(mmXML::GetTypeTransition(mmtype));
-		_v_sParamValue->SetText(value);
+		if(mmtype == mmXML::g_eXMLBool)
+			_v_sParamValue->SetText(value.compare(L"true") == 0 ? mmImages::g_pAutoCalcXML_Params_ParamType_BoolValue_YES : mmImages::g_pAutoCalcXML_Params_ParamType_BoolValue_NO);
+		else
+			_v_sParamValue->SetText(value);
 	}
 
 	mmString params_xml = _v_sInputXML->SaveToXMLBuffer();

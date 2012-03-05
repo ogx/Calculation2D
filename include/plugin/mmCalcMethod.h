@@ -1,8 +1,11 @@
 #pragma once
 
+#include <map>
+
 #include <log/mmLogSender.h>
 #include <mmXMLIOUtilities.h>
-#include <map>
+
+#include <plugin/mmGenericParam.h>
 
 //******************************************************************************
 //******************************************************************************
@@ -133,7 +136,19 @@ namespace mmImages {
 			/// @param[in] p_psValue pointer to the appropriate member field
 			/// @param[in] p_bIsOutput optional, default is a user input parameter
 			////////////////////////////////////////////////////////////////////////////////
-			void SetParam(mmString p_sName, mmXML::mmXMLDataType p_eType, void* p_psValue, bool p_bIsOutput = false);			
+
+			// DEPRECATED
+			void SetParam(mmString const & p_sName, mmXML::mmXMLDataType const p_eType, void * const p_psValue, bool const p_bIsOutput=false);
+
+			// Use the following instead
+			template<class param_t>
+			void BindInputParam(mmString const & p_sName, mmXML::mmXMLDataType const p_eType, param_t & p_sValue) {
+				BindParam(m_sInputParams, p_sName, p_eType, p_sValue);
+			}
+			template<class param_t>
+			void BindOutputParam(mmString const & p_sName, mmXML::mmXMLDataType const p_eType, param_t & p_sValue) {
+				BindParam(m_sOutputParams, p_sName, p_eType, p_sValue);
+			}
 
 			std::vector<mmID> GetImageIDs();
 
@@ -143,7 +158,8 @@ namespace mmImages {
 
 		private:
 
-			void UpdateParameters();
+			void SerializeParameters();
+			void DeserializeParameters(mmImagesCalculationMethodI::sCalculationAutomationParams const & p_sAutomationParams);
 
 		private:
 			////////////////////////////////////////////////////////////////////////////////
@@ -182,7 +198,8 @@ namespace mmImages {
 			bool m_bIsExecuting;
 			bool m_bStopExecution;
 			bool m_bFinishImage;
-			std::vector<mmCMParameter> m_vParameters;
+			std::list<mmGenericParamI*> m_sInputParams;
+			std::list<mmGenericParamI*> m_sOutputParams;
 			std::map<mmID, mmInt> m_mNextRows;		// next available row for each image in structure which is identified by ID
 	};
 };

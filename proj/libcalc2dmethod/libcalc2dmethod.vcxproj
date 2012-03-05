@@ -20,9 +20,11 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="plugin\mmCalcMethod.cpp" />
+    <ClCompile Include="plugin\mmGenericParam.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\include\plugin\mmCalcMethod.h" />
+    <ClInclude Include="..\..\include\plugin\mmGenericParam.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{F699503B-5691-4ACB-9F1B-FA48C1703D65}</ProjectGuid>

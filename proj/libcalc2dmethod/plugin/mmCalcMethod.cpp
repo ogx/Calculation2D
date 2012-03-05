@@ -6,32 +6,6 @@
 ////////////////////////////////////////////////////////////////////////////////
 /// Additional tool class simplifying edition of method's parameters 
 ////////////////////////////////////////////////////////////////////////////////
-namespace mmImages {
-	class mmCMParameter
-	{
-	public:
-		mmCMParameter(): m_sName(L""), 
-			m_eType(mmXML::g_eXMLUnknownDataType),
-			m_bIsOutput(false) { }
-		mmCMParameter(mmString p_sName, 
-			mmXML::mmXMLDataType p_eType, 
-			void* p_psValue,
-			bool p_bIsOutput = false)
-		{
-			m_sName = p_sName;
-			m_eType = p_eType;
-			m_bIsOutput = p_bIsOutput;
-			m_pValue = p_psValue;
-		}
-		~mmCMParameter() { }
-
-		mmString m_sName;
-		mmXML::mmXMLDataType m_eType;
-		mmXML::mmXMLNodePosition m_sPosition;
-		void* m_pValue;
-		bool m_bIsOutput;
-	};
-}
 
 mmImages::mmCalcMethod::mmCalcMethod(mmLog::mmLogReceiverI *p_psLogReceiver, mmString p_sClassName) :
 	mmLog::mmLogSender(p_sClassName,p_psLogReceiver)
@@ -40,7 +14,7 @@ mmImages::mmCalcMethod::mmCalcMethod(mmLog::mmLogReceiverI *p_psLogReceiver, mmS
 
 	swprintf_s(m_sCMParams.sShortName, L"Generic calculation method");
 	swprintf_s(m_sCMParams.sIDName, L"{C13390E5-EBA6-404d-8706-B07FFE01C52F}");
-	swprintf_s(m_sCMParams.sDescription,L"Generic calculation method");
+	swprintf_s(m_sCMParams.sDescription, L"Generic calculation method");
 	m_sCMParams.bIsMultithreaded = true;
 
 	m_psThreadSynchEL.reset(mmInterfaceInitializers::CreateExclusiveLock(NULL));
@@ -63,34 +37,63 @@ mmImages::mmCalcMethod::~mmCalcMethod()
 	SendLogMessage(mmLog::debug,mmString(L"End Destructor"));
 }
 //---------------------------------------------------------------------------
+
+// DEPRECATED
+void mmImages::mmCalcMethod::SetParam(mmString const & p_sName, mmXML::mmXMLDataType const p_eType, void * const p_psValue, bool const p_bIsOutput) {
+	std::list<mmGenericParamI*> & v_sParams = p_bIsOutput ? m_sOutputParams : m_sInputParams;
+	switch(p_eType) {
+		case mmXML::g_eXMLInt: 
+			BindParam(v_sParams, p_sName, p_eType, *reinterpret_cast<mmInt*>(p_psValue)); return;
+		case mmXML::g_eXMLReal: 
+			BindParam(v_sParams, p_sName, p_eType, *reinterpret_cast<mmReal*>(p_psValue)); return;
+		case mmXML::g_eXMLBool: 
+			BindParam(v_sParams, p_sName, p_eType, *reinterpret_cast<bool*>(p_psValue)); return;
+		case mmXML::g_eXMLString: 
+		case mmXML::g_eXMLImageName: 
+		case mmXML::g_eXMLDataLayerName: 
+			BindParam(v_sParams, p_sName, p_eType, *reinterpret_cast<mmString*>(p_psValue)); return;
+		default: return;
+	}
+}
+//---------------------------------------------------------------------------
+
+void mmImages::mmCalcMethod::SerializeParameters()
+{
+	::wcscpy_s(m_sCMParams.sAutoParams.sInParams, mmImages::SerializeParameters(mmImages::g_pAutoCalcXML_INParams_Node, m_sInputParams).c_str());
+	::wcscpy_s(m_sCMParams.sAutoParams.sOutParams, mmImages::SerializeParameters(mmImages::g_pAutoCalcXML_OUTParams_Node, m_sInputParams).c_str());
+}
+
+void mmImages::mmCalcMethod::DeserializeParameters(mmImagesCalculationMethodI::sCalculationAutomationParams const & p_sAutomationParams)
+{
+	mmImages::DeserializeParameters(p_sAutomationParams.sInParams, m_sInputParams);
+	mmImages::DeserializeParameters(p_sAutomationParams.sOutParams, m_sOutputParams);
+}
+
 mmImages::mmImagesCalculationMethodI::sCalculationMethodParams mmImages::mmCalcMethod::GetCalculationMethodInfo(void)
 {
 	SendLogMessage(mmLog::debug,mmString(L"Start GetCalculationMethodInfo"));
 
-	UpdateParameters();
+	// serialize parameters
+	SerializeParameters();
 
 	SendLogMessage(mmLog::debug,mmString(L"End GetCalculationMethodInfo"));
 
 	return m_sCMParams;
 }
 //---------------------------------------------------------------------------
+
 void mmImages::mmCalcMethod::SetCalculationMethodParameters(mmImages::mmImageStructureI* p_psImageStructure, mmImages::mmImagesCalculationMethodI::sCalculationAutomationParams* p_psAutomationParams)
 {
 	SendLogMessage(mmLog::debug,mmString(L"Start SetCalculationMethodParameters"));
 
 	m_psImageStructure = p_psImageStructure;
 
-	if (p_psAutomationParams != NULL) {
-		std::auto_ptr<mmXML::mmXMLDocI> v_psXMLDoc(mmInterfaceInitializers::CreateXMLDocument());
-		v_psXMLDoc->ParseXMLBuffer(p_psAutomationParams->sInParams);
-		for (mmUInt i = 0; i < m_vParameters.size(); ++i) {
-			mmXML::GetValue(v_psXMLDoc.get(), m_vParameters[i].m_sPosition, m_vParameters[i].m_pValue);
-		}
-	}
-
 	m_rProgress = 0.0;
 	//m_iThreadsCount = 0;
 	m_bFinishImage = false;
+
+	// deserialize parameters
+	DeserializeParameters(*p_psAutomationParams);
 	
 	// prepare map with first available row for each image
 	m_mNextRows.clear();
@@ -202,48 +205,6 @@ void mmImages::mmCalcMethod::ForEachImage(mmCalcKernelI* p_psKernel)
 	/*m_psThreadSynchEL->Lock();
 		m_iThreadsCount--;
 	m_psThreadSynchEL->Unlock();*/
-}
-
-void mmImages::mmCalcMethod::SetParam(mmString p_sName, mmXML::mmXMLDataType p_eType, void* p_psValue, bool p_bIsOutput)
-{
-	std::vector<mmCMParameter>::iterator v_it;
-	for (v_it = m_vParameters.begin(); v_it != m_vParameters.end(); ++v_it) {
-		if (p_sName.compare((*v_it).m_sName) == 0) {
-			return;
-		}
-	}
-	mmCMParameter v_sParam(p_sName, p_eType, p_psValue, p_bIsOutput);
-	m_vParameters.push_back(v_sParam);
-}
-
-void mmImages::mmCalcMethod::UpdateParameters()
-{
-	// create XML document which stores input automation options
-	std::auto_ptr<mmXML::mmXMLDocI> v_psXMLInDoc(mmInterfaceInitializers::CreateXMLDocument(GetLogReceiver()));
-	mmXML::mmXMLPositionedNode v_sXMLInRootPosNode = mmXML::CreateAutomationInput(v_psXMLInDoc.get());
-
-	// create XML document which stores output automation options
-	std::auto_ptr<mmXML::mmXMLDocI> v_psXMLOutDoc(mmInterfaceInitializers::CreateXMLDocument(GetLogReceiver()));
-	mmXML::mmXMLPositionedNode v_sXMLOutRootPosNode = mmXML::CreateAutomationOutput(v_psXMLOutDoc.get());
-	
-	std::vector<mmImages::mmCMParameter>::iterator v_it;
-	for (v_it = m_vParameters.begin(); v_it != m_vParameters.end(); ++v_it) {
-		if ((*v_it).m_bIsOutput) {
-			(*v_it).m_sPosition = mmXML::AddParam(&v_sXMLOutRootPosNode,
-																						(*v_it).m_sName,
-																						(*v_it).m_eType,
-																						(*v_it).m_pValue);
-		}
-		else {
-			(*v_it).m_sPosition = mmXML::AddParam(&v_sXMLInRootPosNode,
-																						(*v_it).m_sName,
-																						(*v_it).m_eType,
-																						(*v_it).m_pValue);
-		}
-	}
-	
-	mmXML::CopyInputParams(v_psXMLInDoc.get(), &m_sCMParams.sAutoParams);
-	mmXML::CopyOutputParams(v_psXMLOutDoc.get(), &m_sCMParams.sAutoParams);
 }
 
 std::vector<mmID> mmImages::mmCalcMethod::GetImageIDs()

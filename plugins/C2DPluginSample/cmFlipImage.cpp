@@ -11,9 +11,11 @@ static mmImages::mmImagesCalculationMethodI::sCalculationMethodParams cmFlipImag
 	L"cmFlipImage"
 };
 
-static const wchar_t* g_UIParam_ImageName = L"Image:";
+static const wchar_t* g_UIParam_ImageName = L"Image";
 static const wchar_t* g_UIParam_Horizontal = L"Horizontally?";
 static const wchar_t* g_UIParam_Vertical = L"Vertically?";
+
+static const wchar_t* g_UIParam_NewImageName = L"Flipped image";
 
 mmImages::cmFlipImage::cmFlipImage(mmLog::mmLogReceiverI* p_psLogReceiver):
 mmCalcMethod(p_psLogReceiver, L"cmFlipImage")
@@ -24,10 +26,12 @@ mmCalcMethod(p_psLogReceiver, L"cmFlipImage")
 	m_bHorizontal = true;
 	m_bVertical = true;
 
-	// parameters definition
-	SetParam(g_UIParam_ImageName,mmXML::g_eXMLImageName, &m_sImageName); 
-	SetParam(g_UIParam_Horizontal,mmXML::g_eXMLBool, &m_bHorizontal); 
-	SetParam(g_UIParam_Vertical,mmXML::g_eXMLBool, &m_bVertical); 
+	// input parameters
+	SetParam(g_UIParam_ImageName, mmXML::g_eXMLImageName, &m_sImageName); 
+	SetParam(g_UIParam_Horizontal, mmXML::g_eXMLBool, &m_bHorizontal); 
+	SetParam(g_UIParam_Vertical, mmXML::g_eXMLBool, &m_bVertical); 
+	// output parameters
+	SetParam(g_UIParam_NewImageName, mmXML::g_eXMLImageName, &m_sNewImageName, true);
 }
 
 bool mmImages::cmFlipImage::Calculate()

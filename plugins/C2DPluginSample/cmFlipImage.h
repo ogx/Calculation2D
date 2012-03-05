@@ -21,6 +21,7 @@ namespace mmImages {
 			// members
 
 			mmString m_sImageName;
+			mmString m_sNewImageName;
 			bool m_bHorizontal;
 			bool m_bVertical;
 
