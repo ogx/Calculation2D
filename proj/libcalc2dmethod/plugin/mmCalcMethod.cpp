@@ -33,6 +33,12 @@ mmImages::mmCalcMethod::mmCalcMethod(mmLog::mmLogReceiverI *p_psLogReceiver, mmS
 mmImages::mmCalcMethod::~mmCalcMethod()
 {
 	SendLogMessage(mmLog::debug,mmString(L"Start Destructor"));
+	
+	for(std::list<mmGenericParamI*>::iterator v_sParam = m_sInputParams.begin(); v_sParam != m_sInputParams.end(); ++v_sParam)
+		delete *v_sParam;
+
+	for(std::list<mmGenericParamI*>::iterator v_sParam = m_sOutputParams.begin(); v_sParam != m_sOutputParams.end(); ++v_sParam)
+		delete *v_sParam;
 
 	SendLogMessage(mmLog::debug,mmString(L"End Destructor"));
 }
