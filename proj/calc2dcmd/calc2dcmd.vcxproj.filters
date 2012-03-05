@@ -1,0 +1,126 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="Source Files\Commands">
+      <UniqueIdentifier>{aee42037-4902-4761-b6dd-6518316c1538}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Commands">
+      <UniqueIdentifier>{df8a2b7b-5b12-46c1-99d9-d2f249f1db1c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Preview">
+      <UniqueIdentifier>{32118337-34e2-41d9-b16c-a4a058f7da2b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Preview">
+      <UniqueIdentifier>{fc442d74-f5b9-4aa2-aafe-ea2651ff5265}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\External">
+      <UniqueIdentifier>{d7705a94-1421-45a8-9ea4-3c1e20e58ed2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\External">
+      <UniqueIdentifier>{268eca46-5df6-47bc-ba8b-a513c7406b0b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Console">
+      <UniqueIdentifier>{46f87fb6-79fc-4440-baf6-de07ce221089}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Console">
+      <UniqueIdentifier>{9265e5c1-9662-4c00-ab72-a0b6c2dbca2b}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="calc2dcmd.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\commands\mmQuit.cpp">
+      <Filter>Source Files\Commands</Filter>
+    </ClCompile>
+    <ClCompile Include="src\external\bmpfile.cpp">
+      <Filter>Source Files\External</Filter>
+    </ClCompile>
+    <ClCompile Include="src\preview\mmImagePreviewOGL.cpp">
+      <Filter>Source Files\Preview</Filter>
+    </ClCompile>
+    <ClCompile Include="src\commands\mmCommand.cpp">
+      <Filter>Source Files\Commands</Filter>
+    </ClCompile>
+    <ClCompile Include="src\commands\mmExternalCommand.cpp">
+      <Filter>Source Files\Commands</Filter>
+    </ClCompile>
+    <ClCompile Include="src\commands\mmLoad.cpp">
+      <Filter>Source Files\Commands</Filter>
+    </ClCompile>
+    <ClCompile Include="src\commands\mmParam.cpp">
+      <Filter>Source Files\Commands</Filter>
+    </ClCompile>
+    <ClCompile Include="src\commands\mmPreview.cpp">
+      <Filter>Source Files\Commands</Filter>
+    </ClCompile>
+    <ClCompile Include="src\commands\mmStructureInfo.cpp">
+      <Filter>Source Files\Commands</Filter>
+    </ClCompile>
+    <ClCompile Include="src\commands\mmImageUtils.cpp">
+      <Filter>Source Files\Commands</Filter>
+    </ClCompile>
+    <ClCompile Include="src\console\mmCommandName.cpp">
+      <Filter>Source Files\Console</Filter>
+    </ClCompile>
+    <ClCompile Include="src\console\mmCommandLine.cpp">
+      <Filter>Source Files\Console</Filter>
+    </ClCompile>
+    <ClCompile Include="src\console\mmClient.cpp">
+      <Filter>Source Files\Console</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="include\commands\mmCommand.h">
+      <Filter>Header Files\Commands</Filter>
+    </ClInclude>
+    <ClInclude Include="include\commands\mmLoad.h">
+      <Filter>Header Files\Commands</Filter>
+    </ClInclude>
+    <ClInclude Include="include\commands\mmPreview.h">
+      <Filter>Header Files\Commands</Filter>
+    </ClInclude>
+    <ClInclude Include="include\commands\mmQuit.h">
+      <Filter>Header Files\Commands</Filter>
+    </ClInclude>
+    <ClInclude Include="include\commands\mmStructureInfo.h">
+      <Filter>Header Files\Commands</Filter>
+    </ClInclude>
+    <ClInclude Include="include\commands\mmExternalCommand.h">
+      <Filter>Header Files\Commands</Filter>
+    </ClInclude>
+    <ClInclude Include="include\commands\mmParam.h">
+      <Filter>Header Files\Commands</Filter>
+    </ClInclude>
+    <ClInclude Include="include\external\bmpfile.h">
+      <Filter>Header Files\External</Filter>
+    </ClInclude>
+    <ClInclude Include="include\preview\mmImagePreviewOGL.h">
+      <Filter>Header Files\Preview</Filter>
+    </ClInclude>
+    <ClInclude Include="include\console\mmCommandLine.h">
+      <Filter>Header Files\Console</Filter>
+    </ClInclude>
+    <ClInclude Include="include\commands\mmImageUtils.h">
+      <Filter>Header Files\Commands</Filter>
+    </ClInclude>
+    <ClInclude Include="include\console\mmCommandName.h">
+      <Filter>Header Files\Console</Filter>
+    </ClInclude>
+    <ClInclude Include="include\console\mmClient.h">
+      <Filter>Header Files\Console</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>
