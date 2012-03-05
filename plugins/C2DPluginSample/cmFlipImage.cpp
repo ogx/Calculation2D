@@ -49,7 +49,7 @@ bool mmImages::cmFlipImage::Calculate()
 	const mmImageI::mmPixelType v_iPixelType = v_psImage->GetPixelType();
 
 	// append suffixes to image name
-	mmString m_sNewImageName = m_sImageName + L"_flipped";
+	m_sNewImageName = m_sImageName + L"_flipped";
 
 	if (m_bHorizontal) m_sNewImageName += L"_H";
 	if (m_bVertical) m_sNewImageName += L"_V";

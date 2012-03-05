@@ -60,7 +60,7 @@ void mmImages::mmCalcMethod::SetParam(mmString const & p_sName, mmXML::mmXMLData
 void mmImages::mmCalcMethod::SerializeParameters()
 {
 	::wcscpy_s(m_sCMParams.sAutoParams.sInParams, mmImages::SerializeParameters(mmImages::g_pAutoCalcXML_INParams_Node, m_sInputParams).c_str());
-	::wcscpy_s(m_sCMParams.sAutoParams.sOutParams, mmImages::SerializeParameters(mmImages::g_pAutoCalcXML_OUTParams_Node, m_sInputParams).c_str());
+	::wcscpy_s(m_sCMParams.sAutoParams.sOutParams, mmImages::SerializeParameters(mmImages::g_pAutoCalcXML_OUTParams_Node, m_sOutputParams).c_str());
 }
 
 void mmImages::mmCalcMethod::DeserializeParameters(mmImagesCalculationMethodI::sCalculationAutomationParams const & p_sAutomationParams)

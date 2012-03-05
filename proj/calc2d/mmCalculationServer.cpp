@@ -136,8 +136,7 @@ Json::Value mmCalculationServer::GetStatus()
 				isr.append(image_json);
 			}
 
-			// TODO: send output parameters some day
-			//result[L"params"];
+			result[L"params"] = Params_XML2JSON(calculation_method->GetCalculationMethodInfo().sAutoParams.sOutParams);
 
 			delete calculation_method; calculation_method = NULL;
 			delete utils_factory; utils_factory = NULL;

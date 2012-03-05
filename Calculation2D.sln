@@ -27,6 +27,10 @@ EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libcalc2d", "proj\libcalc2d\libcalc2d.vcxproj", "{81764A51-4B0F-4310-ACD1-059BFC9BEDDE}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "calc2dcmd", "proj\calc2dcmd\calc2dcmd.vcxproj", "{D07C7E58-E714-49B2-82B2-5F58102A418C}"
+	ProjectSection(ProjectDependencies) = postProject
+		{F699503B-5691-4ACB-9F1B-FA48C1703D65} = {F699503B-5691-4ACB-9F1B-FA48C1703D65}
+		{81764A51-4B0F-4310-ACD1-059BFC9BEDDE} = {81764A51-4B0F-4310-ACD1-059BFC9BEDDE}
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
