@@ -344,6 +344,44 @@ $(document).ready(function() {
 		fr.readAsDataURL(file);
 	});
 	
+	// method details handling
+	$('#available_methods').change(function() {
+		var option = $('#available_methods option:selected'),
+			method_id = option.attr('method_id'),
+			method = c2d_client.methods_lookup[method_id];
+		if(!method) {
+			$('#method_details').hide();
+			throw new Exception('Selected method not found!');
+		}
+		
+		var max_params_length = 150;
+		$('#method_details #name').text(method.name);
+		$('#method_details #author').text(
+			method.author.first_name+' '+method.author.last_name+
+			' ('+method.author.email+')'
+		);
+		$('#method_details #description').text(method.description);
+		$('#method_details #input_parameters').html(
+			'<div id="input_parameters_code"/><div id="input_parameters_form"/>'
+			);
+		$('#input_parameters_code').text(
+			JSON.stringify(method.params.in, null, " ")
+			);
+		$('#input_parameters_form').empty().append(
+			surface.createForm(method.params.in)
+			);
+		$('#method_details #output_parameters').html(
+			'<div id="input_parameters_code"/><div id="input_parameters_form"/>'
+			);
+		$('#output_parameters_code').text(
+			JSON.stringify(method.params.out, null, " ")
+			);
+		$('#output_parameters_form').empty().append(
+			surface.createForm(method.params.out)
+			);
+		$('#method_details').show();
+	});
+	
 	
 	// plug in server's API
 	$('#get_methods').click(function() {
@@ -355,7 +393,10 @@ $(document).ready(function() {
 			combo.empty();
 			methods.forEach(function(method) {
 				var option = $(document.createElement('option')),
-					method_text = method.author + ': ' + method.name;
+					author = (method.author.first_name || method.author.last_name) ? 
+					         method.author.first_name + ' ' + method.author.last_name :
+					         'Anonymous',
+					method_text = author + ': ' + method.name;
 				option.text(method_text);
 				option.attr('method_id', method.id);
 				c2d_client.methods_lookup[method.id] = method;
@@ -363,43 +404,7 @@ $(document).ready(function() {
 			});
 			
 			// handle detailed view
-			combo.change(function() {
-				var option = $('#available_methods option:selected'),
-					method_id = option.attr('method_id'),
-					method = c2d_client.methods_lookup[method_id];
-				if(!method) {
-					$('#method_details').hide();
-					throw new Exception('Selected method not found!');
-				}
-				
-				var max_params_length = 150;
-				$('#method_details #name').text(method.name);
-				$('#method_details #author').text(
-					method.author.first_name+' '+method.author.last_name+
-					' ('+method.author.email+')'
-				);
-				$('#method_details #description').text(method.description);
-				$('#method_details #input_parameters').html(
-					'<div id="input_parameters_code"/><div id="input_parameters_form"/>'
-					);
-				$('#input_parameters_code').text(
-					JSON.stringify(method.params.in, null, " ")
-					);
-				$('#input_parameters_form').empty().append(
-					surface.createForm(method.params.in)
-					);
-				$('#method_details #output_parameters').html(
-					'<div id="input_parameters_code"/><div id="input_parameters_form"/>'
-					);
-				$('#output_parameters_code').text(
-					JSON.stringify(method.params.out, null, " ")
-					);
-				$('#output_parameters_form').empty().append(
-					surface.createForm(method.params.out)
-					);
-				$('#method_details').show();
-			});
-			combo.trigger('change');
+			combo.change();
 		});
 	}).click();
 	$('#run_method').click(function() {
