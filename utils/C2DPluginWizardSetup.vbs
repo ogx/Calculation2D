@@ -147,9 +147,16 @@ Sub SetupDir(Destination, Source)
 
   If ShouldUninstall Then
     If objFSO.FolderExists(Destination) Then
-      objLog.Writeline("DeleteFolder(Destination, False)")
-      Call objFSO.DeleteFolder(Destination, False)
-      Call CheckError()
+      IsSymbolic = (objFSO.GetFolder(Destination).Attributes And FA_REPARSE_POINT) = FA_REPARSE_POINT
+      If IsSymbolic Then
+        objLog.Writeline("Removing old symbolic link")
+        Command = "/c rmdir """ & Destination & """"
+        objApp.ShellExecute "cmd", Command, "", "", 0
+      Else
+        objLog.Writeline("DeleteFolder(Destination, False)")
+        Call objFSO.DeleteFolder(Destination, False)
+        Call CheckError()
+      End If
     Else
       objLog.WriteLine("Folder doesn't exist (ignoring): " & Destination)
     End If
