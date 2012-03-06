@@ -135,6 +135,8 @@ End Sub
 
 ' hic sunt dracones
 
+Const FA_REPARSE_POINT = &h400
+
 ''' Copies/Removes directory structure
 Sub SetupDir(Destination, Source)
  
