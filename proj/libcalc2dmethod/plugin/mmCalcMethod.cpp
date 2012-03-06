@@ -47,17 +47,18 @@ mmImages::mmCalcMethod::~mmCalcMethod()
 // DEPRECATED
 void mmImages::mmCalcMethod::SetParam(mmString const & p_sName, mmXML::mmXMLDataType const p_eType, void * const p_psValue, bool const p_bIsOutput) {
 	std::list<mmGenericParamI*> & v_sParams = p_bIsOutput ? m_sOutputParams : m_sInputParams;
+	mmGenericParamI::mmType v_eType = mmImages::GetTypeTransition(p_eType);
 	switch(p_eType) {
 		case mmXML::g_eXMLInt: 
-			BindParam(v_sParams, p_sName, p_eType, *reinterpret_cast<mmInt*>(p_psValue)); return;
+			BindParam(v_sParams, p_sName, v_eType, *reinterpret_cast<mmInt*>(p_psValue)); return;
 		case mmXML::g_eXMLReal: 
-			BindParam(v_sParams, p_sName, p_eType, *reinterpret_cast<mmReal*>(p_psValue)); return;
+			BindParam(v_sParams, p_sName, v_eType, *reinterpret_cast<mmReal*>(p_psValue)); return;
 		case mmXML::g_eXMLBool: 
-			BindParam(v_sParams, p_sName, p_eType, *reinterpret_cast<bool*>(p_psValue)); return;
+			BindParam(v_sParams, p_sName, v_eType, *reinterpret_cast<bool*>(p_psValue)); return;
 		case mmXML::g_eXMLString: 
 		case mmXML::g_eXMLImageName: 
 		case mmXML::g_eXMLDataLayerName: 
-			BindParam(v_sParams, p_sName, p_eType, *reinterpret_cast<mmString*>(p_psValue)); return;
+			BindParam(v_sParams, p_sName, v_eType, *reinterpret_cast<mmString*>(p_psValue)); return;
 		default: return;
 	}
 }
