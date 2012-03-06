@@ -679,6 +679,7 @@ mmImages::mmImageStructure::mmImageStructure(mmImageI::mmCallbackI * const p_psC
 {}
 
 mmImages::mmImageStructure::~mmImageStructure(void) {
+	for (auto it = m_sImages.begin(); it != m_sImages.end(); delete *it++);
 }
 
 mmImages::mmImageI* mmImages::mmImageStructure::CreateImage(mmString const & p_sName, mmUInt const p_iWidth, mmUInt const p_iHeight, mmImageI::mmPixelType const p_ePixelType) {
