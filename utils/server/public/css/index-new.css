@@ -1,0 +1,180 @@
+/* GENERAL CLASSES */
+.debug {
+	display: none;
+}
+.not-implemented {
+	opacity: 0.5;
+}
+.shadow, #top-panel, .box {
+	-moz-box-shadow:    0 0 3px #666;
+	-webkit-box-shadow: 0 0 3px #666;
+	box-shadow:         0 0 3px #666;
+}
+.wide-ctl {
+	width: 100%;
+}
+
+
+body {
+	padding: 0;
+	margin: 0;
+	
+	background: #ccc;
+	
+	text-align: center;
+}
+
+body, select, table {
+	font-family: 'Open Sans', sans-serif;
+	font-weight: 400;
+	font-size: 1em;
+	color: #333;
+}
+
+button {
+	font-size: 1em;
+	padding: 0.2em;
+}
+
+
+#top-panel {
+	background: #eee;
+	border: 0;
+	border-bottom: solid #666 1px;
+	
+	margin: 0;
+	padding: 30px;
+	
+	position: relative;
+	z-index: 1;
+	
+	background: -webkit-gradient(linear, 0 0, 0 100%, from(#eee), to(#ddd));
+	background: -moz-linear-gradient(top,  #eee 0px,  #ddd 100%);
+}
+#title {
+	font-size: 2em;
+	font-weight: bold;
+	color: #333;
+	text-shadow: 0 0 1px #333;
+}
+#sub-title {
+	font-size: 1.5em;
+	font-weight: bold;
+	display: none;
+}
+
+#content {
+	background: -webkit-gradient(linear, 0 0, 0 500, from(#aaa), to(#ccc));
+	background: -moz-linear-gradient(top,  #aaa 0px,  #ccc 500px);
+	
+	position: relative;
+	z-index: 0;
+	height: 100%;
+}
+
+
+.box {
+	background: #fefefe;
+	border: solid #666 1px;
+	display: inline-block;
+	margin: 30px 20px 30px 20px;
+	padding: 5px;
+}
+.box .title {
+	font-size: 1.5em;
+	font-weight: bold;
+	margin-bottom: 10px;
+}
+
+table.container {
+	margin: 0;
+	padding: 0;
+	border-spacing: 0;
+}
+table.container div.column {
+	display: inline-block;
+}
+
+
+/* DATA PANEL */
+#data-panel div.column {
+	vertical-align: top;
+	display: inline-block;
+}
+#input_preview_canvas {
+	border: solid #CCC 1px;
+	margin: 10px;
+}
+#data-browser {
+	text-align: left;
+	margin: 5px 10px 5px 10px;
+	width: 200px;
+}
+#main_image_list {
+	font-weight: bold;
+	font-size: 1em;
+}
+
+img.image_btn {
+	margin-left: 5px;
+	border: 0;
+}
+
+
+/* PROCESSING PANEL */
+#proc-panel {
+	width: 250px;
+	padding: 10px 15px 10px 15px;
+	margin-left: 0px;
+}
+#available_methods {
+	width: 100%;
+}
+#method_details {
+	margin: 10px 0 0 0;
+}
+#method_details td {
+	font-family: 'Open Sans', sans-serif;
+	font-weight: 300;
+	font-size: 0.8em;
+}
+#method_details .label {
+	font-weight: 700;
+	vertical-align: top;
+	padding-right: 5px;
+}
+#method_details .value {
+}
+
+/* INPUT PARAMETERS FORM */
+#input_parameters, #input_parameters table, #input_parameters select, #input_parameters input {
+	font-family: 'Open Sans', sans-serif;
+	font-weight: 300;
+}
+#input_parameters {
+	font-size: 0.8em;
+	margin: 20px 0 20px 0;
+	padding: 5px;
+	background: #eee;
+	border: #ddd solid 1px;
+}
+#input_parameters table {
+	width: 100%;
+}
+#input_parameters .param-label-cell {
+	font-weight: 700;
+	vertical-align: top;
+	padding-right: 5px;
+}
+#input_parameters .param-value-cell {
+	font-weight: 300;
+	vertical-align: top;
+	width: 100%;
+}
+
+
+#input_path {
+	height: 0;
+	width: 0;
+	opacity: 0;
+}

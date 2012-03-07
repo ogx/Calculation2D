@@ -33,10 +33,14 @@ fieldset legend {
 	padding-left: 10px;
 	padding-right: 10px;
 }
-#title {
+#top-panel {
 	background: #EEE;
 	border-bottom: solid #999 1px;
 	padding: 10px 30px 10px 30px;
+}
+#title {
+	font-size: 2em;
+	font-weight: bold;
 }
 fieldset legend, #title {
 	color: #558;

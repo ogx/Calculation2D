@@ -100,7 +100,26 @@ c2d.spawnProcess();
 
 // request routing (bogart)
 router.get('/', function() {
-	return viewEngine.respond('index.htm');
+	return viewEngine.respond('index.htm', { 
+		locals: {
+			styles: ['index'], 
+			jquery: true, 
+			jqueryui: true
+		} 
+	});
+});
+router.get('/new', function() {
+	return viewEngine.respond('index-new.htm', { 
+		locals: {
+			jquery: true, 
+			jqueryui: false,
+			styles: ['index-new'], 
+			headers: [
+				"<link href='http://fonts.googleapis.com/css?family=Open+Sans+Condensed:700,300' rel='stylesheet' type='text/css'>",
+				"<link href='http://fonts.googleapis.com/css?family=Open+Sans:400,300,600,700,800' rel='stylesheet' type='text/css'>"
+			],
+		} 
+	});
 });
 
 var promiseJson = function(obj_promise, opt_callback) {

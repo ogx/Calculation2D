@@ -1,0 +1,56 @@
+<table class='container' style='display: inline-block;'>
+	<tr>
+		<td style='vertical-align: top;'>
+
+			<div id='data-panel' class='box'>
+				<table class='container'><tr><td style='vertical-align: top;'>
+						<div id='data-browser' class='column'>
+							<div class='title'>Images</div>
+							<table class='container' style='width: 100%; margin-bottom: 10px;'><tr><td style='vertical-align: middle;width: 100%;'>
+									<select id='main_image_list' class='image-list' style='width: 100%;'>
+									</select>
+								</td><td style='vertical-align: middle;'>
+									<a href='#'><img id='load_btn' class='image_btn' src='img/famfamfam/icons/picture_add.png'/></a>
+								</td><td style='vertical-align: middle;'>
+									<a href='#'><img id='save_btn' class='image_btn not-implemented' src='img/famfamfam/icons/picture_save.png'/></a>
+							</td></tr></table>
+							<div style='padding-left: 10px;'>
+								<select id='main_layer_list' class='layer-list' size='10' style='width: 100%'>
+								</select>
+							</div>
+						</div>
+					</td><td style='vertical-align: top;'>
+						<div id='data-preview' class='column'>
+							<canvas id='input_preview_canvas' width='640' height='480'/>
+						</div>
+				</td></tr></table>
+			</div>
+			
+		</td><td style='vertical-align: top;'>
+
+			<div id='proc-panel' class='box'>
+				<div class='title'>Algorithms</div>
+				<div>
+					<select id='available_methods'></select>
+				</div>
+				<div class='buttons debug'>
+					<div><button id='get_methods'>Get methods</button></div>
+					<div><button id='get_status'>Get status</button></div>
+				</div>
+				<div>
+					<table id='method_details'>
+						<tr><td class='label'>Name</td><td id='name' class='value'></td></tr>
+						<tr><td class='label'>Author</td><td id='author' class='value'></td></tr>
+						<tr><td class='label'>Description</td><td id='description' class='value'></td></tr>
+					</table>
+					<div id='input_parameters' class='parameters_form'></div>
+					<div id='output_parameters' class='parameters_form'></div>
+					<button id='run_method' class='wide-ctl'>Launch</button>
+				</div>
+			</div>
+
+		</td>
+	</tr>
+</table>
+
+<input type='file' id='input_path'/>

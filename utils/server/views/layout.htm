@@ -1,18 +1,26 @@
 <html>
   <head>
     <title>Calculation2D</title>
-		<link rel="stylesheet" type="text/css" href="css/smoothness/jquery-ui-1.8.16.custom.css" media="all"/>
-		<script language='javascript' src='js/jquery-1.7.1.js'></script>
-		<script language='javascript' src='js/jquery-ui-1.8.16.custom.min.js'></script>
-		<link rel="stylesheet" type="text/css" href="css/index.css"/>
+		{{#jquery}}
+			<script language='javascript' src='js/jquery-1.7.1.js'></script>
+			{{#jqueryui}}
+				<link rel="stylesheet" type="text/css" href="css/smoothness/jquery-ui-1.8.16.custom.css" media="all"/>
+				<script language='javascript' src='js/jquery-ui-1.8.16.custom.min.js'></script>
+			{{/jqueryui}}
+		{{/jquery}}
+		{{%IMPLICIT-ITERATOR}}{{#styles}}
+			<link rel="stylesheet" type="text/css" href="css/{{.}}.css"/>
+		{{/styles}}
+		{{%IMPLICIT-ITERATOR}}{{#headers}}{{{.}}}{{/headers}}
 		<script language='javascript' src='js/client.js'></script>
 	</head>
 	<body>
-		<div id='title'>
-			<h2>Calculation2D - a 2D image processing framework for C++</h2>
+		<div id='top-panel'>
+			<div id='title'>Calculation2D</div>
+			<div id='sub-title'>Image processing framework for C++.</div>
 		</div>
 		<div id='content'>
-			{{{ body }}}
+			{{{body}}}
 		</div>
 	</body>
 </html>

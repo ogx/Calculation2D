@@ -81,8 +81,14 @@ var c2d_client = {
 	
 	image_structure: [],
 	newImage: function(image_data_or_image, image_name_if_image_data) {
-		var image;
-		if(image_data_or_image instanceof ImageData)
+		var image,
+			isImageData = function(i) {
+				return typeof i.width === "number" &&
+				       typeof i.height === "number" &&
+					   typeof i.data === "object" &&
+					   typeof i.data[0] === "number";
+			};
+		if(isImageData(image_data_or_image))
 			image = {
 				name: image_name_if_image_data,
 				image: this.extractImage(image_data_or_image),
@@ -216,8 +222,8 @@ var surface = {
 					'for': input.id,
 					'class': 'param_label' 
 				}).text(param.name),
-				cell1 = $(document.createElement('td')),
-				cell2 = $(document.createElement('td')),
+				cell1 = $(document.createElement('td')).addClass('param-label-cell'),
+				cell2 = $(document.createElement('td')).addClass('param-value-cell'),
 				row = $(document.createElement('tr'));
 				
 			table.append(row.append(cell1.append(label)).append(cell2.append(input)));
@@ -285,20 +291,21 @@ var surface = {
 		var createEdit = function(param) {
 				return $(document.createElement('input')).attr({
 					type: 'text',
-					value: param.value 
+					value: param.value,
+					'class': 'wide-ctl',
 				})[0];
 			},
 			createCheckbox = function(param) {
 				return $(document.createElement('input')).attr({
 					type: 'checkbox',
-					checked: param.value 
+					checked: param.value,
 				})[0];
 			},
 			createCombo = function(cl) {
 				return function(param) {
 					return $(document.createElement('select')).attr({
 						value: param.value,
-						'class': cl
+						'class': cl+' wide-ctl',
 					})[0];
 				};
 			}, 
@@ -343,7 +350,9 @@ var surface = {
 
 $(document).ready(function() {
 	// init appearances
-	$('button').button();
+	if($().button) {
+		$('button').button();
+	}
 	$('legend,label').addClass('header');
 	$('#input_path').css({opacity: 0, height: 0});
 	
@@ -393,13 +402,14 @@ $(document).ready(function() {
 		
 		var max_params_length = 150;
 		$('#method_details #name').text(method.name);
-		$('#method_details #author').text(
-			method.author.first_name+' '+method.author.last_name+
-			' ('+method.author.email+')'
-		);
+		var author = (method.author.first_name || method.author.last_name) ? 
+					  method.author.first_name + ' ' + method.author.last_name :
+					  'Anonymous',
+			email = method.author.email ? ' ('+method.author.email+')' : '';
+		$('#method_details #author').text(author+email);
 		$('#method_details #description').text(method.description);
-		$('#method_details #input_parameters').html(
-			'<div id="input_parameters_code"/><div id="input_parameters_form"/>'
+		$('#input_parameters').html(
+			'<div id="input_parameters_code debug"/><div id="input_parameters_form"/>'
 			);
 		$('#input_parameters_code').text(
 			JSON.stringify(method.params.in, null, " ")
@@ -407,7 +417,7 @@ $(document).ready(function() {
 		$('#input_parameters_form').empty().append(
 			surface.createForm(method.params.in)
 			);
-		$('#method_details #output_parameters').html(
+		$('#output_parameters').html(
 			'<div id="input_parameters_code"/><div id="input_parameters_form"/>'
 			);
 		$('#output_parameters_code').text(
