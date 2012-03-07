@@ -8,7 +8,7 @@
 static mmImages::mmImagesCalculationMethodI::sCalculationMethodParams cmAddLayerParams =
 {
 	L"Add layer",
-	L"{BA728F54-6D6B-4478-AFAC-C4367BDB494F}",
+	L"{521FEFE6-C9D3-485F-B411-83FCEB407158}",
 	L"Adds a new layer when provided with image, name and default value",
 	false,
 	{0, 0},
