@@ -116,13 +116,35 @@ mmCommands::mmCommand * mmConsole::mmClient::FindCommand(std::wstring const & p_
 bool mmConsole::mmClient::Aggregate(wchar_t const p_cCurrent) {
 	if(p_cCurrent == cNavTrigger1 || p_cCurrent == cNavTrigger2) {
 		wchar_t v_cDirection = ::_getwch();
-		if(v_cDirection == cNavUp && ! m_sHistory.empty()) {
+		if(v_cDirection == cNavUp && m_sPositionInHistory != m_sHistory.begin()) {
+			m_bNavigate = true;
 
 			EraseToPrompt();
-			m_sCommandLine = m_sHistory.back();
-			Write(m_sCommandLine.Print(cEndOfWord, cEscape));
+
+			--m_sPositionInHistory;
+			Write(m_sPositionInHistory->Print(cEndOfWord, cEscape));
+		} else if(v_cDirection == cNavDown && m_sPositionInHistory != m_sHistory.end()) {
+			m_bNavigate = true;
+
+			EraseToPrompt();
+
+			++m_sPositionInHistory;
+			if(m_sPositionInHistory != m_sHistory.end())
+				Write(m_sPositionInHistory->Print(cEndOfWord, cEscape));
+			else
+				Write(m_sCommandLine.Print(cEndOfWord, cEscape));
 		}
-	} else if(p_cCurrent == cEndOfWord) {
+	} else {
+		if(m_bNavigate) {
+			if(m_sPositionInHistory != m_sHistory.end()) {
+				m_sCommandLine = *m_sPositionInHistory;
+				m_sPositionInHistory = m_sHistory.end();
+			}
+			m_bNavigate = false;
+		}
+	}
+		
+	if(p_cCurrent == cEndOfWord) {
 		m_sCommandLine.AddParam();
 		Write(p_cCurrent);
 	} else if(p_cCurrent == cEndOfLine) {
@@ -148,6 +170,8 @@ bool mmConsole::mmClient::Aggregate(wchar_t const p_cCurrent) {
 		m_psCommand = NULL;
 		m_sHistory.push_back(m_sCommandLine);
 		m_sCommandLine = mmCommandLine();
+		// reset current position in history
+		m_sPositionInHistory = m_sHistory.end();
 		// display prompt
 		DisplayPrompt();
 	} else if(p_cCurrent == cAutoComplete) {
@@ -313,7 +337,8 @@ void mmConsole::mmClient::NewLine(void) {
 }
 
 void mmConsole::mmClient::EraseToPrompt(void) {
-	std::size_t v_iHowMany = m_sCommandLine.Print(cEndOfWord, cEscape).length();
+	std::size_t const v_iHowMany = (m_sPositionInHistory == m_sHistory.end() ? m_sCommandLine.Print(cEndOfWord, cEscape).length() : m_sPositionInHistory->Print(cEndOfWord, cEscape).length());
+		
 	for(std::size_t v_iI = 0; v_iI < v_iHowMany; ++v_iI)
 		Write(cBackSpace);
 	for(std::size_t v_iI = 0; v_iI < v_iHowMany; ++v_iI)
