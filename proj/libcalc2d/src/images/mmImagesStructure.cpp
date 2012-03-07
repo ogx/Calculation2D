@@ -162,7 +162,8 @@ bool mmImages::mmLayer::SetRows(mmUInt const p_iStart, mmUInt const p_iCount, mm
 	return true;
 }
 
-bool mmImages::mmLayer::GetPixels(mmReal p_prValues[], mmRect const & p_sRect) const {
+bool mmImages::mmLayer::GetPixels(mmRect const & p_sRect, mmReal p_prValues[]) const
+{
 	if(p_sRect.iLeft > m_iWidth || p_sRect.iTop > m_iHeight || (p_sRect.iLeft + p_sRect.iWidth) > m_iWidth || (p_sRect.iTop + p_sRect.iHeight) > m_iHeight || p_sRect.iWidth * p_sRect.iHeight == 0)
 		return false;
 
@@ -428,35 +429,35 @@ bool mmImages::mmImage::SetRows(mmUInt const p_iStart, mmUInt const p_iCount, mm
 	return true;
 }
 
-bool mmImages::mmImage::GetPixels(mmPixel8 p_psValues[], mmRect const & p_sRect) const {
+bool mmImages::mmImage::GetPixels(mmRect const & p_sRect, mmPixel8 p_psValues[]) const {
 	if(m_ePixelType != mmP8 || p_sRect.iLeft > m_iWidth || p_sRect.iTop > m_iHeight || (p_sRect.iLeft + p_sRect.iWidth) > m_iWidth || (p_sRect.iTop + p_sRect.iHeight) > m_iHeight || p_sRect.iWidth * p_sRect.iHeight == 0)
 		return false;
 
-	m_sChannels.front()->GetPixels(&p_psValues->rI, p_sRect);
+	m_sChannels.front()->GetPixels(p_sRect, &p_psValues->rI);
 
 	return true;
 }
 
-bool mmImages::mmImage::GetPixels(mmPixel24 p_psValues[], mmRect const & p_sRect) const {
+bool mmImages::mmImage::GetPixels(mmRect const & p_sRect, mmPixel24 p_psValues[]) const {
 	if((m_ePixelType != mmP24 && m_ePixelType != mmP32) || p_sRect.iLeft > m_iWidth || p_sRect.iTop > m_iHeight || (p_sRect.iLeft + p_sRect.iWidth) > m_iWidth || (p_sRect.iTop + p_sRect.iHeight) > m_iHeight || p_sRect.iWidth * p_sRect.iHeight == 0)
 		return false;
 
 	mmReal * v_prValues = new mmReal[p_sRect.iWidth * p_sRect.iHeight];
 	std::list<mmLayer*>::const_iterator v_sChannel = m_sChannels.begin();
 
-	(*v_sChannel)->GetPixels(v_prValues, p_sRect);
+	(*v_sChannel)->GetPixels(p_sRect, v_prValues);
 	for(mmUInt v_iRow = 0; v_iRow < p_sRect.iHeight; ++v_iRow)
 		for(mmUInt v_iPixel = 0; v_iPixel < p_sRect.iWidth; ++v_iPixel)
 			p_psValues[v_iRow * p_sRect.iWidth + v_iPixel].rR = v_prValues[v_iRow * p_sRect.iWidth + v_iPixel];
 
 	++v_sChannel;
-	(*v_sChannel)->GetPixels(v_prValues, p_sRect);
+	(*v_sChannel)->GetPixels(p_sRect, v_prValues);
 	for(mmUInt v_iRow = 0; v_iRow < p_sRect.iHeight; ++v_iRow)
 		for(mmUInt v_iPixel = 0; v_iPixel < p_sRect.iWidth; ++v_iPixel)
 			p_psValues[v_iRow * p_sRect.iWidth + v_iPixel].rG = v_prValues[v_iRow * p_sRect.iWidth + v_iPixel];
 
 	++v_sChannel;
-	(*v_sChannel)->GetPixels(v_prValues, p_sRect);
+	(*v_sChannel)->GetPixels(p_sRect, v_prValues);
 	for(mmUInt v_iRow = 0; v_iRow < p_sRect.iHeight; ++v_iRow)
 		for(mmUInt v_iPixel = 0; v_iPixel < p_sRect.iWidth; ++v_iPixel)
 			p_psValues[v_iRow * p_sRect.iWidth + v_iPixel].rB = v_prValues[v_iRow * p_sRect.iWidth + v_iPixel];
@@ -466,32 +467,32 @@ bool mmImages::mmImage::GetPixels(mmPixel24 p_psValues[], mmRect const & p_sRect
 	return true;
 }
 
-bool mmImages::mmImage::GetPixels(mmPixel32 p_psValues[], mmRect const & p_sRect) const {
+bool mmImages::mmImage::GetPixels(mmRect const & p_sRect, mmPixel32 p_psValues[]) const {
 	if(m_ePixelType != mmP32 || p_sRect.iLeft > m_iWidth || p_sRect.iTop > m_iHeight || (p_sRect.iLeft + p_sRect.iWidth) > m_iWidth || (p_sRect.iTop + p_sRect.iHeight) > m_iHeight || p_sRect.iWidth * p_sRect.iHeight == 0)
 		return false;
 
 	mmReal * v_prValues = new mmReal[p_sRect.iWidth * p_sRect.iHeight];
 	std::list<mmLayer*>::const_iterator v_sChannel = m_sChannels.begin();
 
-	(*v_sChannel)->GetPixels(v_prValues, p_sRect);
+	(*v_sChannel)->GetPixels(p_sRect, v_prValues);
 	for(mmUInt v_iRow = 0; v_iRow < p_sRect.iHeight; ++v_iRow)
 		for(mmUInt v_iPixel = 0; v_iPixel < p_sRect.iWidth; ++v_iPixel)
 			p_psValues[v_iRow * p_sRect.iWidth + v_iPixel].rR = v_prValues[v_iRow * p_sRect.iWidth + v_iPixel];
 
 	++v_sChannel;
-	(*v_sChannel)->GetPixels(v_prValues, p_sRect);
+	(*v_sChannel)->GetPixels(p_sRect, v_prValues);
 	for(mmUInt v_iRow = 0; v_iRow < p_sRect.iHeight; ++v_iRow)
 		for(mmUInt v_iPixel = 0; v_iPixel < p_sRect.iWidth; ++v_iPixel)
 			p_psValues[v_iRow * p_sRect.iWidth + v_iPixel].rG = v_prValues[v_iRow * p_sRect.iWidth + v_iPixel];
 
 	++v_sChannel;
-	(*v_sChannel)->GetPixels(v_prValues, p_sRect);
+	(*v_sChannel)->GetPixels(p_sRect, v_prValues);
 	for(mmUInt v_iRow = 0; v_iRow < p_sRect.iHeight; ++v_iRow)
 		for(mmUInt v_iPixel = 0; v_iPixel < p_sRect.iWidth; ++v_iPixel)
 			p_psValues[v_iRow * p_sRect.iWidth + v_iPixel].rB = v_prValues[v_iRow * p_sRect.iWidth + v_iPixel];
 
 	++v_sChannel;
-	(*v_sChannel)->GetPixels(v_prValues, p_sRect);
+	(*v_sChannel)->GetPixels(p_sRect, v_prValues);
 	for(mmUInt v_iRow = 0; v_iRow < p_sRect.iHeight; ++v_iRow)
 		for(mmUInt v_iPixel = 0; v_iPixel < p_sRect.iWidth; ++v_iPixel)
 			p_psValues[v_iRow * p_sRect.iWidth + v_iPixel].rA = v_prValues[v_iRow * p_sRect.iWidth + v_iPixel];
@@ -501,7 +502,7 @@ bool mmImages::mmImage::GetPixels(mmPixel32 p_psValues[], mmRect const & p_sRect
 	return true;
 }
 
-bool mmImages::mmImage::SetPixels(mmPixel8 const p_psValues[], mmRect const & p_sRect) {
+bool mmImages::mmImage::SetPixels(mmRect const & p_sRect, mmPixel8 const p_psValues[]) {
 	if(m_ePixelType != mmP8 || p_sRect.iLeft > m_iWidth || p_sRect.iTop > m_iHeight || (p_sRect.iLeft + p_sRect.iWidth) > m_iWidth || (p_sRect.iTop + p_sRect.iHeight) > m_iHeight || p_sRect.iWidth * p_sRect.iHeight == 0)
 		return false;
 
@@ -513,7 +514,7 @@ bool mmImages::mmImage::SetPixels(mmPixel8 const p_psValues[], mmRect const & p_
 	return true;
 }
 
-bool mmImages::mmImage::SetPixels(mmPixel24 const p_psValues[], mmRect const & p_sRect) {
+bool mmImages::mmImage::SetPixels(mmRect const & p_sRect, mmPixel24 const p_psValues[]) {
 	if((m_ePixelType != mmP24 && m_ePixelType != mmP32) || p_sRect.iLeft > m_iWidth || p_sRect.iTop > m_iHeight || (p_sRect.iLeft + p_sRect.iWidth) > m_iWidth || (p_sRect.iTop + p_sRect.iHeight) > m_iHeight || p_sRect.iWidth * p_sRect.iHeight == 0)
 		return false;
 
@@ -545,7 +546,7 @@ bool mmImages::mmImage::SetPixels(mmPixel24 const p_psValues[], mmRect const & p
 	return true;
 }
 
-bool mmImages::mmImage::SetPixels(mmPixel32 const p_psValues[], mmRect const & p_sRect) {
+bool mmImages::mmImage::SetPixels(mmRect const & p_sRect, mmPixel32 const p_psValues[]) {
 	if(m_ePixelType != mmP32 || p_sRect.iLeft > m_iWidth || p_sRect.iTop > m_iHeight || (p_sRect.iLeft + p_sRect.iWidth) > m_iWidth || (p_sRect.iTop + p_sRect.iHeight) > m_iHeight || p_sRect.iWidth * p_sRect.iHeight == 0)
 		return false;
 
