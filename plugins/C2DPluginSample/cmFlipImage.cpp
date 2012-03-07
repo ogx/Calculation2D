@@ -84,7 +84,7 @@ bool mmImages::cmFlipImage::Calculate()
 	std::fill(v_prLayerValues, v_prLayerValues + v_iPixelCount, 0.0);
 
 	const mmUInt v_iChannels = v_iPixelType;
-	const mmReal v_rAllRows = 1.0 * v_iHeight * (v_iChannels + v_psImage->GetLayerCount()));
+	const mmReal v_rAllRows = 1.0 * v_iHeight * (v_iChannels + v_psImage->GetLayerCount());
 	mmUInt v_iCalculatedRows = 0;
 
 	// loop over all channels

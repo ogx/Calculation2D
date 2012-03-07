@@ -32,6 +32,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "calc2dcmd", "proj\calc2dcmd
 		{81764A51-4B0F-4310-ACD1-059BFC9BEDDE} = {81764A51-4B0F-4310-ACD1-059BFC9BEDDE}
 	EndProjectSection
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "C2DPluginBasicOperation", "plugins\C2DPluginBasicOperation\C2DPluginBasicOperation.vcxproj", "{1EF4D68C-8CE2-4762-A6AF-1C88CE71F422}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -80,11 +82,20 @@ Global
 		{D07C7E58-E714-49B2-82B2-5F58102A418C}.Release|Win32.Build.0 = Release|Win32
 		{D07C7E58-E714-49B2-82B2-5F58102A418C}.Release|x64.ActiveCfg = Release|x64
 		{D07C7E58-E714-49B2-82B2-5F58102A418C}.Release|x64.Build.0 = Release|x64
+		{1EF4D68C-8CE2-4762-A6AF-1C88CE71F422}.Debug|Win32.ActiveCfg = Debug|Win32
+		{1EF4D68C-8CE2-4762-A6AF-1C88CE71F422}.Debug|Win32.Build.0 = Debug|Win32
+		{1EF4D68C-8CE2-4762-A6AF-1C88CE71F422}.Debug|x64.ActiveCfg = Debug|x64
+		{1EF4D68C-8CE2-4762-A6AF-1C88CE71F422}.Debug|x64.Build.0 = Debug|x64
+		{1EF4D68C-8CE2-4762-A6AF-1C88CE71F422}.Release|Win32.ActiveCfg = Release|Win32
+		{1EF4D68C-8CE2-4762-A6AF-1C88CE71F422}.Release|Win32.Build.0 = Release|Win32
+		{1EF4D68C-8CE2-4762-A6AF-1C88CE71F422}.Release|x64.ActiveCfg = Release|x64
+		{1EF4D68C-8CE2-4762-A6AF-1C88CE71F422}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{0A32DE24-BE34-4761-B964-B91C941558E5} = {85415F62-44CE-466F-B067-39A923D60352}
+		{1EF4D68C-8CE2-4762-A6AF-1C88CE71F422} = {85415F62-44CE-466F-B067-39A923D60352}
 	EndGlobalSection
 EndGlobal
