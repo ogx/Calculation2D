@@ -70,7 +70,7 @@ var c2d = {
 			};
 		stdOut.on('data', onStdoutData);
 		if(params && params.method) {
-			params.method = params.method.replace(/ /g, '_');
+			//params.method = params.method.replace(/ /g, '_');
 			//console.log('sent exactly:', JSON.stringify(params.method));
 		}
 		var command = JSON.stringify({
