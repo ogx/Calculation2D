@@ -84,6 +84,8 @@ bool mmImages::cmFlipImage::Calculate()
 	std::fill(v_prLayerValues, v_prLayerValues + v_iPixelCount, 0.0);
 
 	const mmUInt v_iChannels = v_iPixelType;
+	const mmReal v_rAllRows = static_cast<mmReal>(v_iHeight * v_iChannels);
+	mmUInt v_iCalculatedRows = 0;
 
 	// loop over all channels
 	for (mmUInt v_iChannel = 0; v_iChannel < v_iChannels; ++v_iChannel) {
@@ -103,7 +105,9 @@ bool mmImages::cmFlipImage::Calculate()
 				v_prNewPixels[v_iNewPixelID] = v_prPixels[v_iPixelID];
 
 				v_prLayerValues[v_iPixelID] = std::max(v_prLayerValues[v_iPixelID], ::fabs(v_prPixels[v_iPixelID] - v_prPixels[v_iNewPixelID]));
+
 			}
+			m_rProgress = static_cast<mmReal>(++v_iCalculatedRows) / v_rAllRows * 100.0;
 		}
 
 		mmLayerI *v_psNewChannel = v_psNewImage->GetChannel(v_iChannel);

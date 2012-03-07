@@ -357,11 +357,11 @@ LRESULT CALLBACK mmImages::mmImagePreviewOGLIMPL::WndProc( UINT p_uiMessage, WPA
 	PAINTSTRUCT v_sPaintStruct;
 	switch( p_uiMessage ) {
 		case WM_C2DP_DISPLAY_IMAGE: {
-			DisplayImage(reinterpret_cast<mmImageI*>(p_sWParam), static_cast<bool>(p_sLParam));
+			DisplayImage(reinterpret_cast<mmImageI*>(p_sWParam), p_sLParam != 0);
 			return 0;
 		}
 		case WM_C2DP_DISPLAY_LAYER: {
-			DisplayDataLayer(reinterpret_cast<mmLayerI*>(p_sWParam), static_cast<bool>(p_sLParam));
+			DisplayDataLayer(reinterpret_cast<mmLayerI*>(p_sWParam), p_sLParam != 0);
 			return 0;
 		}
     	case WM_NCHITTEST: {
@@ -413,47 +413,10 @@ DWORD WINAPI mmImages::mmImagePreviewOGL::PreviewFunc(LPVOID p_psParam) {
 	v_psInstance->m_psPreview = new mmImagePreviewOGLIMPL(v_psInstance->m_sTitle.c_str());
 
 	MSG v_sMessage;
-	PAINTSTRUCT v_sPaintStruct;
 	while(! v_psInstance->m_bExit) {
-		::PeekMessageW(&v_sMessage, v_psInstance->m_psPreview->m_hWindow, 0, 0, PM_REMOVE);
-
-		switch( v_sMessage.message ) {
-			case WM_C2DP_DISPLAY_IMAGE: 
-				v_psInstance->m_psPreview->DisplayImage(reinterpret_cast<mmImageI*>(v_sMessage.wParam), static_cast<bool>(v_sMessage.lParam));
-				break;
-			case WM_C2DP_DISPLAY_LAYER: 
-				v_psInstance->m_psPreview->DisplayDataLayer(reinterpret_cast<mmLayerI*>(v_sMessage.wParam), static_cast<bool>(v_sMessage.lParam));
-				break;
-    //		case WM_NCHITTEST: 
-				//LRESULT v_sHitTestResult;
-				//if( ( v_sHitTestResult = ::DefWindowProc( v_psInstance->m_psPreview->m_hWindow, v_sMessage.message, v_sMessage.wParam, v_sMessage.lParam ) ) == HTCLIENT )
-				//	return HTCAPTION;
-				//else
-    //        		return v_sHitTestResult;
-				//break;
-			case WM_PAINT: 
-				::BeginPaint( v_psInstance->m_psPreview->m_hWindow, &v_sPaintStruct );
-				v_psInstance->m_psPreview->RepaintDisplay();
-				::EndPaint( v_psInstance->m_psPreview->m_hWindow, &v_sPaintStruct );
-				break;
-			case WM_MOUSEWHEEL: 
-				if( GET_WHEEL_DELTA_WPARAM(v_sMessage.wParam) < 0 )
-					v_psInstance->m_psPreview->ZoomOut();
-				else
-					v_psInstance->m_psPreview->ZoomIn();
-				break;
-			case WM_LBUTTONDBLCLK: 
-				v_psInstance->m_psPreview->ResetView( v_psInstance->m_psPreview->m_iWidth, v_psInstance->m_psPreview->m_iHeight );
-				v_psInstance->m_psPreview->RepaintDisplay();
-				break;
-			case WM_NCMBUTTONUP:
-				v_psInstance->m_psPreview->HidePreviewWindow();
-				break;
-			case WM_CLOSE:
-				v_psInstance->m_psPreview->HidePreviewWindow();
-				break;
-			default:
-				DefWindowProc(v_psInstance->m_psPreview->m_hWindow, v_sMessage.message, v_sMessage.wParam, v_sMessage.lParam);
+		while(::PeekMessageW(&v_sMessage, v_psInstance->m_psPreview->m_hWindow, 0, 0, PM_REMOVE)) {
+			::TranslateMessage(&v_sMessage);
+			::DispatchMessageW(&v_sMessage);
 		}
 		::Sleep(10);
 	}
@@ -473,7 +436,7 @@ void mmImages::mmImagePreviewOGL::DisplayImage( mmImages::mmImageI * const p_psI
 }
 
 void mmImages::mmImagePreviewOGL::DisplayDataLayer( mmImages::mmLayerI * const p_psLayer, bool p_bResetView) {
-	::SendMessage(m_psPreview->m_hWindow, WM_C2DP_DISPLAY_IMAGE, reinterpret_cast<WPARAM>(p_psLayer), static_cast<LPARAM>(p_bResetView));
+	::SendMessage(m_psPreview->m_hWindow, WM_C2DP_DISPLAY_LAYER, reinterpret_cast<WPARAM>(p_psLayer), static_cast<LPARAM>(p_bResetView));
 }
 
 void mmImages::mmImagePreviewOGL::ShowPreviewWindow( void ) {

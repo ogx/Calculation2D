@@ -8,6 +8,6 @@
 
 int _tmain(int argc, _TCHAR* argv[])
 {
-	return mmConsole::mmClient().Run();
+	return mmConsole::mmClient(L"Calculation2D").Run();
 }
 
