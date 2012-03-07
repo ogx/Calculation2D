@@ -33,12 +33,12 @@ mmCalcMethod(p_psLogReceiver, L"cmFlipImage")
 	m_bVertical = true;
 
 	// input parameters
-	SetParam(g_UIParam_ImageName, mmXML::g_eXMLImageName, &m_sImageName); 
-	SetParam(g_UIParam_Horizontal, mmXML::g_eXMLBool, &m_bHorizontal); 
-	SetParam(g_UIParam_Vertical, mmXML::g_eXMLBool, &m_bVertical); 
+	BindInputParam(g_UIParam_ImageName, mmGenericParamI::mmImageNameType, m_sImageName); 
+	BindInputParam(g_UIParam_Horizontal, mmGenericParamI::mmBoolType, m_bHorizontal); 
+	BindInputParam(g_UIParam_Vertical, mmGenericParamI::mmBoolType, m_bVertical); 
 	// output parameters
-	SetParam(g_UIParam_NewImageName, mmXML::g_eXMLImageName, &m_sNewImageName, true);
-	SetParam(g_UIParam_NewLayerName, mmXML::g_eXMLDataLayerName, &m_sNewLayerName, true);
+	BindOutputParam(g_UIParam_NewImageName, mmGenericParamI::mmImageNameType, m_sNewImageName);
+	BindOutputParam(g_UIParam_NewLayerName, mmGenericParamI::mmLayerNameType, m_sNewLayerName);
 }
 
 bool mmImages::cmFlipImage::Calculate()

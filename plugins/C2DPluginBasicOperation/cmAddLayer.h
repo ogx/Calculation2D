@@ -4,7 +4,7 @@
 
 namespace mmImages {
 
-	// Flip image calculation method. It makes a mirrored image.
+	// Adds a new layer when provided with image, name and default value.
 	class cmAddLayer : public mmCalcMethod
 	{
 		public:			// methods
@@ -12,17 +12,12 @@ namespace mmImages {
 
 			virtual ~cmAddLayer() {}
 
-		protected:	// mmCalcMethodI implementation
+		protected:	// implementation
 			bool mmCalcMethod::Calculate();
-			//void mmCalcMethod::RetrieveParameters();
 
-		private:
-
-			// members
-
+		private:    // members
 			mmString m_sImageName;
 			mmString m_sNewLayerName;
 			mmReal m_rDefaultValue;
-
 	};
 };

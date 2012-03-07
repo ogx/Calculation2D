@@ -12,19 +12,14 @@ namespace mmImages {
 
 			virtual ~cmFlipImage() {}
 
-		protected:	// mmCalcMethodI implementation
+		protected: //implementation
 			bool mmCalcMethod::Calculate();
-			//void mmCalcMethod::RetrieveParameters();
 
-		private:
-
-			// members
-
+		private: // members
 			mmString m_sImageName;
 			mmString m_sNewImageName;
 			mmString m_sNewLayerName;
 			bool m_bHorizontal;
 			bool m_bVertical;
-
 	};
 };

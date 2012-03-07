@@ -1,15 +1,10 @@
 #include "cmAddLayer.h"
 
-#include <algorithm>
-
-#undef min
-#undef max
-
 static mmImages::mmImagesCalculationMethodI::sCalculationMethodParams cmAddLayerParams =
 {
 	L"Add layer",
 	L"{521FEFE6-C9D3-485F-B411-83FCEB407158}",
-	L"Adds a new layer when provided with image, name and default value",
+	L"Adds a new layer when provided with image, name and default value.",
 	false,
 	{0, 0},
 	{0, L"John", L"Doe", L"j.doe@example.com"},
@@ -31,12 +26,12 @@ mmCalcMethod(p_psLogReceiver, L"cmAddLayer")
 	m_sNewLayerName = L"New layer";
 
 	// input parameters
-	SetParam(g_UIParam_ImageName, mmXML::g_eXMLImageName, &m_sImageName); 
-	SetParam(g_UIParam_NewLayerName, mmXML::g_eXMLString, &m_sNewLayerName); 
-	SetParam(g_UIParam_DefaultValue, mmXML::g_eXMLReal, &m_rDefaultValue); 
+	BindInputParam(g_UIParam_ImageName, mmGenericParamI::mmImageNameType, m_sImageName); 
+	BindInputParam(g_UIParam_NewLayerName, mmGenericParamI::mmStringType, m_sNewLayerName); 
+	BindInputParam(g_UIParam_DefaultValue, mmGenericParamI::mmRealType, m_rDefaultValue); 
 	// output parameters
-	SetParam(g_UIParam_NewLayerName, mmXML::g_eXMLDataLayerName, &m_sNewLayerName, true); 
-	SetParam(g_UIParam_DefaultValue, mmXML::g_eXMLReal, &m_rDefaultValue, true); 
+	BindOutputParam(g_UIParam_NewLayerName, mmGenericParamI::mmLayerNameType, m_sNewLayerName); 
+	BindOutputParam(g_UIParam_DefaultValue, mmGenericParamI::mmRealType, m_rDefaultValue); 
 }
 
 bool mmImages::cmAddLayer::Calculate()
