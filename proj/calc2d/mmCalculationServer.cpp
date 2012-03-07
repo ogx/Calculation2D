@@ -50,9 +50,8 @@ int mmCalculationServer::Serve()
 	Json::Reader reader;
 	Json::FastWriter fwriter;
 	Json::Value obj_in, obj_out;
-	while(os.good())
+	while(std::getline(is, input).good())
 	{
-		is >> input;
 		reader.parse(input, obj_in);
 		if(obj_in[L"cmd"].asString() == L"finalize")
 		{
