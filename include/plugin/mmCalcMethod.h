@@ -192,8 +192,9 @@ namespace mmImages {
 			////////////////////////////////////////////////////////////////////////////////
 			mmReal mmThreadExecutionI::GetProgress(void);
 
-		private:		// fields
+		protected:
 			mmReal m_rProgress;
+		private:		// fields
 			//mmInt m_iThreadsCount;
 			bool m_bIsExecuting;
 			bool m_bStopExecution;

@@ -1,5 +1,10 @@
 #include <commands/mmExternalCommand.h>
 
+#include <algorithm>
+
+#undef min
+#undef max
+
 mmCommands::mmExternalCommand::mmExternalCommand(std::wstring const & p_sID, std::wstring const & p_sName, std::wstring const & p_sInputParams, mmImages::mmImagesCalculationMethodContainerI * const p_psMethodsContainer, mmImages::mmImagesCalculationManagement * const p_psCalculationManager, mmImages::mmImageStructureI * const p_psImageStructure) 
 	: m_sID(p_sID), 
 	  m_psMethodsContainer(p_psMethodsContainer), 
@@ -56,17 +61,17 @@ bool mmCommands::mmExternalCommand::Run(std::wstring const & p_sName, std::vecto
 
 	m_psCalculationManager->CalculateImages(v_psMethod.get(), m_psImageStructure, &v_sParamsXML);
 
-	std::size_t v_iLastStatus = 10, v_iCurrentStatus;
+	unsigned v_iLastStatus = 10, v_iCurrentStatus;
 	::_cputws(L"0% ");
 	while(m_psCalculationManager->IsCalculating()) {
-		v_iCurrentStatus = static_cast<std::size_t>(m_psCalculationManager->GetProgress());
+		v_iCurrentStatus = static_cast<unsigned>(m_psCalculationManager->GetProgress());
 		if(v_iCurrentStatus > v_iLastStatus)
 			for(; v_iLastStatus < v_iCurrentStatus && v_iLastStatus < 100 && m_psCalculationManager->IsCalculating(); v_iLastStatus += 10)
-				::_cwprintf(L"%d%% ", v_iLastStatus);
+				::_cwprintf(L"%u%% ", v_iLastStatus);
 		::Sleep(10);
 	}
 	for(; v_iLastStatus <= 100; v_iLastStatus += 10)
-		::_cwprintf(L"%d%% ", v_iLastStatus);
+		::_cwprintf(L"%u%% ", v_iLastStatus);
 	::_cputws(L"\r\n");
 
 	return true;

@@ -11,7 +11,8 @@
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 mmImages::mmImagesCalculationManagement::mmImagesCalculationManagement(mmInt p_iCalcThreadCount, mmLog::mmLogReceiverI *p_psLogReceiver = NULL):
-	mmLog::mmLogSender(L"mmImages::mmImagesCalculationManagement",p_psLogReceiver)
+	mmLog::mmLogSender(L"mmImages::mmImagesCalculationManagement",p_psLogReceiver), 
+	m_rProgress(0.0)
 {
 	SendLogMessage(mmLog::debug,mmString(L"Start Constructor"));
 
@@ -76,6 +77,7 @@ void mmImages::mmImagesCalculationManagement::CalculateImages(	mmImages::mmImage
 																	p_psAutomationParams);
 
 	m_bIsActiveCalculation = true;
+	m_rProgress = 0.0;
 
 	m_psImageStructure = p_psImageStructure;
 	if(p_psImagesCalculationMethod->GetCalculationMethodInfo().bIsMultithreaded)

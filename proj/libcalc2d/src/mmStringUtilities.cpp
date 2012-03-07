@@ -396,6 +396,8 @@ mmString mmStringUtilities::GetCommonSubstring(std::vector<mmString>::iterator p
 				break;
 			}
 	}
+	if(v_bBreak && v_iLastCommonChar)
+		--v_iLastCommonChar;
 
 	return p_sBegin->substr(0, v_iLastCommonChar);
 }

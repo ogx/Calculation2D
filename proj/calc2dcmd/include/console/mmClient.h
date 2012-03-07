@@ -17,7 +17,7 @@
 namespace mmConsole {
 	class mmClient {
 	public:
-		mmClient(void);
+		mmClient(std::wstring const & p_sTitle);
 		~mmClient(void);
 		mmInt Run(void);
 	private:
@@ -51,6 +51,8 @@ namespace mmConsole {
 		std::map<mmCommandName, mmCommands::mmCommand*> m_sCommands;
 		std::vector<mmCommandName> m_sCommandNames;
 		std::vector<mmCommandLine> m_sHistory;
+		std::vector<mmCommandLine>::iterator m_sPositionInHistory;
+		bool m_bNavigate;
 		mmCommandLine m_sCommandLine;
 		mmCommands::mmCommand * m_psCommand;
 	private:

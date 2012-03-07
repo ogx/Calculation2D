@@ -22,6 +22,7 @@ namespace mmImages {
 
 			mmString m_sImageName;
 			mmString m_sNewImageName;
+			mmString m_sNewLayerName;
 			bool m_bHorizontal;
 			bool m_bVertical;
 

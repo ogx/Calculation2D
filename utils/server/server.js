@@ -16,7 +16,7 @@ var config = {
 
 process.nextTick(function() {
 	console.log("\n Calculation2D server functional. \n Go to the browser and type: " +
-		"http://" + config.serverAddress + ":" + config.serverPort + "\n");
+		"\n   http://" + config.serverAddress + ":" + config.serverPort + "\n");
 		
 	var print_debug_info = function() {
 		console.log('process path: ' + process.execPath);
@@ -70,7 +70,7 @@ var c2d = {
 			};
 		stdOut.on('data', onStdoutData);
 		if(params && params.method) {
-			params.method = params.method.replace(/ /g, '_');
+			//params.method = params.method.replace(/ /g, '_');
 			//console.log('sent exactly:', JSON.stringify(params.method));
 		}
 		var command = JSON.stringify({

@@ -15,7 +15,6 @@
 #include <algorithm>
 #include <iterator>
 
-
 struct FindByName {
 	FindByName(mmString const & p_sName) : m_sName(p_sName) {}
 	bool operator () (mmImages::mmLayer * const p_psLayer) {
