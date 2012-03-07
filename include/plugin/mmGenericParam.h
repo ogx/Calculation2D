@@ -12,7 +12,7 @@
 namespace mmImages {
 	class mmGenericParamI {
 	public:
-		enum mmType {mmIntType, mmRealType, mmBoolType, mmStringType, mmImageType, mmImageNameType, mmLayerType, mmLayerNameType, mmRectType, mmPointType};
+		enum mmType {mmIntType=0, mmRealType, mmBoolType, mmStringType, mmImageType, mmImageNameType, mmLayerType, mmLayerNameType, mmRectType, mmPointType, mmUnknownType};
 	public:
 		struct FindByName {
 			FindByName(mmString const & p_sName) : sName(p_sName) {}
@@ -30,6 +30,10 @@ namespace mmImages {
 		virtual ~mmGenericParamI(void) {}
 	};
 
+	// to remove with mmXMLIOUtilities
+	extern mmGenericParamI::mmType GetTypeTransition(mmXML::mmXMLDataType const p_eType);
+	extern mmXML::mmXMLDataType GetTypeTransition(mmGenericParamI::mmType const p_eType);
+
 	template<class param_t> 
 	inline param_t FromString(mmString const & p_sString);
 
@@ -45,6 +49,8 @@ namespace mmImages {
 	extern mmRect FromString<mmRect>(mmString const & p_sString);
 	template<>
 	extern mmMath::sPoint2D FromString<mmMath::sPoint2D>(mmString const & p_sString);
+	template<>
+	extern mmGenericParamI::mmType FromString<mmGenericParamI::mmType>(mmString const & p_sString);
 
 	template<class param_t>
 	inline mmString ToString(param_t const & p_sValue);
@@ -61,31 +67,33 @@ namespace mmImages {
 	extern mmString ToString<mmRect>(mmRect const & p_sValue);
 	template<>
 	extern mmString ToString<mmMath::sPoint2D>(mmMath::sPoint2D const & p_sValue);
+	template<>
+	extern mmString ToString<mmGenericParamI::mmType>(mmGenericParamI::mmType const & p_sValue);
 
 	template<class param_t>
 	class mmGenericParam_base : public mmGenericParamI {
 	public:
-		mmGenericParam_base(mmString const & p_sName, mmXML::mmXMLDataType const p_eType, param_t & p_sValue) : m_sName(p_sName), m_eType(p_eType), m_sValue(p_sValue) {}
+		mmGenericParam_base(mmString const & p_sName, mmType const p_eType, param_t & p_sValue) : m_sName(p_sName), m_eType(p_eType), m_sValue(p_sValue) {}
 		virtual mmString GetTypeString(void) const {
-			return mmXML::GetTypeTransition(m_eType);
+			return ToString(m_eType);
 		}
 		virtual mmString GetNameString(void) const {
 			return m_sName;
 		}
 		virtual mmString GetValueString(void) const {
-			return ToString<param_t>(m_sValue);
+			return ToString(m_sValue);
 		}
 		virtual void SetValueString(mmString const & p_sValue) {
 			m_sValue = FromString<param_t>(p_sValue);
 		}
 	private:
-		mmXML::mmXMLDataType const m_eType;
+		mmType const m_eType;
 		mmString const m_sName;
 		param_t & m_sValue;
 	};
 
 	template<class param_t>
-	inline void BindParam(std::list<mmGenericParamI*> & p_sParams, mmString const & p_sName, mmXML::mmXMLDataType const p_eType, param_t & p_sValue) {
+	inline void BindParam(std::list<mmGenericParamI*> & p_sParams, mmString const & p_sName, mmGenericParamI::mmType const p_eType, param_t & p_sValue) {
 		std::list<mmGenericParamI*>::iterator v_sParam;
 		if((v_sParam = std::find_if(p_sParams.begin(), p_sParams.end(), mmGenericParamI::FindByName(p_sName))) != p_sParams.end()) {
 			delete *v_sParam;

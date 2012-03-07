@@ -528,6 +528,7 @@ namespace mmImages
 		virtual ~mmImageStructureI(void) {};
 	};
 
+	// to be removed with mmXMLIOUtilities
 	extern const wchar_t* g_pAutoCalcXML_Params_ParamType_ImageName;
 	extern const wchar_t* g_pAutoCalcXML_Params_ParamType_ImagesNames;
         extern const wchar_t* g_pAutoCalcXML_Params_ParamType_ImageCount_All;

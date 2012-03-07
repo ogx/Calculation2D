@@ -126,7 +126,8 @@ bool mmImages::cmFlipImage::Calculate()
 
 	}
 
-	delete [] v_prPixels, v_prNewPixels;
+	delete [] v_prPixels;
+	delete [] v_prNewPixels;
 
 	return true;
 }

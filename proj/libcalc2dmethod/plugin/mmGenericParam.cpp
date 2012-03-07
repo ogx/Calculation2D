@@ -5,6 +5,30 @@
 
 #include <cstdlib>
 
+inline mmImages::mmGenericParamI::mmType mmImages::GetTypeTransition(mmXML::mmXMLDataType const p_eType) {
+	switch(p_eType) {
+		case mmXML::g_eXMLInt: return mmGenericParamI::mmIntType;
+		case mmXML::g_eXMLReal: return mmGenericParamI::mmRealType;
+		case mmXML::g_eXMLString: return mmGenericParamI::mmStringType;
+		case mmXML::g_eXMLBool: return mmGenericParamI::mmBoolType;
+		case mmXML::g_eXMLImageName: return mmGenericParamI::mmImageNameType;
+		case mmXML::g_eXMLDataLayerName: return mmGenericParamI::mmLayerNameType;
+		default: return mmGenericParamI::mmUnknownType;
+	}
+}
+
+inline mmXML::mmXMLDataType mmImages::GetTypeTransition(mmGenericParamI::mmType const p_eType) {
+	switch(p_eType) {
+	case mmGenericParamI::mmIntType: return mmXML::g_eXMLInt;
+	case mmGenericParamI::mmRealType: return mmXML::g_eXMLReal;
+	case mmGenericParamI::mmStringType: return mmXML::g_eXMLString;
+	case mmGenericParamI::mmBoolType: return mmXML::g_eXMLBool;
+	case mmGenericParamI::mmImageNameType: return mmXML::g_eXMLImageName;
+	case mmGenericParamI::mmLayerNameType: return mmXML::g_eXMLDataLayerName;
+	default: return mmXML::g_eXMLUnknownDataType;
+	}
+}
+
 template<>
 inline mmString mmImages::FromString<mmString>(mmString const & p_sString) {
 	return p_sString;
@@ -39,6 +63,36 @@ inline mmMath::sPoint2D mmImages::FromString<mmMath::sPoint2D>(mmString const & 
 	return v_sPoint;
 }
 
+namespace mmImages {
+	//wchar_t const * const g_ppcTypeToString[] = {L"int", L"real", L"bool", L"string", L"image", L"image_name", L"layer", L"layer_name", L"rect", L"point"};
+	// to be removed with mmXMLIOUtilities
+	wchar_t const * const g_ppcTypeToString[] = {
+		g_pAutoCalcXML_Params_ParamType_IntegerValue, 
+		g_pAutoCalcXML_Params_ParamType_RealValue, 
+		g_pAutoCalcXML_Params_ParamType_BoolValue, 
+		g_pAutoCalcXML_Params_ParamType_String, 
+		L"image", 
+		g_pAutoCalcXML_Params_ParamType_ImageName, 
+		L"layer", 
+		g_pAutoCalcXML_Params_ParamType_DataLayerName,
+		L"rect",
+		L"point"
+	};
+	wchar_t const * const * const g_ppcTypeToStringEnd = g_ppcTypeToString + sizeof(g_ppcTypeToString) / sizeof(*g_ppcTypeToString);
+	struct EqualStrings {
+		EqualStrings(wchar_t const p_pcS[]) : m_pcS(p_pcS) {}
+		bool operator ()(wchar_t const p_pcS[]) { return ::wcscmp(p_pcS, m_pcS) == 0; }
+	private:
+		wchar_t const * const m_pcS;
+	};
+};
+
+template<>
+extern mmImages::mmGenericParamI::mmType mmImages::FromString<mmImages::mmGenericParamI::mmType>(mmString const & p_sString) {
+	wchar_t const * const * const v_ppcTypeToString = std::find_if(g_ppcTypeToString, g_ppcTypeToStringEnd, EqualStrings(p_sString.c_str()));
+	return (v_ppcTypeToString != g_ppcTypeToStringEnd ? static_cast<mmGenericParamI::mmType>(v_ppcTypeToString - g_ppcTypeToString) : mmGenericParamI::mmUnknownType);
+}
+
 template<>
 inline mmString mmImages::ToString<mmString>(mmString const & p_sValue) {
 	return p_sValue;
@@ -67,6 +121,12 @@ inline mmString mmImages::ToString<mmRect>(mmRect const & p_sValue) {
 template<>
 inline mmString mmImages::ToString<mmMath::sPoint2D>(mmMath::sPoint2D const & p_sValue) {
 	return mmStringUtilities::MMRealToString(p_sValue.rX) + L"|" + mmStringUtilities::MMRealToString(p_sValue.rY);
+}
+
+template<>
+extern mmString mmImages::ToString<mmImages::mmGenericParamI::mmType>(mmGenericParamI::mmType const & p_sValue) {
+	std::size_t i = p_sValue;
+	return (p_sValue == mmGenericParamI::mmUnknownType ? L"" : g_ppcTypeToString[static_cast<std::size_t>(p_sValue)]);
 }
 
 inline mmXML::mmXMLNodeI* FindOrCreateChild(mmXML::mmXMLNodeI * const p_psParent, mmString const & p_sName) {

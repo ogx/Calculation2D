@@ -50,7 +50,7 @@ int mmCalculationServer::Serve()
 	Json::Reader reader;
 	Json::FastWriter fwriter;
 	Json::Value obj_in, obj_out;
-	while(1)
+	while(os.good())
 	{
 		is >> input;
 		reader.parse(input, obj_in);
