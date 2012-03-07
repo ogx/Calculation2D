@@ -29,6 +29,7 @@ body, select, table {
 	font-weight: 400;
 	font-size: 1em;
 	color: #333;
+	text-align: left;
 }
 
 button {
@@ -43,7 +44,7 @@ button {
 	border-bottom: solid #666 1px;
 	
 	margin: 0;
-	padding: 30px;
+	padding: 30px 300px 30px 300px;
 	
 	position: relative;
 	z-index: 1;
@@ -58,9 +59,12 @@ button {
 	text-shadow: 0 0 1px #333;
 }
 #sub-title {
-	font-size: 1.5em;
+	font-size: 0.8em;
 	font-weight: bold;
-	display: none;
+	//display: none;
+	margin-left: 20px;
+	color: #666;
+	text-shadow: 0 0 1px #999;
 }
 
 #content {
