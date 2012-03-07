@@ -144,6 +144,9 @@
     <ClInclude Include="include\interfaces\mmICalculationMethodContainer.h">
       <Filter>Header Files\Interfaces</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\include\mmID.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\mmError.cpp">
@@ -209,7 +212,7 @@
     <ClCompile Include="src\factories\mmUtilsFactory.cpp">
       <Filter>Source Files\Interfaces</Filter>
     </ClCompile>
-    <ClCompile Include="src\mmGlobalDefs.cpp">
+    <ClCompile Include="src\mmID.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

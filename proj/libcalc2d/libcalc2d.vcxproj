@@ -172,6 +172,7 @@
     <ClInclude Include="..\..\include\mmError.h" />
     <ClInclude Include="..\..\include\mmExecutionContext.h" />
     <ClInclude Include="..\..\include\mmGlobalDefs.h" />
+    <ClInclude Include="..\..\include\mmID.h" />
     <ClInclude Include="..\..\include\mmOperatingSystemCalls.h" />
     <ClInclude Include="..\..\include\mmPixel.h" />
     <ClInclude Include="..\..\include\mmStringUtilities.h" />
@@ -195,7 +196,7 @@
     <ClCompile Include="src\factories\mmUtilsFactory.cpp" />
     <ClCompile Include="src\interfaces\mmInterfaceInitializers.cpp" />
     <ClCompile Include="src\mmError.cpp" />
-    <ClCompile Include="src\mmGlobalDefs.cpp" />
+    <ClCompile Include="src\mmID.cpp" />
     <ClCompile Include="src\mmStringUtilities.cpp" />
     <ClCompile Include="src\images\mmImagesStructure.cpp" />
     <ClCompile Include="src\mmPixel.cpp" />

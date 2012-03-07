@@ -84,7 +84,7 @@ bool mmImages::cmFlipImage::Calculate()
 	std::fill(v_prLayerValues, v_prLayerValues + v_iPixelCount, 0.0);
 
 	const mmUInt v_iChannels = v_iPixelType;
-	const mmReal v_rAllRows = static_cast<mmReal>(v_iHeight * v_iChannels);
+	const mmReal v_rAllRows = static_cast<mmReal>(v_iHeight * (v_iChannels + v_psImage->GetLayerCount()));
 	mmUInt v_iCalculatedRows = 0;
 
 	// loop over all channels
@@ -116,15 +116,12 @@ bool mmImages::cmFlipImage::Calculate()
 		v_psNewChannel->SetPixels(v_sROI, v_prNewPixels);
 	}
 
+	// update pixel_difference layer
 	v_psNewLayer->SetPixels(v_sROI, v_prLayerValues);
 
-	const mmUInt v_iDataLayerCount = v_psImage->GetLayerCount();
-
 	// loop over all additional data layers
-	for (mmUInt v_iDataLayer = 0; v_iDataLayer < v_iDataLayerCount; ++v_iDataLayer) {
+	for (mmLayerI* v_psLayer = v_psImage->FindLayer(); NULL != v_psLayer; v_psLayer = v_psImage->FindLayer(v_psLayer)) {
 
-		// read data layer
-		mmLayerI *v_psLayer = v_psImage->GetChannel(v_iDataLayer);
 		v_psLayer->GetPixels(v_prPixels, v_sROI);
 
 		// loop over all pixels
@@ -137,6 +134,7 @@ bool mmImages::cmFlipImage::Calculate()
 				v_prNewPixels[v_iNewPixelID] = v_prPixels[v_iPixelID];
 
 			}
+			m_rProgress = static_cast<mmReal>(++v_iCalculatedRows) / v_rAllRows * 100.0;
 		}
 
 		mmLayerI *v_psNewLayer= v_psNewImage->CreateLayer(v_psLayer->GetName(), v_psLayer->GetDefaultValue());
@@ -149,6 +147,7 @@ bool mmImages::cmFlipImage::Calculate()
 
 	delete [] v_prPixels;
 	delete [] v_prNewPixels;
+	delete [] v_prLayerValues;
 
 	return true;
 }
