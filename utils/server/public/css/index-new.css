@@ -101,6 +101,11 @@ table.container div.column {
 	vertical-align: top;
 	display: inline-block;
 }
+#data-preview {
+	min-width: 300px;
+	min-height: 300px;
+	text-align: center;
+}
 #input_preview_canvas {
 	border: solid #CCC 1px;
 	margin: 10px;
