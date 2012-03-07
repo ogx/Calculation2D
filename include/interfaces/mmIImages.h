@@ -195,7 +195,7 @@ namespace mmImages
 		/// @return true if the call succeeded, false if the supplied rectangle is larger
 		///			than layer dimensions, in this case no changes to the layer are made
 		////////////////////////////////////////////////////////////////////////////////
-		virtual bool GetPixels(mmReal p_prValues[], mmRect const & p_sRect) const = 0;
+		virtual bool GetPixels(mmRect const & p_sRect, mmReal p_prValues[]) const = 0;
 		////////////////////////////////////////////////////////////////////////////////
 		/// Fills a pixel rectangle of the layer with values from the array. 
 		/// Use SetRows instead this function to increase efficiency. 
@@ -397,9 +397,9 @@ namespace mmImages
 		///			than image dimensions or pixel type is not supported, in this case no 
 		///			changes to the image are made
 		////////////////////////////////////////////////////////////////////////////////
-		virtual bool GetPixels(mmPixel8 p_psValues[], mmRect const & p_sRect = mmRect()) const = 0;
-		virtual bool GetPixels(mmPixel24 p_psValues[], mmRect const & p_sRect = mmRect()) const = 0;
-		virtual bool GetPixels(mmPixel32 p_psValues[], mmRect const & p_sRect = mmRect()) const = 0;
+		virtual bool GetPixels(mmRect const & p_sRect, mmPixel8 p_psValues[]) const = 0;
+		virtual bool GetPixels(mmRect const & p_sRect, mmPixel24 p_psValues[]) const = 0;
+		virtual bool GetPixels(mmRect const & p_sRect, mmPixel32 p_psValues[]) const = 0;
 		////////////////////////////////////////////////////////////////////////////////
 		/// Fills a pixel rectangle of the layer with values from the array. 
 		/// Use SetRows instead this function to increase efficiency and GetChannel for best efficiency. 
@@ -415,9 +415,9 @@ namespace mmImages
 		///			than image dimensions or pixel type is not supported, in this case no 
 		///			changes to the image are made
 		////////////////////////////////////////////////////////////////////////////////
-		virtual bool SetPixels(mmPixel8 const p_psValues[], mmRect const & p_sRect = mmRect()) = 0;
-		virtual bool SetPixels(mmPixel24 const p_psValues[], mmRect const & p_sRect = mmRect()) = 0;
-		virtual bool SetPixels(mmPixel32 const p_psValues[], mmRect const & p_sRect = mmRect()) = 0;
+		virtual bool SetPixels(mmRect const & p_sRect, mmPixel8 const p_psValues[]) = 0;
+		virtual bool SetPixels(mmRect const & p_sRect, mmPixel24 const p_psValues[]) = 0;
+		virtual bool SetPixels(mmRect const & p_sRect, mmPixel32 const p_psValues[]) = 0;
 		////////////////////////////////////////////////////////////////////////////////
 		///	Sets the region of interest for an image. Does not affect any other properties. 
 		///

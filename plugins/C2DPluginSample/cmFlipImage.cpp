@@ -4,7 +4,7 @@ static mmImages::mmImagesCalculationMethodI::sCalculationMethodParams cmFlipImag
 {
 	L"Flip Image (example)",
 	L"{BA728F54-6D6B-4478-AFAC-C4367BDB494F}",
-	L"flips selected image horizontally and/or vertically to a new image",
+	L"Flips selected image horizontally and/or vertically to a new image based on ROI.",
 	false,
 	{0, 0},
 	{0, L"John", L"Doe", L"j.doe@example.com"},
@@ -43,8 +43,11 @@ bool mmImages::cmFlipImage::Calculate()
 
 	if (!v_psImage) return false;
 
-	const mmUInt v_iWidth = v_psImage->GetWidth();
-	const mmUInt v_iHeight = v_psImage->GetHeight();
+	const mmRect v_sROI = v_psImage->GetRegionOfInterest();
+	const mmInt v_iPixelCount = v_sROI.GetSize();
+	const mmUInt v_iWidth = v_sROI.iWidth;
+	const mmUInt v_iHeight = v_sROI.iHeight;
+
 
 	const mmImageI::mmPixelType v_iPixelType = v_psImage->GetPixelType();
 
@@ -60,8 +63,6 @@ bool mmImages::cmFlipImage::Calculate()
 																												 v_iPixelType);
 	if (!v_psNewImage) return false;
 
-	const mmInt v_iPixelCount = v_iWidth*v_iHeight;
-	const mmRect v_sROI = v_psImage->GetRegionOfInterest();
 
 	// create pixel array for reading
 	mmReal *v_prPixels = new mmReal[v_iPixelCount];
@@ -77,7 +78,7 @@ bool mmImages::cmFlipImage::Calculate()
 		mmLayerI *v_psChannel = v_psImage->GetChannel(v_iChannel);
 
 		// read channel
-		v_psChannel->GetPixels(v_prPixels, v_sROI);
+		v_psChannel->GetPixels(v_sROI, v_prPixels);
 
 		// loop over all pixels
 		for (mmUInt j = 0; j < v_iHeight; j++) {
@@ -104,7 +105,7 @@ bool mmImages::cmFlipImage::Calculate()
 
 		// read data layer
 		mmLayerI *v_psLayer = v_psImage->GetChannel(v_iDataLayer);
-		v_psLayer->GetPixels(v_prPixels, v_sROI);
+		v_psLayer->GetPixels(v_sROI, v_prPixels);
 
 		// loop over all pixels
 		for (mmUInt j = 0; j < v_iHeight; j++) {

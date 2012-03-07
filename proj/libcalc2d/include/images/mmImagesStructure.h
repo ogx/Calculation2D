@@ -39,7 +39,7 @@ namespace mmImages
 		virtual bool GetRows(mmUInt const p_iStart, mmUInt const p_iCount, mmReal p_prValues[]) const;
 		virtual bool SetRows(mmUInt const p_iStart, mmUInt const p_iCount, mmReal const p_prValues[]);
 
-		virtual bool GetPixels(mmReal p_prValues[], mmRect const & p_sRect) const;
+		virtual bool GetPixels(mmRect const & p_sRect, mmReal p_prValues[]) const;
 		virtual bool SetPixels(mmRect const & p_sRect, mmReal const p_prValues[]);
 	private:
 		mmID const m_sID;
@@ -78,13 +78,13 @@ namespace mmImages
 		virtual bool SetRows(mmUInt const p_iStart, mmUInt const p_iCount, mmPixel24 const p_psValues[]);
 		virtual bool SetRows(mmUInt const p_iStart, mmUInt const p_iCount, mmPixel32 const p_psValues[]);
 		
-		virtual bool GetPixels(mmPixel8 p_psValues[], mmRect const & p_sRect = mmRect()) const;
-		virtual bool GetPixels(mmPixel24 p_psValues[], mmRect const & p_sRect = mmRect()) const;
-		virtual bool GetPixels(mmPixel32 p_psValues[], mmRect const & p_sRect = mmRect()) const;
+		virtual bool GetPixels(mmRect const & p_sRect, mmPixel8 p_psValues[]) const;
+		virtual bool GetPixels(mmRect const & p_sRect, mmPixel24 p_psValues[]) const;
+		virtual bool GetPixels(mmRect const & p_sRect, mmPixel32 p_psValues[]) const;
 		
-		virtual bool SetPixels(mmPixel8 const p_psValues[], mmRect const & p_sRect);
-		virtual bool SetPixels(mmPixel24 const p_psValues[], mmRect const & p_sRect);
-		virtual bool SetPixels(mmPixel32 const p_psValues[], mmRect const & p_sRect);
+		virtual bool SetPixels(mmRect const & p_sRect, mmPixel8 const p_psValues[]);
+		virtual bool SetPixels(mmRect const & p_sRect, mmPixel24 const p_psValues[]);
+		virtual bool SetPixels(mmRect const & p_sRect, mmPixel32 const p_psValues[]);
 		
 		virtual void SetRegionOfInterest(mmRect const & p_sRegion);
 		virtual mmRect GetRegionOfInterest(void) const;

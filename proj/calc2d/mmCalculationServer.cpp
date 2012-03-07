@@ -297,7 +297,7 @@ Json::Value mmCalculationServer::LayerToJSON( mmImages::mmLayerI const * layer )
 
 	std::vector<mmReal> buf(width*height);
 	mmRect rect(0, 0, width, height);
-	layer->GetPixels(&buf[0], rect);
+	layer->GetPixels(rect, &buf[0]);
 
 #if LAYER_TRANSPORT == LAYER_TRANSPORT__TEXT_ARRAY
 

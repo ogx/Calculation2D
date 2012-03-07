@@ -169,7 +169,7 @@ bool mmImages::mmImagesCalculationManagement::Execute(void)
                                         	mmStringUtilities::MMRealToString(v_rElapsed,3) + mmString(L"s"));
 
 
-					for(mmInt v_iT=0;v_iT<v_iActiveThreadCount;v_iT++)
+					for(std::size_t v_iT=0;v_iT<v_iActiveThreadCount;v_iT++)
 					{
 						delete m_vRunningThreads[v_iT];
 						//m_vRunningThreads.clear();
