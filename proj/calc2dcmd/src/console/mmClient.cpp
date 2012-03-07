@@ -25,14 +25,18 @@ wchar_t const mmConsole::mmClient::cNavRight = L'M';
 wchar_t const mmConsole::mmClient::cNavDown = L'P';
 wchar_t const mmConsole::mmClient::cEscape = L'\\';
 
-mmConsole::mmClient::mmClient(void) 
+mmConsole::mmClient::mmClient(std::wstring const & p_sTitle) 
 	: m_bEscape(false),
+		m_bNavigate(false),
+		m_sPositionInHistory(m_sHistory.begin()),
 		m_psCommand(NULL),
 		m_sPrompt(L">> "), 
 		m_psImageStructure(new mmImages::mmImageStructure(NULL)), 
 		m_psMethodsContainer(mmInterfaceInitializers::CreateDefaultImagesCalculationMethodContainer(NULL)),
 		m_psCalculationManager(new mmImages::mmImagesCalculationManagement(3, NULL))
 {
+	::SetConsoleTitleW(p_sTitle.c_str());
+
 	AddCommand(new mmCommands::mmQuit());
 	AddCommand(new mmCommands::mmLoad(m_psImageStructure.get()));
 	AddCommand(new mmCommands::mmPreview(m_psImageStructure.get()));
@@ -61,10 +65,10 @@ mmConsole::mmClient::~mmClient(void) {
 }
 
 mmInt mmConsole::mmClient::Run(void) {
-	::_cwprintf_s(L"\r\n\
-                 Welcome to Calculation 2D command line!                \r\n\r\n\
-    %d calculation methods are available, for a list of commands press TAB\r\n\r\n", 
-				m_psMethodsContainer->GetAvailableImagesCalculationMethods().size());
+	::_cwprintf_s(	L"\r\n"
+					L"                 Welcome to Calculation2D command line!                \r\n\r\n"
+					L"    %d calculation methods are available, for a list of commands press TAB\r\n\r\n", 
+					m_psMethodsContainer->GetAvailableImagesCalculationMethods().size());
 
 	DisplayPrompt();
 
@@ -113,6 +117,7 @@ bool mmConsole::mmClient::Aggregate(wchar_t const p_cCurrent) {
 	if(p_cCurrent == cNavTrigger1 || p_cCurrent == cNavTrigger2) {
 		wchar_t v_cDirection = ::_getwch();
 		if(v_cDirection == cNavUp && ! m_sHistory.empty()) {
+
 			EraseToPrompt();
 			m_sCommandLine = m_sHistory.back();
 			Write(m_sCommandLine.Print(cEndOfWord, cEscape));

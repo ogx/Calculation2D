@@ -1,4 +1,4 @@
-#include <mmGlobalDefs.h>
+#include <mmID.h>
 
 #include <limits>
 
