@@ -109,33 +109,8 @@ Json::Value mmCalculationServer::GetStatus()
 		else
 		{
 			response[L"status"] = L"finished";
-			Json::Value& result = response[L"result"];
-
-			// send image structure
-			Json::Value& isr = result[L"image_structure"] = Json::Value(Json::arrayValue);
-			mmImages::mmImageI* image = NULL;
-			while(image = image_structure->FindImage(image))
-			{
-				Json::Value image_json(Json::objectValue);
-				image_json[L"name"] = image->GetName();
-				Json::Value& image_json_image = image_json[L"image"] = Json::Value(Json::objectValue);
-				Json::Value& image_json_layers = image_json[L"data_layers"] = Json::Value(Json::arrayValue);
-
-				image_json_image[L"width"] = image->GetWidth();
-				image_json_image[L"height"] = image->GetHeight();
-				image_json_image[L"red"] = LayerToJSON(image->GetChannel(0));
-				if(image->GetPixelType() >= mmImageI::mmP24)
-				{
-					image_json_image[L"green"] = LayerToJSON(image->GetChannel(1));
-					image_json_image[L"blue"] = LayerToJSON(image->GetChannel(2));
-				}
-				else // TODO: doing small steps - remove this overhead!
-					image_json_image[L"green"] = image_json_image[L"blue"] = image_json_image[L"red"];
-
-				isr.append(image_json);
-			}
-
-			result[L"params"] = Params_XML2JSON(calculation_method->GetCalculationMethodInfo().sAutoParams.sOutParams);
+			response[L"result"] = WrapResults(image_structure, 
+				calculation_method->GetCalculationMethodInfo().sAutoParams.sOutParams);
 
 			delete calculation_method; calculation_method = NULL;
 			delete utils_factory; utils_factory = NULL;
@@ -148,7 +123,6 @@ Json::Value mmCalculationServer::GetStatus()
 
 Json::Value mmCalculationServer::RunCalculationMethod( Json::Value& params )
 {
-	Json::Value& image_structure_json = params[L"image_structure"];
 	Json::Value& method_id = params[L"method"];
 	Json::Value response = success_response;
 
@@ -156,28 +130,15 @@ Json::Value mmCalculationServer::RunCalculationMethod( Json::Value& params )
 	utils_factory = mmInterfaceInitializers::CreateUtilsFactory();
 	calculation_method = methods_mgr.InitializeImagesCalculationMethod(method_id.asString());
 
+	mmString params_xml;
+	UnwrapArguments(params, image_structure, params_xml);
+
 	// prep params
-	mmString params_xml = Params_JSON2XML(params[L"method_params"]);
 	mmImages::mmImagesCalculationMethodI::sCalculationMethodParams method_info = 
 		calculation_method->GetCalculationMethodInfo();
 	mmImages::mmImagesCalculationMethodI::sCalculationAutomationParams params_struct = 
 		method_info.sAutoParams;
 	wcscpy_s(params_struct.sInParams, params_xml.c_str());
-
-	// prep image structure
-	for(int i=0, n=image_structure_json.size(); i<n; ++i)
-	{
-		Json::Value& image_param = image_structure_json[i];
-		Json::Value& image_param_image = image_param[L"image"];
-		mmUInt width = image_param_image[L"width"].asUInt();
-		mmUInt height = image_param_image[L"height"].asUInt();
-		std::wstring name = image_param[L"name"].asString();
-
-		mmImages::mmImageI* image = image_structure->CreateImage(name, width, height, mmImages::mmImageI::mmP24);
-		LayerFromJSON(image_param_image[L"red"], image->GetChannel(0));
-		LayerFromJSON(image_param_image[L"green"], image->GetChannel(1));
-		LayerFromJSON(image_param_image[L"blue"], image->GetChannel(2));
-	}
 
 	// run the plugin
 	calc_mgr.CalculateImages(calculation_method, image_structure, &params_struct);
@@ -186,7 +147,7 @@ Json::Value mmCalculationServer::RunCalculationMethod( Json::Value& params )
 	return response;
 }
 
-Json::Value mmCalculationServer::Params_XML2JSON( mmString const & params_xml )
+Json::Value mmCalculationServer::Params_XML2JSON( mmString const & params_xml ) const
 {
 	// get child nodes with parameters
 	mmXML::mmXMLDocI* _v_sInputXML = mmInterfaceInitializers::CreateXMLDocument(NULL);
@@ -244,7 +205,7 @@ Json::Value mmCalculationServer::Params_XML2JSON( mmString const & params_xml )
 	return converted;
 }
 
-mmString mmCalculationServer::Params_JSON2XML(Json::Value const & params_json)
+mmString mmCalculationServer::Params_JSON2XML(Json::Value const & params_json) const
 {
 	mmXML::mmXMLDocI* _v_sInputXML = mmInterfaceInitializers::CreateXMLDocument(NULL);
 	_v_sInputXML->CreateXMLRootNode(g_pAutoCalcXML_INParams_Node);
@@ -256,7 +217,7 @@ mmString mmCalculationServer::Params_JSON2XML(Json::Value const & params_json)
 		std::wstring name = param[L"name"].asString();
 		std::wstring type = param[L"type"].asString();
 		std::wstring value = param[L"value"].asString();
-		mmXML::mmXMLDataType mmtype = param_type_lookup[type];
+		mmXML::mmXMLDataType mmtype = param_type_lookup.at(type);
 
 		mmXML::mmXMLNodeI* _v_sParam = _v_sRootNode->AddChild(g_pAutoCalcXML_Params_Param_Node);
 		mmXML::mmXMLNodeI* _v_sParamName = _v_sParam->AddChild(g_pAutoCalcXML_Params_ParamName_Node);
@@ -276,14 +237,14 @@ mmString mmCalculationServer::Params_JSON2XML(Json::Value const & params_json)
 	return params_xml;
 }
 
-Json::Value mmCalculationServer::FailureResponse( std::wstring const & error )
+Json::Value mmCalculationServer::FailureResponse( std::wstring const & error ) const
 {
 	Json::Value result = failure_response;
 	result[L"error"] = error;
 	return result;
 }
 
-Json::Value mmCalculationServer::LayerToJSON( mmImages::mmLayerI const * layer )
+Json::Value mmCalculationServer::LayerToJSON(mmImages::mmLayerI const * layer) const
 {
 	Json::Value json(Json::objectValue);
 
@@ -319,7 +280,7 @@ Json::Value mmCalculationServer::LayerToJSON( mmImages::mmLayerI const * layer )
 	return json;
 }
 
-void mmCalculationServer::LayerFromJSON( Json::Value const & json, mmImages::mmLayerI * layer )
+void mmCalculationServer::LayerFromJSON( Json::Value const & json, mmImages::mmLayerI * layer ) const
 {
 	layer->SetName(json[L"name"].asString());
 
@@ -346,4 +307,64 @@ void mmCalculationServer::LayerFromJSON( Json::Value const & json, mmImages::mmL
 
 	mmRect rect(0, 0, width, height);
 	layer->SetPixels(rect, &buf[0]);
+}
+
+Json::Value mmCalculationServer::WrapResults( mmImages::mmImageStructure const * image_structure, mmString const & output_params ) const
+{
+	Json::Value result = Json::Value(Json::objectValue);
+
+	// form image structure
+	Json::Value& isr = result[L"image_structure"] = Json::Value(Json::arrayValue);
+	mmImages::mmImageI* image = NULL;
+	while(image = image_structure->FindImage(image))
+	{
+		Json::Value image_json(Json::objectValue);
+		image_json[L"name"] = image->GetName();
+		Json::Value& image_json_image = image_json[L"image"] = Json::Value(Json::objectValue);
+		Json::Value& image_json_layers = image_json[L"data_layers"] = Json::Value(Json::arrayValue);
+
+		image_json_image[L"width"] = image->GetWidth();
+		image_json_image[L"height"] = image->GetHeight();
+		image_json_image[L"red"] = LayerToJSON(image->GetChannel(0));
+		if(image->GetPixelType() >= mmImageI::mmP24)
+		{
+			image_json_image[L"green"] = LayerToJSON(image->GetChannel(1));
+			image_json_image[L"blue"] = LayerToJSON(image->GetChannel(2));
+		}
+		else // TODO: doing small steps - remove this overhead!
+			image_json_image[L"green"] = image_json_image[L"blue"] = image_json_image[L"red"];
+
+		isr.append(image_json);
+	}
+
+	// form output params
+	result[L"params"] = Params_XML2JSON(output_params);
+
+	return result;
+}
+
+void mmCalculationServer::UnwrapArguments( 
+	Json::Value const & params_json, 
+	mmImages::mmImageStructure * image_structure, 
+	mmString & input_params 
+	) const
+{
+	// prep image structure
+	const Json::Value& image_structure_json = params_json[L"image_structure"];
+	for(int i=0, n=image_structure_json.size(); i<n; ++i)
+	{
+		const Json::Value& image_param = image_structure_json[i];
+		const Json::Value& image_param_image = image_param[L"image"];
+		mmUInt width = image_param_image[L"width"].asUInt();
+		mmUInt height = image_param_image[L"height"].asUInt();
+		std::wstring name = image_param[L"name"].asString();
+
+		mmImages::mmImageI* image = image_structure->CreateImage(name, width, height, mmImages::mmImageI::mmP24);
+		LayerFromJSON(image_param_image[L"red"], image->GetChannel(0));
+		LayerFromJSON(image_param_image[L"green"], image->GetChannel(1));
+		LayerFromJSON(image_param_image[L"blue"], image->GetChannel(2));
+	}
+
+	// prep input params
+	input_params = Params_JSON2XML(params_json[L"method_params"]);
 }
