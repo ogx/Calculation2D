@@ -9,7 +9,7 @@ static mmImages::mmImagesCalculationMethodI::sCalculationMethodParams cmFlipImag
 {
 	L"Flip Image (example)",
 	L"{BA728F54-6D6B-4478-AFAC-C4367BDB494F}",
-	L"flips selected image horizontally and/or vertically to a new image",
+	L"Flips selected image horizontally and/or vertically to a new image based on ROI.",
 	false,
 	{0, 0},
 	{0, L"John", L"Doe", L"j.doe@example.com"},
@@ -33,12 +33,12 @@ mmCalcMethod(p_psLogReceiver, L"cmFlipImage")
 	m_bVertical = true;
 
 	// input parameters
-	SetParam(g_UIParam_ImageName, mmXML::g_eXMLImageName, &m_sImageName); 
-	SetParam(g_UIParam_Horizontal, mmXML::g_eXMLBool, &m_bHorizontal); 
-	SetParam(g_UIParam_Vertical, mmXML::g_eXMLBool, &m_bVertical); 
+	BindInputParam(g_UIParam_ImageName, mmGenericParamI::mmImageNameType, m_sImageName); 
+	BindInputParam(g_UIParam_Horizontal, mmGenericParamI::mmBoolType, m_bHorizontal); 
+	BindInputParam(g_UIParam_Vertical, mmGenericParamI::mmBoolType, m_bVertical); 
 	// output parameters
-	SetParam(g_UIParam_NewImageName, mmXML::g_eXMLImageName, &m_sNewImageName, true);
-	SetParam(g_UIParam_NewLayerName, mmXML::g_eXMLDataLayerName, &m_sNewLayerName, true);
+	BindOutputParam(g_UIParam_NewImageName, mmGenericParamI::mmImageNameType, m_sNewImageName);
+	BindOutputParam(g_UIParam_NewLayerName, mmGenericParamI::mmLayerNameType, m_sNewLayerName);
 }
 
 bool mmImages::cmFlipImage::Calculate()
@@ -84,7 +84,7 @@ bool mmImages::cmFlipImage::Calculate()
 	std::fill(v_prLayerValues, v_prLayerValues + v_iPixelCount, 0.0);
 
 	const mmUInt v_iChannels = v_iPixelType;
-	const mmReal v_rAllRows = static_cast<mmReal>(v_iHeight * (v_iChannels + v_psImage->GetLayerCount()));
+	const mmReal v_rAllRows = 1.0 * v_iHeight * (v_iChannels + v_psImage->GetLayerCount());
 	mmUInt v_iCalculatedRows = 0;
 
 	// loop over all channels
@@ -93,7 +93,7 @@ bool mmImages::cmFlipImage::Calculate()
 		mmLayerI *v_psChannel = v_psImage->GetChannel(v_iChannel);
 
 		// read channel
-		v_psChannel->GetPixels(v_prPixels, v_sROI);
+		v_psChannel->GetPixels(v_sROI, v_prPixels);
 
 		// loop over all pixels
 		for (mmUInt j = 0; j < v_iHeight; j++) {
@@ -107,7 +107,7 @@ bool mmImages::cmFlipImage::Calculate()
 				v_prLayerValues[v_iPixelID] = std::max(v_prLayerValues[v_iPixelID], ::fabs(v_prPixels[v_iPixelID] - v_prPixels[v_iNewPixelID]));
 
 			}
-			m_rProgress = static_cast<mmReal>(++v_iCalculatedRows) / v_rAllRows * 100.0;
+			m_rProgress =  100.0 * ++v_iCalculatedRows / v_rAllRows;
 		}
 
 		mmLayerI *v_psNewChannel = v_psNewImage->GetChannel(v_iChannel);
@@ -122,7 +122,7 @@ bool mmImages::cmFlipImage::Calculate()
 	// loop over all additional data layers
 	for (mmLayerI* v_psLayer = v_psImage->FindLayer(); NULL != v_psLayer; v_psLayer = v_psImage->FindLayer(v_psLayer)) {
 
-		v_psLayer->GetPixels(v_prPixels, v_sROI);
+		v_psLayer->GetPixels(v_sROI, v_prPixels);
 
 		// loop over all pixels
 		for (mmUInt j = 0; j < v_iHeight; j++) {
@@ -134,7 +134,7 @@ bool mmImages::cmFlipImage::Calculate()
 				v_prNewPixels[v_iNewPixelID] = v_prPixels[v_iPixelID];
 
 			}
-			m_rProgress = static_cast<mmReal>(++v_iCalculatedRows) / v_rAllRows * 100.0;
+			m_rProgress = 100.0 * ++v_iCalculatedRows / v_rAllRows;
 		}
 
 		mmLayerI *v_psNewLayer= v_psNewImage->CreateLayer(v_psLayer->GetName(), v_psLayer->GetDefaultValue());

@@ -137,16 +137,12 @@ namespace mmImages {
 			/// @param[in] p_bIsOutput optional, default is a user input parameter
 			////////////////////////////////////////////////////////////////////////////////
 
-			// DEPRECATED
-			void SetParam(mmString const & p_sName, mmXML::mmXMLDataType const p_eType, void * const p_psValue, bool const p_bIsOutput=false);
-
-			// Use the following instead
 			template<class param_t>
-			void BindInputParam(mmString const & p_sName, mmXML::mmXMLDataType const p_eType, param_t & p_sValue) {
+			void BindInputParam(mmString const & p_sName, mmGenericParamI::mmType const p_eType, param_t & p_sValue) {
 				BindParam(m_sInputParams, p_sName, p_eType, p_sValue);
 			}
 			template<class param_t>
-			void BindOutputParam(mmString const & p_sName, mmXML::mmXMLDataType const p_eType, param_t & p_sValue) {
+			void BindOutputParam(mmString const & p_sName, mmGenericParamI::mmType const p_eType, param_t & p_sValue) {
 				BindParam(m_sOutputParams, p_sName, p_eType, p_sValue);
 			}
 

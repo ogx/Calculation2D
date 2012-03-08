@@ -11,7 +11,7 @@ namespace mmImages {
 			cmGeneric(mmLog::mmLogReceiverI *p_psLogReceiver = NULL);
 			virtual ~cmGeneric() {}
 
-		protected:	// mmCalcMethodI implementation
+		protected:	// implementation
 			bool mmCalcMethod::Calculate();
 
 		private:
