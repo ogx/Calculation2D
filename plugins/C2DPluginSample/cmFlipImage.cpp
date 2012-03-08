@@ -1,10 +1,5 @@
 #include "cmFlipImage.h"
 
-#include <algorithm>
-
-#undef min
-#undef max
-
 static mmImages::mmImagesCalculationMethodI::sCalculationMethodParams cmFlipImageParams =
 {
 	L"Flip Image (example)",
@@ -21,7 +16,6 @@ static const wchar_t* g_UIParam_Horizontal = L"Horizontally?";
 static const wchar_t* g_UIParam_Vertical = L"Vertically?";
 
 static const wchar_t* g_UIParam_NewImageName = L"Flipped image";
-static const wchar_t* g_UIParam_NewLayerName = L"Pixel difference";
 
 mmImages::cmFlipImage::cmFlipImage(mmLog::mmLogReceiverI* p_psLogReceiver):
 mmCalcMethod(p_psLogReceiver, L"cmFlipImage")
@@ -38,7 +32,6 @@ mmCalcMethod(p_psLogReceiver, L"cmFlipImage")
 	BindInputParam(g_UIParam_Vertical, mmGenericParamI::mmBoolType, m_bVertical); 
 	// output parameters
 	BindOutputParam(g_UIParam_NewImageName, mmGenericParamI::mmImageNameType, m_sNewImageName);
-	BindOutputParam(g_UIParam_NewLayerName, mmGenericParamI::mmLayerNameType, m_sNewLayerName);
 }
 
 bool mmImages::cmFlipImage::Calculate()
@@ -57,7 +50,6 @@ bool mmImages::cmFlipImage::Calculate()
 
 	// append suffixes to image name
 	m_sNewImageName = m_sImageName + L"_flipped";
-	m_sNewLayerName = L"pixel_difference";
 
 	if (m_bHorizontal) m_sNewImageName += L"_H";
 	if (m_bVertical) m_sNewImageName += L"_V";
@@ -66,8 +58,6 @@ bool mmImages::cmFlipImage::Calculate()
 																												 v_iWidth,
 																												 v_iHeight,
 																												 v_iPixelType);
-	mmLayerI* v_psNewLayer = v_psNewImage->CreateLayer(m_sNewLayerName, 0.0);
-
 	if (!v_psNewImage) return false;
 
 	const mmInt v_iPixelCount = v_iWidth*v_iHeight;
@@ -78,10 +68,6 @@ bool mmImages::cmFlipImage::Calculate()
 
 	// create pixel array for writing
 	mmReal *v_prNewPixels = new mmReal[v_iPixelCount];
-	// create array for new layer
-	mmReal *v_prLayerValues = new mmReal[v_iPixelCount];
-	// initialize array with 0.0
-	std::fill(v_prLayerValues, v_prLayerValues + v_iPixelCount, 0.0);
 
 	const mmUInt v_iChannels = v_iPixelType;
 	const mmReal v_rAllRows = 1.0 * v_iHeight * (v_iChannels + v_psImage->GetLayerCount());
@@ -103,9 +89,6 @@ bool mmImages::cmFlipImage::Calculate()
 				mmUInt v_iNewPixelID = (m_bHorizontal ? v_iWidth - 1 - i : i) + v_iWidth*(m_bVertical ? v_iHeight - 1 - j : j);
 
 				v_prNewPixels[v_iNewPixelID] = v_prPixels[v_iPixelID];
-
-				v_prLayerValues[v_iPixelID] = std::max(v_prLayerValues[v_iPixelID], ::fabs(v_prPixels[v_iPixelID] - v_prPixels[v_iNewPixelID]));
-
 			}
 			m_rProgress =  100.0 * ++v_iCalculatedRows / v_rAllRows;
 		}
@@ -115,9 +98,6 @@ bool mmImages::cmFlipImage::Calculate()
 		// write channel
 		v_psNewChannel->SetPixels(v_sROI, v_prNewPixels);
 	}
-
-	// update pixel_difference layer
-	v_psNewLayer->SetPixels(v_sROI, v_prLayerValues);
 
 	// loop over all additional data layers
 	for (mmLayerI* v_psLayer = v_psImage->FindLayer(); NULL != v_psLayer; v_psLayer = v_psImage->FindLayer(v_psLayer)) {
@@ -147,7 +127,6 @@ bool mmImages::cmFlipImage::Calculate()
 
 	delete [] v_prPixels;
 	delete [] v_prNewPixels;
-	delete [] v_prLayerValues;
 
 	return true;
 }

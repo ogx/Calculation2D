@@ -29,7 +29,7 @@
     <ClInclude Include="..\..\include\Serialization\mmSerializer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\include\plugin\mmGenericParam.h">
+    <ClInclude Include="..\..\include\serialization\mmGenericParam.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

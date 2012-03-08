@@ -168,8 +168,8 @@
     </Lib>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\include\plugin\mmGenericParam.h" />
     <ClInclude Include="..\..\include\serialization\mmBasicSerialization.h" />
+    <ClInclude Include="..\..\include\serialization\mmGenericParam.h" />
     <ClInclude Include="..\..\include\Serialization\mmSerializeID.h" />
     <ClInclude Include="..\..\include\serialization\mmSerializeList.h" />
     <ClInclude Include="..\..\include\serialization\mmSerializePoint.h" />

@@ -20,10 +20,12 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="C2DPluginSample.cpp" />
+    <ClCompile Include="cmBinarize.cpp" />
     <ClCompile Include="cmFlipImage.cpp" />
     <ClCompile Include="cmGeneric.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="cmBinarize.h" />
     <ClInclude Include="cmFlipImage.h" />
     <ClInclude Include="cmGeneric.h" />
   </ItemGroup>

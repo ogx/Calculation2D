@@ -8,7 +8,7 @@
 
 // TODO: 1. include headers of your calculation methods
 #include "cmFlipImage.h"
-#include "cmGeneric.h"
+#include "cmBinarize.h"
 
 // TODO: 2. add your calculation method here by adding another entry, 
 // otherwise it will not be detected by the main application
@@ -18,7 +18,7 @@ mmImages::mmImagesCalculationMethodI* GetCalculationMethod( mmInt const p_iCalcu
 	case __COUNTER__:
 		return new mmImages::cmFlipImage(p_psLogReceiver );
 	case __COUNTER__:
-		return new mmImages::cmGeneric(p_psLogReceiver );
+		return new mmImages::cmBinarize(p_psLogReceiver );
 	default:
 		return NULL;
 	};
