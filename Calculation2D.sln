@@ -10,6 +10,7 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "calc2d", "proj\calc2d\calc2
 	ProjectSection(ProjectDependencies) = postProject
 		{F699503B-5691-4ACB-9F1B-FA48C1703D65} = {F699503B-5691-4ACB-9F1B-FA48C1703D65}
 		{81764A51-4B0F-4310-ACD1-059BFC9BEDDE} = {81764A51-4B0F-4310-ACD1-059BFC9BEDDE}
+		{8879B4A9-91B5-44C4-BC21-CD9737B3D37B} = {8879B4A9-91B5-44C4-BC21-CD9737B3D37B}
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "plugins", "plugins", "{85415F62-44CE-466F-B067-39A923D60352}"
@@ -26,6 +27,9 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libcalc2dmethod", "proj\lib
 	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libcalc2d", "proj\libcalc2d\libcalc2d.vcxproj", "{81764A51-4B0F-4310-ACD1-059BFC9BEDDE}"
+	ProjectSection(ProjectDependencies) = postProject
+		{8879B4A9-91B5-44C4-BC21-CD9737B3D37B} = {8879B4A9-91B5-44C4-BC21-CD9737B3D37B}
+	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "calc2dcmd", "proj\calc2dcmd\calc2dcmd.vcxproj", "{D07C7E58-E714-49B2-82B2-5F58102A418C}"
 	ProjectSection(ProjectDependencies) = postProject
@@ -34,6 +38,9 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "calc2dcmd", "proj\calc2dcmd
 	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "C2DPluginBasicOperation", "plugins\C2DPluginBasicOperation\C2DPluginBasicOperation.vcxproj", "{1EF4D68C-8CE2-4762-A6AF-1C88CE71F422}"
+	ProjectSection(ProjectDependencies) = postProject
+		{F699503B-5691-4ACB-9F1B-FA48C1703D65} = {F699503B-5691-4ACB-9F1B-FA48C1703D65}
+	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libcalc2dserialize", "proj\libcalc2dserialize\libcalc2dserialize.vcxproj", "{8879B4A9-91B5-44C4-BC21-CD9737B3D37B}"
 EndProject
