@@ -23,9 +23,9 @@ public:
 		if(p_sValue.empty())
 			return L"";
 		
-		mmString v_sString = mmSerializer<val_t>::ToString(p_sValue);
-		for(std::list<val_t>::const_iterator v_sItem = ++p_sValue.begin(), v_sItem != p_sValue.end(); ++v_sItem)
-			v_sString += L"|" + mmSerializer<val_t>::ToString(*p_sValue);
+		mmString v_sString = mmSerializer<val_t>::ToString(p_sValue.front());
+		for(std::list<val_t>::const_iterator v_sItem = ++p_sValue.begin(); v_sItem != p_sValue.end(); ++v_sItem)
+			v_sString += L"|" + mmSerializer<val_t>::ToString(*v_sItem);
 		return v_sString;
 	}
 };

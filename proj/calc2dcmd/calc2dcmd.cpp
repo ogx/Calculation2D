@@ -6,8 +6,6 @@
 
 #include <console/mmClient.h>
 
-#include <serialization/mmSerializeList.h>
-
 int _tmain(int argc, _TCHAR* argv[])
 {
 	return mmConsole::mmClient(L"Calculation2D").Run();
