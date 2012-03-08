@@ -43,17 +43,6 @@ void mmImages::mmStats::Update(mmReal const p_prValues[], mmUInt const p_iSize) 
 	rStdDev = ::sqrt(rStdDev / static_cast<mmReal>(p_iSize));
 }
 
-const wchar_t* mmImages::g_pAutoCalcXML_Params_ParamType_ImageName = L"Image name...";
-const wchar_t* mmImages::g_pAutoCalcXML_Params_ParamType_ImagesNames = L"Image names...";
-const wchar_t* mmImages::g_pAutoCalcXML_Params_ParamType_ImageCount_All = L"All";
-const wchar_t* mmImages::g_pAutoCalcXML_Params_ParamType_DataLayerName = L"Data layer name...";
-const wchar_t* mmImages::g_pAutoCalcXML_Params_ParamType_RealValue = L"Real value...";
-const wchar_t* mmImages::g_pAutoCalcXML_Params_ParamType_IntegerValue = L"Integer value...";
-const wchar_t* mmImages::g_pAutoCalcXML_Params_ParamType_BoolValue = L"Yes/No value...";
-const wchar_t* mmImages::g_pAutoCalcXML_Params_ParamType_BoolValue_YES = L"YES";
-const wchar_t* mmImages::g_pAutoCalcXML_Params_ParamType_BoolValue_NO = L"NO";
-const wchar_t* mmImages::g_pAutoCalcXML_Params_ParamType_String = L"String value...";
-
 const wchar_t* mmImages::g_pAutoCalcXML_INParams_Node = L"AutoINParams";
 const wchar_t* mmImages::g_pAutoCalcXML_OUTParams_Node = L"AutoOUTParams";
 const wchar_t* mmImages::g_pAutoCalcXML_Params_Param_Node = L"AutoParam";
