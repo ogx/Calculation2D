@@ -1,7 +1,7 @@
 #ifndef types_mmRect_H_
 #define types_mmRect_H_
 
-#include <mmGlobalDefs.h>
+#include <types/mmBasic.h>
 
 struct mmRect { 
 	mmRect(void) : iLeft(0), iTop(0), iWidth(0), iHeight(0) {}
