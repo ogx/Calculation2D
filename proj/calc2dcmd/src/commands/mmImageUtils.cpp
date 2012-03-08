@@ -1,5 +1,6 @@
 #include <commands/mmImageUtils.h>
 
+#include <mmStringUtilities.h>
 
 mmCommands::mmImageUtils::mmRename::mmRename(mmImages::mmImageStructureI * const p_psImageStructure) : m_psImageStructure(p_psImageStructure) { 
 	m_sNames.push_back(L"rename");

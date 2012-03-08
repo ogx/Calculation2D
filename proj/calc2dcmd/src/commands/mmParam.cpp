@@ -1,13 +1,13 @@
 #include <commands/mmParam.h>
 
-mmCommands::mmParam::mmType mmCommands::TranslateType(mmXML::mmXMLDataType const p_eXMLType) {
+mmCommands::mmParam::mmType mmCommands::TranslateType(mmImages::mmGenericParamI::mmType const p_eXMLType) {
 	switch(p_eXMLType) {
-	case mmXML::g_eXMLInt: return mmParam::mmTypeInt;
-	case mmXML::g_eXMLReal: return mmParam::mmTypeReal;
-	case mmXML::g_eXMLString: return mmParam::mmTypeString;
-	case mmXML::g_eXMLBool: return mmParam::mmTypeBool;
-	case mmXML::g_eXMLImageName: return mmParam::mmTypeImage;
-	case mmXML::g_eXMLDataLayerName: return mmParam::mmTypeLayer;
+	case mmImages::mmGenericParamI::mmIntType: return mmParam::mmTypeInt;
+	case mmImages::mmGenericParamI::mmRealType: return mmParam::mmTypeReal;
+	case mmImages::mmGenericParamI::mmStringType: return mmParam::mmTypeString;
+	case mmImages::mmGenericParamI::mmBoolType: return mmParam::mmTypeBool;
+	case mmImages::mmGenericParamI::mmImageNameType: return mmParam::mmTypeImage;
+	case mmImages::mmGenericParamI::mmLayerNameType: return mmParam::mmTypeLayer;
 	default: return mmParam::mmTypeUnknown;
 	}
 }

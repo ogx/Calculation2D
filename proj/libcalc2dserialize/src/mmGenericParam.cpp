@@ -1,50 +1,12 @@
-#include <plugin/mmGenericParam.h>
+#include <serialization/mmGenericParam.h>
 
 #include <interfaces/mmInterfaceInitializers.h>
 #include <interfaces/mmIImages.h>
 
 #include <cstdlib>
 
-inline mmImages::mmGenericParamI::mmType mmImages::GetTypeTransition(mmXML::mmXMLDataType const p_eType) {
-	switch(p_eType) {
-		case mmXML::g_eXMLInt: return mmGenericParamI::mmIntType;
-		case mmXML::g_eXMLReal: return mmGenericParamI::mmRealType;
-		case mmXML::g_eXMLString: return mmGenericParamI::mmStringType;
-		case mmXML::g_eXMLBool: return mmGenericParamI::mmBoolType;
-		case mmXML::g_eXMLImageName: return mmGenericParamI::mmImageNameType;
-		case mmXML::g_eXMLDataLayerName: return mmGenericParamI::mmLayerNameType;
-		default: return mmGenericParamI::mmUnknownType;
-	}
-}
-
-inline mmXML::mmXMLDataType mmImages::GetTypeTransition(mmGenericParamI::mmType const p_eType) {
-	switch(p_eType) {
-	case mmGenericParamI::mmIntType: return mmXML::g_eXMLInt;
-	case mmGenericParamI::mmRealType: return mmXML::g_eXMLReal;
-	case mmGenericParamI::mmStringType: return mmXML::g_eXMLString;
-	case mmGenericParamI::mmBoolType: return mmXML::g_eXMLBool;
-	case mmGenericParamI::mmImageNameType: return mmXML::g_eXMLImageName;
-	case mmGenericParamI::mmLayerNameType: return mmXML::g_eXMLDataLayerName;
-	default: return mmXML::g_eXMLUnknownDataType;
-	}
-}
-
 namespace mmImages {
-	//wchar_t const * const g_ppcTypeToString[] = {L"int", L"real", L"bool", L"string", L"image", L"image_name", L"layer", L"layer_name", L"rect", L"point", L"list"};
-	// to be removed with mmXMLIOUtilities
-	wchar_t const * const g_ppcTypeToString[] = {
-		g_pAutoCalcXML_Params_ParamType_IntegerValue, 
-		g_pAutoCalcXML_Params_ParamType_RealValue, 
-		g_pAutoCalcXML_Params_ParamType_BoolValue, 
-		g_pAutoCalcXML_Params_ParamType_String, 
-		L"image", 
-		g_pAutoCalcXML_Params_ParamType_ImageName, 
-		L"layer", 
-		g_pAutoCalcXML_Params_ParamType_DataLayerName,
-		L"rect",
-		L"point", 
-		L"list"
-	};
+	wchar_t const * const g_ppcTypeToString[] = {L"int", L"real", L"bool", L"string", L"image", L"image_name", L"layer", L"layer_name", L"rect", L"point", L"list"};
 	wchar_t const * const * const g_ppcTypeToStringEnd = g_ppcTypeToString + sizeof(g_ppcTypeToString) / sizeof(*g_ppcTypeToString);
 	struct EqualStrings {
 		EqualStrings(wchar_t const p_pcS[]) : m_pcS(p_pcS) {}

@@ -1,6 +1,8 @@
 #ifndef calc2dcmd_mmCommand_H_
 #define calc2dcmd_mmCommand_H_
 
+#include <vector>
+
 #include <commands/mmParam.h>
 
 namespace mmCommands {

@@ -7,7 +7,9 @@
 #include <stdlib.h>
 #include "mmCodecBase64.h"
 
+#include <serialization/mmGenericParam.h>
 #include <serialization/mmSerializeID.h>
+#include <serialization/mmBasicSerialization.h>
 
 using namespace mmImages;
 
@@ -24,13 +26,13 @@ mmCalculationServer::mmCalculationServer(void) :
 	image_structure(NULL),
 	calculation_method(NULL)
 {
-	param_type_lookup[L"real"] = mmXML::g_eXMLReal;
-	param_type_lookup[L"int"] = mmXML::g_eXMLInt;
-	param_type_lookup[L"string"] = mmXML::g_eXMLString;
-	param_type_lookup[L"bool"] = mmXML::g_eXMLBool;
-	param_type_lookup[L"image"] = mmXML::g_eXMLImageName;
-	param_type_lookup[L"layer"] = mmXML::g_eXMLDataLayerName;
-	param_type_lookup[L"unknown"] = mmXML::g_eXMLUnknownDataType;
+	param_type_lookup[L"real"] = mmGenericParamI::mmRealType;
+	param_type_lookup[L"int"] = mmGenericParamI::mmIntType;
+	param_type_lookup[L"string"] = mmGenericParamI::mmStringType;
+	param_type_lookup[L"bool"] = mmGenericParamI::mmBoolType;
+	param_type_lookup[L"image"] = mmGenericParamI::mmImageNameType;
+	param_type_lookup[L"layer"] = mmGenericParamI::mmLayerNameType;
+	param_type_lookup[L"unknown"] = mmGenericParamI::mmUnknownType;
 
 	success_response = failure_response = Json::Value(Json::objectValue);
 	success_response[L"success"] = true;
@@ -158,13 +160,13 @@ Json::Value mmCalculationServer::Params_XML2JSON( mmString const & params_xml ) 
 	std::vector<mmXML::mmXMLNodeI*> v_vrChildNodes = _v_sRootNode->GetChildren();
 
 	// add a corresponding edit/combo for each parameter depending on its type
-	mmXML::mmXMLDataType v_eDataType;
+	mmGenericParamI::mmType v_eDataType;
 	mmString v_tName, v_tValue;
 	Json::Value converted(Json::arrayValue);
 	for( std::vector<mmXML::mmXMLNodeI*>::iterator v_vriI = v_vrChildNodes.begin(); v_vriI != v_vrChildNodes.end(); ++v_vriI) {
 		v_tName = (*v_vriI)->FindChild(mmImages::g_pAutoCalcXML_Params_ParamName_Node)->GetText();
 		v_tValue = (*v_vriI)->FindChild(mmImages::g_pAutoCalcXML_Params_ParamValue_Node)->GetText();
-		v_eDataType = mmXML::GetTypeTransition((*v_vriI)->FindChild( mmImages::g_pAutoCalcXML_Params_ParamType_Node)->GetText());
+		v_eDataType = mmSerializer<mmGenericParamI::mmType>::FromString((*v_vriI)->FindChild( mmImages::g_pAutoCalcXML_Params_ParamType_Node)->GetText());
 
 		std::wstring type = L"unknown";
 		for(auto it=param_type_lookup.begin(), end=param_type_lookup.end(); it!=end; ++it)
@@ -179,22 +181,22 @@ Json::Value mmCalculationServer::Params_XML2JSON( mmString const & params_xml ) 
 		param[L"type"] = type;
 		switch( v_eDataType ) 
 		{
-		case mmXML::g_eXMLReal:
-			param[L"value"] = StringToMMReal(v_tValue);
+		case mmGenericParamI::mmRealType:
+			param[L"value"] = mmSerializer<mmReal>::FromString(v_tValue);
 			break;
-		case mmXML::g_eXMLInt:
-			param[L"value"] = StringToMMInt(v_tValue);
+		case mmGenericParamI::mmIntType:
+			param[L"value"] = mmSerializer<mmInt>::FromString(v_tValue);
 			break;
-		case mmXML::g_eXMLString:
+		case mmGenericParamI::mmStringType:
 			param[L"value"] = v_tValue;
 			break;
-		case mmXML::g_eXMLBool:
-			param[L"value"] = v_tValue.compare(g_pAutoCalcXML_Params_ParamType_BoolValue_YES) == 0;
+		case mmGenericParamI::mmBoolType:
+			param[L"value"] = mmSerializer<bool>::FromString(v_tValue);
 			break;
-		case mmXML::g_eXMLImageName:
+		case mmGenericParamI::mmImageNameType:
 			param[L"value"] = v_tValue;
 			break;
-		case mmXML::g_eXMLDataLayerName:
+		case mmGenericParamI::mmLayerNameType:
 			param[L"value"] = v_tValue;
 			break;
 		default:
@@ -219,7 +221,7 @@ mmString mmCalculationServer::Params_JSON2XML(Json::Value const & params_json) c
 		std::wstring name = param[L"name"].asString();
 		std::wstring type = param[L"type"].asString();
 		std::wstring value = param[L"value"].asString();
-		mmXML::mmXMLDataType mmtype = param_type_lookup.at(type);
+		mmGenericParamI::mmType mmtype = param_type_lookup.at(type);
 
 		mmXML::mmXMLNodeI* _v_sParam = _v_sRootNode->AddChild(g_pAutoCalcXML_Params_Param_Node);
 		mmXML::mmXMLNodeI* _v_sParamName = _v_sParam->AddChild(g_pAutoCalcXML_Params_ParamName_Node);
@@ -227,9 +229,9 @@ mmString mmCalculationServer::Params_JSON2XML(Json::Value const & params_json) c
 		mmXML::mmXMLNodeI* _v_sParamValue = _v_sParam->AddChild(g_pAutoCalcXML_Params_ParamValue_Node);
 
 		_v_sParamName->SetText(name);
-		_v_sParamType->SetText(mmXML::GetTypeTransition(mmtype));
-		if(mmtype == mmXML::g_eXMLBool)
-			_v_sParamValue->SetText(value.compare(L"true") == 0 ? mmImages::g_pAutoCalcXML_Params_ParamType_BoolValue_YES : mmImages::g_pAutoCalcXML_Params_ParamType_BoolValue_NO);
+		_v_sParamType->SetText(mmSerializer<mmGenericParamI::mmType>::ToString(mmtype));
+		if(mmtype == mmGenericParamI::mmBoolType)
+			_v_sParamValue->SetText(value.compare(L"true") == 0 ? mmSerializer<bool>::ToString(true) : mmSerializer<bool>::ToString(false));
 		else
 			_v_sParamValue->SetText(value);
 	}

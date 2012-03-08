@@ -2,7 +2,7 @@
 #include <images\mmImagesStructure.h>
 #include <images\mmImagesCalculationManagement.h>
 #include <images\mmImagesCalculationMethodContainerWindows.h>
-#include <mmXMLIOUtilities.h>
+#include <serialization\mmGenericParam.h>
 #include "json\json.h"
 #include <map>
 
@@ -36,7 +36,7 @@ private:
 	mmImages::mmImagesCalculationMethodI* calculation_method;
 
 	// utils
-	std::map<std::wstring, mmXML::mmXMLDataType> param_type_lookup;
+	std::map<std::wstring, mmImages::mmGenericParamI::mmType> param_type_lookup;
 	Json::Value success_response, failure_response;
 	Json::Value FailureResponse(std::wstring const & error) const;
 	Json::Value WrapResults(

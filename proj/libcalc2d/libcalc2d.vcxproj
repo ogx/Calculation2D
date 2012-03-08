@@ -175,7 +175,6 @@
     <ClInclude Include="..\..\include\mmOperatingSystemCalls.h" />
     <ClInclude Include="..\..\include\mmPixel.h" />
     <ClInclude Include="..\..\include\mmStringUtilities.h" />
-    <ClInclude Include="..\..\include\mmXMLIOUtilities.h" />
     <ClInclude Include="..\..\include\types\mmBasic.h" />
     <ClInclude Include="..\..\include\types\mmID.h" />
     <ClInclude Include="..\..\include\types\mmRect.h" />
@@ -203,7 +202,6 @@
     <ClCompile Include="src\mmPixel.cpp" />
     <ClCompile Include="src\types\mmID.cpp" />
     <ClCompile Include="src\xml\mmXMLBB.cpp" />
-    <ClCompile Include="src\mmXMLIOUtilities.cpp" />
     <ClCompile Include="src\log\mmLogFile.cpp" />
     <ClCompile Include="src\log\mmLogRedirector.cpp" />
     <ClCompile Include="src\log\mmLogSender.cpp" />

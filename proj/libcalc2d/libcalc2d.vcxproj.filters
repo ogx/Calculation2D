@@ -117,9 +117,6 @@
     <ClInclude Include="..\..\include\mmOperatingSystemCalls.h">
       <Filter>Header Files\System</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\include\mmXMLIOUtilities.h">
-      <Filter>Header Files\XML</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\include\mmStringUtilities.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -174,9 +171,6 @@
       <Filter>Source Files\Images</Filter>
     </ClCompile>
     <ClCompile Include="src\xml\mmXMLBB.cpp">
-      <Filter>Source Files\XML</Filter>
-    </ClCompile>
-    <ClCompile Include="src\mmXMLIOUtilities.cpp">
       <Filter>Source Files\XML</Filter>
     </ClCompile>
     <ClCompile Include="src\log\mmLogFile.cpp">

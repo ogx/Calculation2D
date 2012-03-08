@@ -268,7 +268,7 @@ bool mmConsole::mmClient::AutoComplete(void) {
 									WriteLn(*v_sName);
 
 								if(! v_sElement.first.empty()) {
-									std::wstring v_sCommonString = GetCommonSubstring(v_sImageNames.begin(), v_sImageNamesEnd, v_sElement.first.length());
+									std::wstring v_sCommonString = mmStringUtilities::GetCommonSubstring(v_sImageNames.begin(), v_sImageNamesEnd, v_sElement.first.length());
 									if(v_sCommonString.length() > v_sElement.first.size())
 										m_sCommandLine.SetParam(v_sCommonString);
 								}

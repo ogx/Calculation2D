@@ -2,6 +2,8 @@
 
 #include <algorithm>
 
+#include <Windows.h>
+
 #undef min
 #undef max
 
@@ -22,7 +24,7 @@ mmCommands::mmExternalCommand::mmExternalCommand(std::wstring const & p_sID, std
 	for(std::size_t v_iI = 0; v_iI < v_sChildNodes.size(); ++v_iI ) {
 		m_sParams.push_back(mmParam(
 			v_sChildNodes[v_iI]->FindChild(mmImages::g_pAutoCalcXML_Params_ParamName_Node)->GetText(), 
-			TranslateType(mmXML::GetTypeTransition(v_sChildNodes[v_iI]->FindChild(mmImages::g_pAutoCalcXML_Params_ParamType_Node)->GetText())), 
+			TranslateType(FromString<mmImages::mmGenericParamI::mmType>(v_sChildNodes[v_iI]->FindChild(mmImages::g_pAutoCalcXML_Params_ParamType_Node)->GetText())), 
 			false)
 		);
 		m_sParams.back().sValue = v_sChildNodes[v_iI]->FindChild(mmImages::g_pAutoCalcXML_Params_ParamValue_Node)->GetText();

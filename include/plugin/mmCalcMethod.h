@@ -1,11 +1,12 @@
 #pragma once
 
 #include <map>
+#include <vector>
 
+#include <interfaces/mmIImages.h>
+#include <interfaces/mmISynchronize.h>
 #include <log/mmLogSender.h>
-#include <mmXMLIOUtilities.h>
-
-#include <plugin/mmGenericParam.h>
+#include <serialization/mmGenericParam.h>
 
 //******************************************************************************
 //******************************************************************************

@@ -1,7 +1,8 @@
 #ifndef calc2dcmd_mmParam_H_
 #define calc2dcmd_mmParam_H_
 
-#include <mmXMLIOUtilities.h>
+#include <interfaces/mmIImages.h>
+#include <serialization/mmGenericParam.h>
 
 namespace mmCommands {
 	struct mmParam {
@@ -17,7 +18,7 @@ namespace mmCommands {
 		bool bOptional;
 	};
 
-	mmParam::mmType TranslateType(mmXML::mmXMLDataType const p_eXMLType);
+	mmParam::mmType TranslateType(mmImages::mmGenericParamI::mmType);
 	bool TryConvert(mmParam const & p_sParam, std::wstring const & p_sPossibleValue, mmImages::mmImageStructureI const * const p_psImageStructure);
 };
 

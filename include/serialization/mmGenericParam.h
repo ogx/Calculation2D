@@ -6,8 +6,6 @@
 
 #include <serialization/mmSerializer.h>
 
-#include <mmXMLIOUtilities.h>
-
 namespace mmImages {
 	class mmGenericParamI {
 	public:
@@ -28,10 +26,6 @@ namespace mmImages {
 		virtual void SetValueString(mmString const &) = 0;
 		virtual ~mmGenericParamI(void) {}
 	};
-
-	// to be removed with mmXMLIOUtilities
-	extern mmGenericParamI::mmType GetTypeTransition(mmXML::mmXMLDataType const p_eType);
-	extern mmXML::mmXMLDataType GetTypeTransition(mmGenericParamI::mmType const p_eType);
 
 	template<class param_t>
 	class mmGenericParam_base : public mmGenericParamI {
