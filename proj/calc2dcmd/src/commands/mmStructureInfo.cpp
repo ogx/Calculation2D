@@ -1,5 +1,7 @@
 #include <commands/mmStructureInfo.h>
 
+#include <serialization\mmSerializeID.h>
+
 mmCommands::mmStructureInfo::mmStructureInfo(mmImages::mmImageStructureI * const p_psImageStructure) : m_psImageStructure(p_psImageStructure) {
 	m_sNames.push_back(L"images");
 
@@ -21,7 +23,7 @@ bool mmCommands::mmStructureInfo::Run(std::wstring const & p_sName, std::vector<
 }
 
 void mmCommands::mmStructureInfo::DisplayImageInfo(mmImages::mmImageI * const p_psImage) {
-	::_cwprintf(L"ID: %d\r\n", p_psImage->GetID().ancpainalxnkalisxnaosnx_you_cant_type_it_so_you_wont_use_it());
+	::_cwprintf(L"ID: %d\r\n", ToString(p_psImage->GetID()).c_str());
 	::_cwprintf(L"Name: %s\r\n", p_psImage->GetName().c_str());
 	::_cwprintf(L"Size: %dx%d\r\n", p_psImage->GetWidth(), p_psImage->GetHeight());
 	::_cwprintf(L"Channels (%d):\r\n", static_cast<mmInt>(p_psImage->GetPixelType()));

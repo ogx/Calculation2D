@@ -172,11 +172,13 @@
     <ClInclude Include="..\..\include\mmError.h" />
     <ClInclude Include="..\..\include\mmExecutionContext.h" />
     <ClInclude Include="..\..\include\mmGlobalDefs.h" />
-    <ClInclude Include="..\..\include\mmID.h" />
     <ClInclude Include="..\..\include\mmOperatingSystemCalls.h" />
     <ClInclude Include="..\..\include\mmPixel.h" />
     <ClInclude Include="..\..\include\mmStringUtilities.h" />
     <ClInclude Include="..\..\include\mmXMLIOUtilities.h" />
+    <ClInclude Include="..\..\include\types\mmBasic.h" />
+    <ClInclude Include="..\..\include\types\mmID.h" />
+    <ClInclude Include="..\..\include\types\mmRect.h" />
     <ClInclude Include="include\factories\mmUtilsFactory.h" />
     <ClInclude Include="include\images\mmImagesCalculationManagement.h" />
     <ClInclude Include="include\images\mmImagesCalculationMethodContainerWindows.h" />
@@ -196,10 +198,10 @@
     <ClCompile Include="src\factories\mmUtilsFactory.cpp" />
     <ClCompile Include="src\interfaces\mmInterfaceInitializers.cpp" />
     <ClCompile Include="src\mmError.cpp" />
-    <ClCompile Include="src\mmID.cpp" />
     <ClCompile Include="src\mmStringUtilities.cpp" />
     <ClCompile Include="src\images\mmImagesStructure.cpp" />
     <ClCompile Include="src\mmPixel.cpp" />
+    <ClCompile Include="src\types\mmID.cpp" />
     <ClCompile Include="src\xml\mmXMLBB.cpp" />
     <ClCompile Include="src\mmXMLIOUtilities.cpp" />
     <ClCompile Include="src\log\mmLogFile.cpp" />

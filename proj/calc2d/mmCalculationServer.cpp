@@ -7,6 +7,8 @@
 #include <stdlib.h>
 #include "mmCodecBase64.h"
 
+#include <serialization/mmSerializeID.h>
+
 using namespace mmImages;
 
 
@@ -249,7 +251,7 @@ Json::Value mmCalculationServer::LayerToJSON(mmImages::mmLayerI const * layer) c
 	Json::Value json(Json::objectValue);
 
 	json[L"name"] = layer->GetName();
-	json[L"id"] = layer->GetID().ancpainalxnkalisxnaosnx_you_cant_type_it_so_you_wont_use_it();
+	json[L"id"] = ToString(layer->GetID());
 	json[L"default"] = layer->GetDefaultValue();
 
 	mmUInt width = (json[L"width"] = layer->GetWidth()).asUInt();

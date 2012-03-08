@@ -18,15 +18,9 @@
     <ClCompile Include="plugin\mmCalcMethod.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="plugin\mmGenericParam.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\include\plugin\mmCalcMethod.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\include\plugin\mmGenericParam.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

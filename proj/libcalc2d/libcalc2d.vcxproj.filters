@@ -49,6 +49,12 @@
     <Filter Include="Source Files\Interfaces">
       <UniqueIdentifier>{b840c7a4-ea33-45ff-8ad9-73ff4e7d1bad}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\Types">
+      <UniqueIdentifier>{c3b96222-739f-455d-aa73-b68193d42b59}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Types">
+      <UniqueIdentifier>{5dc90139-06c1-4668-829f-b440aa056f77}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\images\mmImagesCalculationManagement.h">
@@ -144,8 +150,14 @@
     <ClInclude Include="include\interfaces\mmICalculationMethodContainer.h">
       <Filter>Header Files\Interfaces</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\include\mmID.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="..\..\include\types\mmRect.h">
+      <Filter>Header Files\Types</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\types\mmID.h">
+      <Filter>Header Files\Types</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\types\mmBasic.h">
+      <Filter>Header Files\Types</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -212,8 +224,8 @@
     <ClCompile Include="src\factories\mmUtilsFactory.cpp">
       <Filter>Source Files\Interfaces</Filter>
     </ClCompile>
-    <ClCompile Include="src\mmID.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="src\types\mmID.cpp">
+      <Filter>Source Files\Types</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

@@ -77,11 +77,8 @@ bool mmCommands::mmImageUtils::mmClean::Run(std::wstring const & p_sName, std::v
 			return false;
 		}
 	} else if(p_sName == L"clear") {
-		std::vector<mmID> v_sImageIDs;
-		for(mmImages::mmImageI * v_psImage = m_psImageStructure->FindImage(NULL); NULL != v_psImage; v_psImage = m_psImageStructure->FindImage(v_psImage))
-			v_sImageIDs.push_back(v_psImage->GetID());
-		for(std::size_t v_iI = 0; v_iI < v_sImageIDs.size(); ++v_iI)
-			m_psImageStructure->DeleteImage(v_sImageIDs[v_iI]);
+		for(mmImages::mmImageI * v_psImage = m_psImageStructure->FindImage(); NULL != v_psImage; v_psImage = m_psImageStructure->FindImage())
+			m_psImageStructure->DeleteImage(v_psImage->GetID());
 	}
 
 	return true;

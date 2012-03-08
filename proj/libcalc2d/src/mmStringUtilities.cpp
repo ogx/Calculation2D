@@ -68,7 +68,7 @@ mmString mmStringUtilities::PointerToString(void* p_pInput)
 
 mmInt mmStringUtilities::StringToMMInt(mmString p_sStr)
 {
-	int v_iTemp;
+	int v_iTemp = 0;
 
 	swscanf_s(p_sStr.c_str(),L"%d",&v_iTemp);
 
@@ -77,7 +77,7 @@ mmInt mmStringUtilities::StringToMMInt(mmString p_sStr)
 
 mmReal mmStringUtilities::StringToMMReal(mmString p_sStr)
 {
-	double v_rTemp;
+	double v_rTemp = 0.0;
 
 	swscanf_s(p_sStr.c_str(),L"%lf",&v_rTemp);
 

@@ -1,9 +1,8 @@
 #ifndef mmIDH
 #define mmIDH
 
-#include <mmGlobalDefs.h>
-
-class mmStringConverters;
+#include <types/mmBasic.h>
+#include <serialization/mmSerializer.h>
 
 class mmID {
 public:
@@ -13,7 +12,8 @@ public:
 	bool operator == (mmID const & p_sID) const { return iID == p_sID.iID; }
 	bool operator != (mmID const & p_sID) const { return iID != p_sID.iID; }
 	bool operator < (mmID const & p_sID) const { return iID < p_sID.iID; }
-	mmUInt ancpainalxnkalisxnaosnx_you_cant_type_it_so_you_wont_use_it(void) { return iID; }
+	// serialization support
+	friend class mmSerializer<mmID>;
 public:
 	static mmID const invalid;
 private:
