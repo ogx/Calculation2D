@@ -105,9 +105,13 @@ Json::Value mmCalculationServer::GetStatus()
 	{
 		Json::Value response = success_response;
 		if(calc_mgr.IsCalculating())
+		{
+			response[L"finished"] = false;
 			response[L"status"] = L"calculation";
+		}
 		else
 		{
+			response[L"finished"] = true;
 			response[L"status"] = L"finished";
 			response[L"result"] = WrapResults(image_structure, 
 				calculation_method->GetCalculationMethodInfo().sAutoParams.sOutParams);
@@ -354,15 +358,16 @@ void mmCalculationServer::UnwrapArguments(
 	for(int i=0, n=image_structure_json.size(); i<n; ++i)
 	{
 		const Json::Value& image_param = image_structure_json[i];
-		const Json::Value& image_param_image = image_param[L"image"];
-		mmUInt width = image_param_image[L"width"].asUInt();
-		mmUInt height = image_param_image[L"height"].asUInt();
+		const Json::Value& channels_param = image_param[L"channels"];
+		mmUInt width = image_param[L"width"].asUInt();
+		mmUInt height = image_param[L"height"].asUInt();
 		std::wstring name = image_param[L"name"].asString();
+		int num_channels = channels_param.size();
 
-		mmImages::mmImageI* image = image_structure->CreateImage(name, width, height, mmImages::mmImageI::mmP24);
-		LayerFromJSON(image_param_image[L"red"], image->GetChannel(0));
-		LayerFromJSON(image_param_image[L"green"], image->GetChannel(1));
-		LayerFromJSON(image_param_image[L"blue"], image->GetChannel(2));
+		mmImages::mmImageI* image = image_structure->CreateImage(name, width, height, mmImages::mmImageI::mmPixelType(num_channels));
+		
+		for(int j=0; j<num_channels; ++j)
+			LayerFromJSON(channels_param[j], image->GetChannel(j));
 	}
 
 	// prep input params

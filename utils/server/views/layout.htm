@@ -11,8 +11,13 @@
 		{{%IMPLICIT-ITERATOR}}{{#styles}}
 			<link rel="stylesheet" type="text/css" href="css/{{.}}.css"/>
 		{{/styles}}
-		{{%IMPLICIT-ITERATOR}}{{#headers}}{{{.}}}{{/headers}}
+		{{%IMPLICIT-ITERATOR}}{{#headers}}
+			{{{.}}}
+		{{/headers}}
+		<script language='javascript' src='js/image_structure.js'></script>
+		<script language='javascript' src='js/server.js'></script>
 		<script language='javascript' src='js/client.js'></script>
+		<script language='javascript' src='js/surface.js'></script>
 	</head>
 	<body>
 		<div id='top-panel'>
