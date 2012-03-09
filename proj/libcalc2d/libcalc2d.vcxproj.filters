@@ -129,9 +129,6 @@
     <ClInclude Include="..\..\include\math\mmMath.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\include\mmPixel.h">
-      <Filter>Header Files\Images</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\include\interfaces\mmIUtilsFactory.h">
       <Filter>Header Files\Interfaces</Filter>
     </ClInclude>
@@ -156,6 +153,9 @@
     <ClInclude Include="..\..\include\types\mmBasic.h">
       <Filter>Header Files\Types</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\include\types\mmPixel.h">
+      <Filter>Header Files\Types</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\mmError.cpp">
@@ -165,9 +165,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\images\mmImagesStructure.cpp">
-      <Filter>Source Files\Images</Filter>
-    </ClCompile>
-    <ClCompile Include="src\mmPixel.cpp">
       <Filter>Source Files\Images</Filter>
     </ClCompile>
     <ClCompile Include="src\xml\mmXMLBB.cpp">
@@ -219,6 +216,9 @@
       <Filter>Source Files\Interfaces</Filter>
     </ClCompile>
     <ClCompile Include="src\types\mmID.cpp">
+      <Filter>Source Files\Types</Filter>
+    </ClCompile>
+    <ClCompile Include="src\types\mmPixel.cpp">
       <Filter>Source Files\Types</Filter>
     </ClCompile>
   </ItemGroup>

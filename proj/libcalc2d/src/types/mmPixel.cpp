@@ -1,4 +1,4 @@
-#include <mmPixel.h>
+#include <types/mmPixel.h>
 
 mmUInt const mmPixel8::iComponents = 1;
 mmPixel8::mmPixel8(void) : rI(0.0) {}

@@ -1,7 +1,7 @@
 #ifndef mmPixelH
 #define mmPixelH
 
-#include <mmGlobalDefs.h>
+#include <types/mmBasic.h>
 
 struct mmPixel8;
 struct mmPixel24;

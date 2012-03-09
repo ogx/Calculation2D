@@ -12,7 +12,7 @@
 
 #include <mmGlobalDefs.h>
 #include <mmError.h>
-#include <mmPixel.h>
+#include <types/mmPixel.h>
 
 #include <interfaces\mmIThread.h>
 
