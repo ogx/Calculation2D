@@ -254,7 +254,7 @@ Json::Value mmCalculationServer::LayerToJSON(mmImages::mmLayerI const * layer) c
 
 	json[L"name"] = layer->GetName();
 	json[L"id"] = layer->GetID().ancpainalxnkalisxnaosnx_you_cant_type_it_so_you_wont_use_it();
-	json[L"default"] = layer->GetDefaultValue();
+	json[L"default_value"] = layer->GetDefaultValue();
 
 	mmUInt width = (json[L"width"] = layer->GetWidth()).asUInt();
 	mmUInt height = (json[L"height"] = layer->GetHeight()).asUInt();
@@ -291,6 +291,7 @@ void mmCalculationServer::LayerFromJSON( Json::Value const & json, mmImages::mmL
 	mmUInt width = json[L"width"].asUInt();
 	mmUInt height = json[L"height"].asUInt();
 	Json::Value const & values = json[L"values"];
+	mmReal def_value = json[L"default_value"].asDouble(); // TODO: use
 
 	std::vector<mmReal> buf(width*height);
 
@@ -323,20 +324,23 @@ Json::Value mmCalculationServer::WrapResults( mmImages::mmImageStructure const *
 	while(image = image_structure->FindImage(image))
 	{
 		Json::Value image_json(Json::objectValue);
+		image_json[L"id"] = image->GetID().ancpainalxnkalisxnaosnx_you_cant_type_it_so_you_wont_use_it();
 		image_json[L"name"] = image->GetName();
-		Json::Value& image_json_image = image_json[L"image"] = Json::Value(Json::objectValue);
+		Json::Value& image_json_channels = image_json[L"channels"] = Json::Value(Json::arrayValue);
 		Json::Value& image_json_layers = image_json[L"data_layers"] = Json::Value(Json::arrayValue);
 
-		image_json_image[L"width"] = image->GetWidth();
-		image_json_image[L"height"] = image->GetHeight();
-		image_json_image[L"red"] = LayerToJSON(image->GetChannel(0));
+		image_json[L"width"] = image->GetWidth();
+		image_json[L"height"] = image->GetHeight();
+		image_json_channels[0] = LayerToJSON(image->GetChannel(0));
 		if(image->GetPixelType() >= mmImageI::mmP24)
 		{
-			image_json_image[L"green"] = LayerToJSON(image->GetChannel(1));
-			image_json_image[L"blue"] = LayerToJSON(image->GetChannel(2));
+			image_json_channels[1] = LayerToJSON(image->GetChannel(1));
+			image_json_channels[2] = LayerToJSON(image->GetChannel(2));
 		}
 		else // TODO: doing small steps - remove this overhead!
-			image_json_image[L"green"] = image_json_image[L"blue"] = image_json_image[L"red"];
+			image_json_channels[2] = image_json_channels[1] = image_json_channels[0];
+
+		// TODO: serialize layers
 
 		isr.append(image_json);
 	}
@@ -368,6 +372,8 @@ void mmCalculationServer::UnwrapArguments(
 		
 		for(int j=0; j<num_channels; ++j)
 			LayerFromJSON(channels_param[j], image->GetChannel(j));
+
+		// TODO: extract layers
 	}
 
 	// prep input params

@@ -41,11 +41,11 @@ C2D.Image = function(name, width, height, content) {
 				default_value: channel.def_value
 			};
 		},
-		unwrapLayer = function(channel, width, height) {
+		unwrapLayer = function(channel) {
 			return new C2D.Layer(
 				channel.name,
-				width,
-				height,
+				channel.width,
+				channel.height,
 				C2D.server.decompress(channel.values),
 				channel.default_value
 			);
@@ -53,10 +53,17 @@ C2D.Image = function(name, width, height, content) {
 			
 	
 	/* CONSTRUCTION */
-	if(typeof content.channels !== 'undefined') {
-		// (create from base64-encoded channels)
-		throw new Error('Not implemented yet.');
-	} else if(typeof content.imade_data !== 'undefined') {
+	if(content.channels) {
+		// (convert from a server-compatible object)
+		// - import channels
+		// - create a buffer
+		
+		channels = content.channels.map(unwrapLayer);
+		console.log('channels:', channels);
+		
+		draw_buffer = C2D.surface.image_structure_reflection.
+			getCanvasContext().createImageData(width, height); // TODO: needs to be done differently - this is a mess
+	} else if(content.imade_data) {
 		// (create from ImageData canvas buffer)
 		// - extract RGB channels from canvas buffer
 		// - save the buffer for this.getRGBA
@@ -75,29 +82,29 @@ C2D.Image = function(name, width, height, content) {
 		
 		channels = [r, g, b];
 		draw_buffer = canvas_data;
+	
+		var num_channels = channels.length,
+			channel_names = [];
+			
+		if(num_channels == 1)
+			channel_names = ['Intensity'];
+		else if(num_channels == 3)
+			channel_names = ['Red', 'Green', 'Blue'];
+		else if(num_channels == 4)
+			channel_names = ['Red', 'Green', 'Blue', 'Alpha'];
+		else
+			throw new Error('Crazy channel count ('+num_channels+')!');
+			
+		channels = channels.map(function(arr) {
+			return new C2D.Layer(
+				channel_names[this.i++],
+				width, 
+				height,
+				arr
+			);
+		}, {i:0});
 	} else 
 		throw new Error('No apropriate content for the image.');
-	
-	var num_channels = channels.length,
-		channel_names = [];
-		
-	if(num_channels == 1)
-		channel_names = ['Intensity'];
-	else if(num_channels == 3)
-		channel_names = ['Red', 'Green', 'Blue'];
-	else if(num_channels == 4)
-		channel_names = ['Red', 'Green', 'Blue', 'Alpha'];
-	else
-		throw new Error('Crazy channel count ('+num_channels+')!');
-		
-	channels = channels.map(function(arr) {
-		return new C2D.Layer(
-			channel_names[this.i++],
-			width, 
-			height,
-			arr
-		);
-	}, {i:0});
 	
 	
 	var self = this;
@@ -169,10 +176,10 @@ C2D.Image = function(name, width, height, content) {
 	// wraps itself to a server-compatible form
 	this.wrapItUp = function() {
 		return {
+			id: self.id,
 			name: self.name,
 			width: self.width,
 			height: self.height,
-			id: self.id,
 			channels: channels.map(wrapLayer),
 			data_layers: self.mapLayers(wrapLayer),
 		};
@@ -211,8 +218,18 @@ C2D.ImageStructure = function() {
 	};
 	
 	// merge processing results from the server
-	this.appendResults = function(results) {
-		throw new Error('Not implemented yet.');
+	this.digestResults = function(results) {
+		results.forEach(function(result_image) {
+			var new_image = new C2D.Image(
+					result_image.name, 
+					result_image.width, 
+					result_image.height, 
+					{ channels:    result_image.channels, 
+					  data_layers: result_image.data_layers }
+				);
+			console.log('Retrieved an image:', new_image);
+			images[new_image.id] = new_image;
+		});
 	};
 	
 	/* image manipulation */

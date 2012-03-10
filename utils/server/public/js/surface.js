@@ -212,13 +212,25 @@ C2D.surface = {
 							 attr('selected', 'selected').
 							 change();
 			},
+			selectLastImage: function() {
+				var image_list = $('#main_image_list'),
+					option = image_list.
+							 children().
+							 last().
+							 attr('selected', 'selected').
+							 change();
+			},
 			
 			drawImageOnCanvas: function(image) {
-				var ctx = $('#input_preview_canvas')[0].getContext('2d');
-				image_data = image.getRGBA();
+				var ctx = $('#input_preview_canvas')[0].getContext('2d'),
+					image_data = image.getRGBA();
 				ctx.canvas.width = image_data.width;
 				ctx.canvas.height = image_data.height;
 				ctx.putImageData(image_data, 0, 0);
+			},
+			
+			getCanvasContext: function() {
+				return $('#input_preview_canvas')[0].getContext('2d');
 			},
 		};
 		
@@ -374,7 +386,16 @@ C2D.surface = {
 			// TODO: impl
 		}
 		this.onCalculationFinished = function(results) {
-			// TODO: impl
+			// TODO: indicate calculation success
+			console.log('Calculation succeeded:', results);
+			try {
+				C2D.client.digestResults(results);
+				self.image_structure_reflection.onImageStructureChanged();
+				self.image_structure_reflection.selectLastImage();
+			} catch(e) {
+				// TODO: indicate indigestion
+				console.log('Cannot digest results!');
+			}
 		}
 		this.onCalculationNotRunning = function() {
 			// TODO: impl

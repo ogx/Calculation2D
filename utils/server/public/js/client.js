@@ -29,6 +29,9 @@ C2D.client = {
 		this.wrapStructure = function(selected_image_ids) {
 			return image_structure.wrapItUp(selected_image_ids);
 		};
+		this.digestResults = function(results) {
+			return image_structure.digestResults(results.image_structure);
+		};
 		
 		/* METHODS MANAGEMENT */
 		this.addMethod = function(method) {
