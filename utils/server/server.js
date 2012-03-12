@@ -108,7 +108,7 @@ router.get('/old', function() {
 		} 
 	});
 });
-router.get(/\/(new)?/, function() {
+router.get('/', function() {
 	return viewEngine.respond('index-new.htm', { 
 		locals: {
 			jquery: true, 
