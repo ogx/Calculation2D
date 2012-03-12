@@ -23,8 +23,7 @@ namespace mmDLLSupport
 	/// @param[in] p_sName name of symbol
 	/// @return full name of symbol in DLL export table
 	////////////////////////////////////////////////////////////////////////////////
-	mmString FindSymbolInDLLExportTable(mmString p_sDLLName,
-																			mmString p_sName);
+	mmString FindSymbolInDLLExportTable(mmString const & p_sDirectory, mmString const & p_sDLLName, mmString const & p_sName);
 };
 
 #endif

@@ -11,9 +11,11 @@ mmImages::mmImagesCalculationMethodDLLBroker::mmImagesCalculationMethodDLLBroker
 {
 	SendLogMessage(mmLog::debug,mmString(L"Start Constructor"));
 
+	std::auto_ptr<mmFileIO::mmFileUtilsI> v_psFileUtils(mmInterfaceInitializers::CreateFileUtils());
+	mmString const v_sAppDir = v_psFileUtils->GetApplicationDir();
 	// restoring functions symbols from DLL
-	mmString v_sDLLSymbol_mmDLLImagesCalculationMethod_Create = mmDLLSupport::FindSymbolInDLLExportTable(p_sDLLName, L"mmDLLCreateImagesCalculationMethod");
-	mmString v_sDLLSymbol_mmDLLImagesCalculationMethod_Destroy = mmDLLSupport::FindSymbolInDLLExportTable(p_sDLLName, L"mmDLLDestroyImagesCalculationMethod");
+	mmString v_sDLLSymbol_mmDLLImagesCalculationMethod_Create = mmDLLSupport::FindSymbolInDLLExportTable(v_sAppDir, p_sDLLName, L"mmDLLCreateImagesCalculationMethod");
+	mmString v_sDLLSymbol_mmDLLImagesCalculationMethod_Destroy = mmDLLSupport::FindSymbolInDLLExportTable(v_sAppDir, p_sDLLName, L"mmDLLDestroyImagesCalculationMethod");
 
 	// loading images calculation method dll
 	m_hDLLHandle = LoadLibrary(p_sDLLName.c_str());

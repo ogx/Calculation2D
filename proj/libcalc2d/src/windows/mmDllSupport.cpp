@@ -7,8 +7,7 @@
 #include <mmStringUtilities.h>
 
 
-mmString mmDLLSupport::FindSymbolInDLLExportTable(mmString p_sDLLName,
-																									mmString p_sName)
+mmString mmDLLSupport::FindSymbolInDLLExportTable(mmString const & p_sDirectory, mmString const & p_sDLLName, mmString const & p_sName)
 {
 	mmString v_sFullSymbol;
 
@@ -17,6 +16,10 @@ mmString mmDLLSupport::FindSymbolInDLLExportTable(mmString p_sDLLName,
 	std::string v_sCharStringDllName = mmStringUtilities::MMStringToCharString(p_sDLLName);
 	std::string v_sCharStringName = mmStringUtilities::MMStringToCharString(p_sName);
 
+	wchar_t v_pcCurrentDir[MAX_PATH] = L"\0";
+	::GetCurrentDirectoryW(MAX_PATH, v_pcCurrentDir);
+	::SetCurrentDirectoryW(p_sDirectory.c_str());
+	
 	if(MapAndLoad(const_cast<char*>(v_sCharStringDllName.c_str()),
 								"",
 								&v_sLoadedImage,
@@ -54,6 +57,8 @@ mmString mmDLLSupport::FindSymbolInDLLExportTable(mmString p_sDLLName,
 	};
 
 	UnMapAndLoad(&v_sLoadedImage);
+
+	::SetCurrentDirectoryW(v_pcCurrentDir);
 
 	return v_sFullSymbol;
 }
