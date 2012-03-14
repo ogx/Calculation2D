@@ -22,10 +22,233 @@ C2D.surface = {
 		C2D.client.init();
 		
 		
-		/* PRIVATE SECTION */
-		var method_id_key = 'method-id',
-			resource_id_key = 'resource-id';
+		/* PRIVATE ELEMENTS */
 		
+		var method_id_key = 'method-id',
+			resource_id_key = 'resource-id',
+			
+			image_options = [],
+			layer_options = {},
+			populateLists = function(elements, options) {
+				// get selected elements
+				var ids = [];
+				for(var i=0, n=elements.length; i<n; i++) {
+					ids[i] = $(elements[i]).children(':selected').attr(resource_id_key);
+				}
+				//console.log('combos:', elements, 'selected items:', ids);
+				
+				// populate lists
+				elements.empty();
+				elements.append(options.length ? 
+								options : 
+								createEmptyListOption());	
+				
+				// restore selections
+				for(var i=0, n=elements.length; i<n; i++) {
+					var option_to_select = $(elements[i]).
+							children('option[' + resource_id_key + '=' + ids[i] + ']');
+					if(option_to_select.length == 0) { // already checked if no options
+						option_to_select.children().first();
+					}
+					option_to_select.attr('selected', 'selected');
+				}
+					
+				elements.change();
+			},
+			createListOption = function(id, name) {
+				return $(document.createElement('option')).
+					attr(resource_id_key, id).
+					text(name)[0];
+			},
+			createEmptyListOption = function() {
+				return createListOption(-1, '(no data)');
+			},
+			
+			// html elements reflection -- image/layer lists, parameters, canvas
+			html_types = {
+				ImageItem: function(image) {
+					image = image || { list_item_id: -1, name: '(no images)' };
+					this.element = $(document.createElement('option')).
+						attr(resource_id_key, image.list_item_id).
+						text(image.name);
+					this.object = image;
+					this.draw = function(ctx) {
+						ctx.canvas.width = this.object.width;
+						ctx.canvas.height = this.object.height;
+						ctx.putImageData(this.object.getRGBA(), 0, 0);
+					};
+				},
+				LayerItem: function(layer) {
+					layer = layer || { list_item_id: -1, name: '(no layers)' };
+					this.element = $(document.createElement('option')).
+						attr(resource_id_key, layer.list_item_id).
+						text(layer.name);
+					this.object = layer;
+					this.draw = function(ctx) {
+						ctx.canvas.width = this.object.width;
+						ctx.canvas.height = this.object.height;
+						ctx.putImageData(this.object.getRGBA(), 0, 0);
+					};
+				},
+				
+				GenericList: function(element, item_ctor) {
+					element = $(element).get(0) || document.createElement('select');
+					if(element.list_object)
+						return element.list_object;
+					element.list_object= this;
+					//console.log('GenericList from', element);
+					var empty_item = new item_ctor(),
+						items = this._i = {}
+					
+					// fields
+					this.element = $(element);
+					// methods
+					this.add = function(item_object) {
+						if($.isEmptyObject(items))
+							this.element.empty();
+					
+						if(typeof html_types.GenericList.next_id === 'undefined')
+							html_types.GenericList.next_id = 0;
+						item_object.list_item_id = item_object.list_item_id || html_types.GenericList.next_id++;
+						
+						if(typeof items[item_object.list_item_id] !== 'undefined') {
+							console.warn('List item object already registered. Replacing.');
+							delete items[item_object.list_item_id];
+						}
+							
+						var item = new item_ctor(item_object);
+						items[item_object.list_item_id] = item;
+						this.element.append(item.element);
+						return item;
+					};
+					this.remove = function(item_object) {
+						var item = items[item_object.list_item_id];
+						this.element.remove(item.element);
+						delete items[item_object.list_item_id];
+						
+						if($.isEmptyObject(items))
+							this.element.empty().append(empty_item.element);
+					};
+					this.empty = function() {
+						for(var id in items)
+							delete items[id];
+					};
+					this.getSelectedItem = function() {
+						var selected = $(this.element).
+								children('option:selected'),
+							list_item_id = selected.attr(resource_id_key);
+						if(list_item_id == -1)
+							return {
+								element: selected,
+								object: null,
+								draw: function(ctx) {
+									var w = ctx.canvas.width, 
+										h = ctx.canvas.height;
+									var pfs = ctx.fillStyle;
+									ctx.fillStyle = $(ctx.canvas).css('background-color');
+									ctx.fillRect(0, 0, w, h);
+									ctx.fillStyle = pfs;
+								}
+							};
+						return items[list_item_id];
+					};
+					this.getSelected = function() {
+						return this.getSelectedItem().object;
+					};
+					this.select = function(id) {
+						this.element.
+							children('option['+resource_id_key+'='+id+']').
+							attr('selected', 'selected');
+						this.element.change();
+					};
+					
+					this.element.empty().append(empty_item.element);
+				},
+				ImageList: function(element) {
+					var list = new html_types.GenericList(element, html_types.ImageItem);
+					
+					// populate with all images
+					if(C2D.client.getImagesCount() > 0) {
+						list.element.empty();
+						C2D.client.forImages(function(image) {
+							list.add(image);
+						});
+					}
+					
+					return list;
+				},
+				LayerList: function(element) {
+					var list = new html_types.GenericList(element, html_types.LayerItem);
+					
+					// additional methods
+					list.populate = function(image) {
+						console.log(image);
+						list.element.empty();
+						list.empty();
+						list.add(image).element.text('(image)'); // RGBA image
+						image.forEachChannel(function(channel) {
+							var item = list.add(channel);
+							item.element.text('('+channel.name+' channel)');
+						});
+						image.forEachLayer(function(layer) {
+							list.add(layer);
+						});
+						
+						list.element.children().first().attr('selected', true);
+						list.element.change();
+						
+						return list;
+					};
+					
+					return list;
+				},
+			},
+			_main_image_list = new html_types.ImageList($('#main_image_list')),
+			_main_layer_list = new html_types.LayerList($('#main_layer_list')),
+			_main_canvas = $('#input_preview_canvas'),
+			html_objects = C2D._h = {				
+				// persistent controls
+				main_canvas: {
+					element: _main_canvas,
+					context: _main_canvas[0].getContext('2d'),
+					
+					drawLayer: function(layer) {
+						throw new Error('Not implemented yet.');
+					},
+					drawImage: function(image) {
+						var image_data = image.getRGBA();
+							canvas = $(this.element)[0];
+						canvas.width = image.width;
+						canvas.height = image.height;
+						this.context.putImageData(image_data, 0, 0);
+					},
+				},
+				main_image_list: _main_image_list,
+				main_layer_list: _main_layer_list,
+				image_lists: {
+					lists: $('select.image-list').
+						map(function(ind, elem) {
+							return new html_types.ImageList($(elem));
+						}).
+						get(),
+					push: function(element) {
+						this.lists.push(new html_types.ImageList(element));
+					},
+				},
+				layer_lists: {
+					lists: $('select.layer-list').
+						map(function(ind, elem) {
+							return new html_types.LayerList($(elem));
+						}).
+						get(),
+					push: function(element) {
+						this.lists.push(new html_types.LayerList(element));
+					},
+				}
+			};
+		
+		
+		/* PUBLIC INTERFACE */
 		
 		// sub-module for creation and parsing parameter forms
 		this.param_form_mgr = {
@@ -45,12 +268,22 @@ C2D.surface = {
 							checked: param.value,
 						})[0];
 					},
+					comboCtors = {
+						'image-list': html_types.ImageList,
+						'layer-list': html_types.LayerList
+					},
+					comboContainers = {
+						'image-list': html_objects.image_lists,
+						'layer-list': html_objects.layer_lists
+					},
 					createCombo = function(cl) {
 						return function(param) {
-							return $(document.createElement('select')).attr({
-								value: param.value,
-								'class': cl+' wide-ctl',
-							})[0];
+							var list = new comboCtors[cl](),
+								elem = $(list.element).
+									addClass(cl).
+									addClass('wide-ctl');
+							comboContainers[cl].push(elem);
+							return elem;
 						};
 					}, 
 					getValue = function(node) {
@@ -94,13 +327,13 @@ C2D.surface = {
 			
 			// createForm
 			// Create an HTML form for plugin parameters given in JSON. 
-			createForm: function(default_params, parent) {
+			createForm: function(default_params) {
 				var table = $(document.createElement('table')),
 					createParamInput = this.createParamInput,
-					that = this;
+					self = this;
 					
 				default_params.forEach(function(param, i) {
-					var input = that.createParamInput(param, 'param_'+i),
+					var input = self.createParamInput(param, 'param_'+i),
 						label = $(document.createElement('label')).attr({
 							'for': input.id,
 							'class': 'param_label' 
@@ -113,9 +346,6 @@ C2D.surface = {
 					
 					return row;
 				});
-				
-				// display list of images
-				this.surface.image_structure_reflection.populateImageLists($('#input_parameters_form select.image-list'));
 				
 				// TODO: layer-list for selected image
 				
@@ -139,70 +369,16 @@ C2D.surface = {
 		
 		// sub-module for managing synchronization of client.image_structure and and UI controls
 		this.image_structure_reflection = {
-			populateImageLists: function(elements) {
-				// get selected elements
-				var ids = [];
-				for(var i=0, n=elements.length; i<n; i++) {
-					ids[i] = $(elements[i]).children(':selected').attr(resource_id_key);
-				}
-				//console.log('combos:', elements, 'selected items:', ids);
+
+			onImageLoaded: function(image) {
+				// An image has been loaded.
+				// - add the image to all image lists
+				// - select loaded image on the main image list
 				
-				// populate lists
-				elements.empty();
-				elements.append(this.image_options.length ? 
-								this.image_options : 
-								this.createEmptyImageListOption());	
-				
-				// restore selections
-				for(var i=0, n=elements.length; i<n; i++) {
-					var option_to_select = $(elements[i]).
-							children('option[' + resource_id_key + '=' + ids[i] + ']');
-					if(option_to_select.length == 0) { // already checked if no options
-						option_to_select.children().first();
-					}
-					option_to_select.attr('selected', 'selected');
-				}
-					
-				elements.change();
-			},
-			populateLayerLists: function(elements, image) {
-				var options = [];
-				if(typeof image === 'undefined') {
-					// TODO: get options for a specific image (use layer_options)
-				} else {
-					// TODO: populate global layers
-				}
-				elements.empty();
-				elements.append(options);
-				elements.change();
-			},
-			
-			createImageListOption: function(id, name) {
-				return $(document.createElement('option')).
-					attr(resource_id_key, id).
-					attr('selected', 'selected').
-					text(name)[0];
-			},
-			createEmptyImageListOption: function() {
-				return this.createImageListOption(-1, '(no images)');
-			},
-			
-			image_options: [],
-			layer_options: {},
-			onImageStructureChanged: function() {
-				var self = this;
-				
-				// image lists
-				this.image_options = [];
-				C2D.client.forImages(function(im) {
-					self.image_options.push(self.createImageListOption(im.id, im.name));
+				html_objects.image_lists.lists.forEach(function(list) {
+					list.add(image);
 				});
-				this.populateImageLists($('select.image-list'));
-				
-				// TODO: layer lists (for current image?)
-			},
-			onLayerListsChanged: function() {
-				populateLayerLists($('select.layer-list'));
+				html_objects.main_image_list.select(image.list_item_id);
 			},
 			
 			selectImage: function(image_id) {
@@ -228,7 +404,6 @@ C2D.surface = {
 				ctx.canvas.height = image_data.height;
 				ctx.putImageData(image_data, 0, 0);
 			},
-			
 			getCanvasContext: function() {
 				return $('#input_preview_canvas')[0].getContext('2d');
 			},
@@ -252,7 +427,7 @@ C2D.surface = {
 				var img = new Image();
 				img.onload = function() {
 					var image = C2D.client.loadImage(img, file.name);
-					self.image_structure_reflection.selectImage(image.id);
+					self.image_structure_reflection.onImageLoaded(image);
 				}
 				img.src = data;
 			};
@@ -277,22 +452,10 @@ C2D.surface = {
 				email = method.author.email ? ' ('+method.author.email+')' : '';
 			$('#method_details #author').text(author+email);
 			$('#method_details #description').text(method.description);
-			$('#input_parameters').html(
-				'<div id="input_parameters_code debug"/><div id="input_parameters_form"/>'
-				);
-			$('#input_parameters_code').text(
-				JSON.stringify(method.params.in, null, " ")
-				);
-			$('#input_parameters_form').empty().append(
+			$('#input_parameters').empty().append(
 				C2D.surface.param_form_mgr.createForm(method.params.in)
 				);
-			$('#output_parameters').html(
-				'<div id="input_parameters_code"/><div id="input_parameters_form"/>'
-				);
-			$('#output_parameters_code').text(
-				JSON.stringify(method.params.out, null, " ")
-				);
-			$('#output_parameters_form').empty().append(
+			$('#output_parameters').empty().append(
 				C2D.surface.param_form_mgr.createForm(method.params.out)
 				);
 			$('#method_details').show();
@@ -324,8 +487,10 @@ C2D.surface = {
 			var option = $(list).children('option:selected'),
 				image_id = option.attr(resource_id_key),
 				image = C2D.client.findImage(image_id);
-			if(image)
-				self.image_structure_reflection.drawImageOnCanvas(image);
+			if(image) {
+				self.image_structure_reflection.populateLayerLists
+			}
+				//self.image_structure_reflection.drawImageOnCanvas(image);
 		};
 		
 		// user wants to launch an algorithm
@@ -334,8 +499,13 @@ C2D.surface = {
 				method_id = option.attr(resource_id_key),
 				method_params = C2D.client.getMethod(method_id).params.in,
 				
-				selected_image_ids = $('#input_parameters_form select.image-list option:selected').map(function() {
-					return $(this).attr(resource_id_key);
+				input_image_ctls = $('#input_parameters select.image-list'),
+				selected_image_ids = input_image_ctls.map(function() {
+					var list, image, id;
+					list = this.list_object;
+					image = list.getSelected();
+					id = image.id;
+					return id;
 				}).get(),
 				wrapped_input_structure = C2D.client.wrapStructure(selected_image_ids),
 				
@@ -389,17 +559,23 @@ C2D.surface = {
 			// TODO: indicate calculation success
 			console.log('Calculation succeeded:', results);
 			try {
-				C2D.client.digestResults(results);
-				self.image_structure_reflection.onImageStructureChanged();
-				self.image_structure_reflection.selectLastImage();
+				var diff = C2D.client.digestResults(results);
+				diff.new_images.forEach(function(new_image) {
+					html_objects.image_lists.lists.forEach(function(list) {
+						list.add(new_image);
+					});
+				});
+				if(diff.new_images.length > 0)
+					html_objects.main_image_list.select(diff.new_images[0].list_item_id);
 			} catch(e) {
 				// TODO: indicate indigestion
-				console.log('Cannot digest results!');
+				console.error('Cannot digest results!\nReason:', e.message, '\nCall stack:', e.stack);
 			}
 		}
 		this.onCalculationNotRunning = function() {
 			// TODO: impl
 		}
+		
 		
 		/* HOOK UP TO THE DOM */
 		$('#input_path').change(function() {
@@ -411,8 +587,18 @@ C2D.surface = {
 		$('#available_methods').change(function() {
 			self.onMethodSelected();
 		});
-		$('#main_image_list').change(function() {
-			self.onImageListChanged(this);
+		html_objects.main_image_list.element.change(function() {
+			var image = html_objects.main_image_list.getSelected();
+			html_objects.main_layer_list.populate(image);
+			//html_objects.main_canvas.drawImage(image);
+		});
+		html_objects.main_layer_list.element.change(function() {
+			var ctx = html_objects.main_canvas.context,
+				layer_item = html_objects.main_layer_list.getSelectedItem();
+			if(ctx && layer_item)
+				layer_item.draw(ctx);
+			else
+				console.log('Cannot draw list item', layer_item, 'on context', ctx, '.');
 		});
 		
 		/* server's API */
@@ -441,7 +627,6 @@ C2D.surface = {
 		});
 		
 		
-		this.image_structure_reflection.onImageStructureChanged();
 		
 		delete this.init;
 	}

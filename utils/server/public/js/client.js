@@ -15,9 +15,10 @@ C2D.client = {
 		
 		/* IMAGES MANAGEMENT */
 		this.loadImage = function(img, name) {
-			var image = image_structure.loadImage(img, name);
-			C2D.surface.image_structure_reflection.onImageStructureChanged();
-			return image;
+			return image_structure.loadImage(img, name);
+		};
+		this.getImagesCount = function() {
+			return image_structure.images.length;
 		};
 		this.forImages = function(callback) {
 			for(var id in image_structure.images)

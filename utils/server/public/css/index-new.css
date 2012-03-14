@@ -111,7 +111,8 @@ table.container div.column {
 	text-align: center;
 }
 #input_preview_canvas {
-	border: solid #CCC 1px;
+	background: #ddf;
+	border: solid #99d 1px;
 	margin: 10px;
 }
 #data-browser {
@@ -156,26 +157,26 @@ img.image_btn {
 }
 
 /* INPUT PARAMETERS FORM */
-#input_parameters, #input_parameters table, #input_parameters select, #input_parameters input {
+.parameters-form, .parameters-form table, .parameters-form select, .parameters-form input {
 	font-family: 'Open Sans', sans-serif;
 	font-weight: 300;
 }
-#input_parameters {
+.parameters-form {
 	font-size: 0.8em;
 	margin: 20px 0 20px 0;
 	padding: 5px;
 	background: #eee;
 	border: #ddd solid 1px;
 }
-#input_parameters table {
+.parameters-form table {
 	width: 100%;
 }
-#input_parameters .param-label-cell {
+.parameters-form .param-label-cell {
 	font-weight: 700;
 	vertical-align: top;
 	padding-right: 5px;
 }
-#input_parameters .param-value-cell {
+.parameters-form .param-value-cell {
 	font-weight: 300;
 	vertical-align: top;
 	width: 100%;
