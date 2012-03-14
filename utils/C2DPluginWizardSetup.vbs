@@ -88,11 +88,11 @@ Sub FindVS()
     If Not VCPath = "" Then 
       objLog.WriteLine(" - FOUND: " & VCPath)
 
-      If InStr(VCPath, "10.0") > 0 Then 
+      'If InStr(VCPath, "10.0") > 0 Then 
         WizVersion = "VCProjects2010"
-      Else
-        WizVersion = "VCProjects2008"
-      End If
+      'Else
+      '  WizVersion = "VCProjects2008"
+      'End If
 
 
       Call RunSetup(VCPath, WizVersion)
