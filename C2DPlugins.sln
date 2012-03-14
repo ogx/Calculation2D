@@ -8,6 +8,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "plugins", "plugins", "{9536
 		plugins\C2DPlugin.props = plugins\C2DPlugin.props
 	EndProjectSection
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "C2DPluginBasicOperation", "plugins\C2DPluginBasicOperation\C2DPluginBasicOperation.vcxproj", "{1EF4D68C-8CE2-4762-A6AF-1C88CE71F422}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -24,11 +26,20 @@ Global
 		{0A32DE24-BE34-4761-B964-B91C941558E5}.Release|Win32.Build.0 = Release|Win32
 		{0A32DE24-BE34-4761-B964-B91C941558E5}.Release|x64.ActiveCfg = Release|x64
 		{0A32DE24-BE34-4761-B964-B91C941558E5}.Release|x64.Build.0 = Release|x64
+		{1EF4D68C-8CE2-4762-A6AF-1C88CE71F422}.Debug|Win32.ActiveCfg = Debug|Win32
+		{1EF4D68C-8CE2-4762-A6AF-1C88CE71F422}.Debug|Win32.Build.0 = Debug|Win32
+		{1EF4D68C-8CE2-4762-A6AF-1C88CE71F422}.Debug|x64.ActiveCfg = Debug|x64
+		{1EF4D68C-8CE2-4762-A6AF-1C88CE71F422}.Debug|x64.Build.0 = Debug|x64
+		{1EF4D68C-8CE2-4762-A6AF-1C88CE71F422}.Release|Win32.ActiveCfg = Release|Win32
+		{1EF4D68C-8CE2-4762-A6AF-1C88CE71F422}.Release|Win32.Build.0 = Release|Win32
+		{1EF4D68C-8CE2-4762-A6AF-1C88CE71F422}.Release|x64.ActiveCfg = Release|x64
+		{1EF4D68C-8CE2-4762-A6AF-1C88CE71F422}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{0A32DE24-BE34-4761-B964-B91C941558E5} = {95366B9C-E0F5-4A44-AD0C-20A2BD3D071A}
+		{1EF4D68C-8CE2-4762-A6AF-1C88CE71F422} = {95366B9C-E0F5-4A44-AD0C-20A2BD3D071A}
 	EndGlobalSection
 EndGlobal
