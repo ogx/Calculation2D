@@ -99,7 +99,7 @@ c2d.spawnProcess();
 
 
 // request routing (bogart)
-router.get('/', function() {
+router.get('/old', function() {
 	return viewEngine.respond('index.htm', { 
 		locals: {
 			styles: ['index'], 
@@ -108,7 +108,7 @@ router.get('/', function() {
 		} 
 	});
 });
-router.get('/new', function() {
+router.get('/', function() {
 	return viewEngine.respond('index-new.htm', { 
 		locals: {
 			jquery: true, 
