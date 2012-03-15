@@ -1,6 +1,7 @@
 //---------------------------------------------------------------------------
 
 #include <preview/mmImagePreviewOGL.h> //gl, glu
+#include <mmError.h>
 #include <algorithm>
 
 #pragma comment ( lib, "opengl32.lib" )
@@ -26,10 +27,10 @@ void mmImages::mmRGBPalette::Set( GLfloat const _p_fThresholds[], mmInt const p_
 	GLfloat v_fBottom(0.0), v_fTop(0.0);
 
 	for( mmInt v_iI = 0; v_iI < p_iSize-1; ++v_iI ) {
-		mmInt v_iBottom(static_cast<mmInt>(_p_fThresholds[v_iI*4+3]*256.0f));
-		mmInt v_iTop(static_cast<mmInt>(_p_fThresholds[(v_iI+1)*4+3]*256.0f));
-		if( v_iTop > 256 )
-			v_iTop = 256;
+		mmInt v_iBottom(static_cast<mmInt>(_p_fThresholds[v_iI*4+3] * 255.0f));
+		mmInt v_iTop(static_cast<mmInt>(_p_fThresholds[(v_iI+1)*4+3] * 255.0f));
+		if( v_iTop > 255 )
+			v_iTop = 255;
 		_m_fPalette[v_iBottom*3] = _p_fThresholds[v_iI*4];
 		_m_fPalette[v_iBottom*3+1] = _p_fThresholds[v_iI*4+1];
 		_m_fPalette[v_iBottom*3+2] = _p_fThresholds[v_iI*4+2];
@@ -177,6 +178,7 @@ bool mmImages::mmImagePreviewOGLIMPL::ZoomIn( void ) {
 		m_fPixelZoom *= 0.9f;
 		::glPixelZoom( m_fPixelZoom, m_fPixelZoom );
 		ResizeWindow( static_cast<int>(static_cast<GLfloat>(m_iWidth)*m_fPixelZoom), static_cast<int>(static_cast<GLfloat>(m_iHeight)*m_fPixelZoom) );
+		RepaintDisplay();
 		return true;
 	}
 	return false;
@@ -188,6 +190,7 @@ bool mmImages::mmImagePreviewOGLIMPL::ZoomOut( void ) {
 		m_fPixelZoom /= 0.9f;
 		::glPixelZoom( m_fPixelZoom, m_fPixelZoom );
 		ResizeWindow( static_cast<int>(static_cast<GLfloat>(m_iWidth)*m_fPixelZoom), static_cast<int>(static_cast<GLfloat>(m_iHeight)*m_fPixelZoom) );
+		RepaintDisplay();
 		return true;
 	}
 	return false;
@@ -197,21 +200,24 @@ bool mmImages::mmImagePreviewOGLIMPL::ZoomOut( void ) {
 void mmImages::mmImagePreviewOGLIMPL::ResizeWindow( int p_iWidth, int p_iHeight ) {
 	RECT v_sClientRect, v_sWindowRect;
 	POINT v_sDiff;
+	POINT v_sCursor;
+	::GetCursorPos(&v_sCursor);
 	::GetClientRect( m_hWindow, &v_sClientRect );
 	::GetWindowRect( m_hWindow, &v_sWindowRect );
 	v_sDiff.x = (v_sWindowRect.right - v_sWindowRect.left) - v_sClientRect.right;
 	v_sDiff.y = (v_sWindowRect.bottom - v_sWindowRect.top) - v_sClientRect.bottom;
-	::MoveWindow( m_hWindow, v_sWindowRect.left, v_sWindowRect.top, p_iWidth + v_sDiff.x, p_iHeight + v_sDiff.y, TRUE );
+	::SetWindowPos( m_hWindow, NULL, v_sWindowRect.left, v_sWindowRect.top, p_iWidth + v_sDiff.x, p_iHeight + v_sDiff.y, 0);
 }
 //---------------------------------------------------------------------------
 
 void mmImages::mmImagePreviewOGLIMPL::ResetView( mmInt p_iWidth, mmInt p_iHeight ) {
 	if( m_bInitialized ) {
-		::glViewport( 0, 0, static_cast<GLint>(p_iWidth), static_cast<GLint>(p_iHeight) );
+		ResizeWindow( p_iWidth, p_iHeight );
+
+		::glViewport( 0, 0, static_cast<GLint>(p_iWidth), static_cast<GLint>(p_iHeight));
 		m_fPixelZoom = 1.0f;
 		::glPixelZoom( 1.0f, 1.0f );
 		::glRasterPos2i( 0, 0 );
-		ResizeWindow( p_iWidth, p_iHeight );
 	}
 }
 //---------------------------------------------------------------------------
@@ -240,29 +246,45 @@ void mmImages::mmImagePreviewOGLIMPL::PrepareImageData( mmImages::mmImageI * con
 	m_iChannels = static_cast<mmInt>(p_psImage->GetPixelType());
 
 	if(m_iChannels == 1) {
-		mmPixel8 * _v_sPixels = new mmPixel8[ m_iWidth * m_iHeight];
+		mmPixel8 * _v_sPixels = new mmPixel8[m_iWidth * m_iHeight];
 		p_psImage->GetRows(0, m_iHeight, _v_sPixels);
 
 		delete[] _m_fPixels;
 		_m_fPixels = new GLfloat[m_iWidth * m_iHeight * 3];
 		for( mmInt v_iY = 0; v_iY < m_iHeight; ++v_iY )
 			for( mmInt v_iX = 0; v_iX < m_iWidth; ++v_iX )
-				_m_fPixels[(m_iHeight - v_iY - 1) * m_iWidth + v_iX] =		static_cast<GLfloat>(_v_sPixels[v_iY * m_iWidth + v_iX].rI / 255.0);
+				_m_fPixels[(m_iHeight - v_iY - 1) * m_iWidth + v_iX] =		static_cast<GLfloat>(_v_sPixels[v_iY * m_iWidth + v_iX].rI);
 
 		delete[] _v_sPixels;
 
 		m_eDisplayMode = GL_LUMINANCE;
-	} else {
-		mmPixel24 * _v_sPixels = new mmPixel24[ m_iWidth * m_iHeight];
+	} else if(m_iChannels == 3) {
+		mmPixel24 * _v_sPixels = new mmPixel24[m_iWidth * m_iHeight];
 		p_psImage->GetRows(0, m_iHeight, _v_sPixels);
 
 		delete[] _m_fPixels;
 		_m_fPixels = new GLfloat[m_iWidth * m_iHeight * 3];
 		for( mmInt v_iY = 0; v_iY < m_iHeight; ++v_iY )
 			for( mmInt v_iX = 0; v_iX < m_iWidth; ++v_iX ) {
-				_m_fPixels[((m_iHeight-v_iY-1)*m_iWidth+v_iX) * 3] =		static_cast<GLfloat>(_v_sPixels[v_iY * m_iWidth + v_iX].rR / 255.0);
-				_m_fPixels[((m_iHeight-v_iY-1)*m_iWidth+v_iX) * 3 + 1] =	static_cast<GLfloat>(_v_sPixels[v_iY * m_iWidth + v_iX].rG / 255.0);
-				_m_fPixels[((m_iHeight-v_iY-1)*m_iWidth+v_iX) * 3 + 2] =	static_cast<GLfloat>(_v_sPixels[v_iY * m_iWidth + v_iX].rB / 255.0);
+				_m_fPixels[((m_iHeight-v_iY-1)*m_iWidth+v_iX) * 3] =		static_cast<GLfloat>(_v_sPixels[v_iY * m_iWidth + v_iX].rR);
+				_m_fPixels[((m_iHeight-v_iY-1)*m_iWidth+v_iX) * 3 + 1] =	static_cast<GLfloat>(_v_sPixels[v_iY * m_iWidth + v_iX].rG);
+				_m_fPixels[((m_iHeight-v_iY-1)*m_iWidth+v_iX) * 3 + 2] =	static_cast<GLfloat>(_v_sPixels[v_iY * m_iWidth + v_iX].rB);
+			}
+
+		delete[] _v_sPixels;
+
+		m_eDisplayMode = GL_RGB;
+	} else if(m_iChannels == 4) {
+		mmPixel32 * _v_sPixels = new mmPixel32[m_iWidth * m_iHeight];
+		p_psImage->GetRows(0, m_iHeight, _v_sPixels);
+
+		delete[] _m_fPixels;
+		_m_fPixels = new GLfloat[m_iWidth * m_iHeight * 3];
+		for( mmInt v_iY = 0; v_iY < m_iHeight; ++v_iY )
+			for( mmInt v_iX = 0; v_iX < m_iWidth; ++v_iX ) {
+				_m_fPixels[((m_iHeight-v_iY-1)*m_iWidth+v_iX) * 3] =		static_cast<GLfloat>(_v_sPixels[v_iY * m_iWidth + v_iX].rR * _v_sPixels[v_iY * m_iWidth + v_iX].rA + (1.0 - _v_sPixels[v_iY * m_iWidth + v_iX].rA));
+				_m_fPixels[((m_iHeight-v_iY-1)*m_iWidth+v_iX) * 3 + 1] =	static_cast<GLfloat>(_v_sPixels[v_iY * m_iWidth + v_iX].rG * _v_sPixels[v_iY * m_iWidth + v_iX].rA + (1.0 - _v_sPixels[v_iY * m_iWidth + v_iX].rA));
+				_m_fPixels[((m_iHeight-v_iY-1)*m_iWidth+v_iX) * 3 + 2] =	static_cast<GLfloat>(_v_sPixels[v_iY * m_iWidth + v_iX].rB * _v_sPixels[v_iY * m_iWidth + v_iX].rA + (1.0 - _v_sPixels[v_iY * m_iWidth + v_iX].rA));
 			}
 
 		delete[] _v_sPixels;
@@ -286,7 +308,7 @@ void mmImages::mmImagePreviewOGLIMPL::PrepareDataLayerData( mmImages::mmLayerI *
 	mmReal * _v_rPixels = new mmReal[ m_iWidth*m_iHeight ];
 	p_psLayer->GetRows(0, m_iHeight, _v_rPixels);
 	mmReal const v_rDefaultValue = p_psLayer->GetDefaultValue();
-	mmImages::mmStats const v_sStats = p_psLayer->GetStats();
+	mmStats const v_sStats = p_psLayer->GetStats();
 	mmReal v_rDLScale = (( v_rDLScale = v_sStats.rMax - v_sStats.rMin ) != 0.0) ? v_rDLScale : 1.0;
 
 	delete[] _m_fPixels;
@@ -301,7 +323,7 @@ void mmImages::mmImagePreviewOGLIMPL::PrepareDataLayerData( mmImages::mmLayerI *
 				_m_fPixels[((m_iHeight-v_iY-1)*m_iWidth+v_iX)*3+1] = m_sPalette.m_sDefaultColor.fG;
 				_m_fPixels[((m_iHeight-v_iY-1)*m_iWidth+v_iX)*3+2] = m_sPalette.m_sDefaultColor.fB;
 			} else {
-				v_iIndex = static_cast<mmInt>(static_cast<GLfloat>((v_rValue-v_sStats.rMin)/v_rDLScale)*255.0f);
+				v_iIndex = static_cast<mmInt>((v_rValue - v_sStats.rMin) / v_rDLScale * 255.0);
 				_m_fPixels[((m_iHeight-v_iY-1)*m_iWidth+v_iX)*3] = m_sPalette._m_fPalette[v_iIndex*3];
 				_m_fPixels[((m_iHeight-v_iY-1)*m_iWidth+v_iX)*3+1] = m_sPalette._m_fPalette[v_iIndex*3+1];
 				_m_fPixels[((m_iHeight-v_iY-1)*m_iWidth+v_iX)*3+2] = m_sPalette._m_fPalette[v_iIndex*3+2];

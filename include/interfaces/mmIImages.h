@@ -478,7 +478,7 @@ namespace mmImages
 		///
 		/// @return stored metadata string
 		////////////////////////////////////////////////////////////////////////////////
-		virtual mmString GetMetadata(void) = 0;
+		virtual mmString GetMetadata(void) const = 0;
 	protected:
 		virtual ~mmImageI(void) {};
 	};

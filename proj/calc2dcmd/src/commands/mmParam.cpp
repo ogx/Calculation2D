@@ -44,7 +44,7 @@ bool mmCommands::TryConvert(mmParam const & p_sParam, std::wstring const & p_sPo
 		case mmParam::mmTypeLayer:
 			return true;
 		case mmParam::mmTypeFile:
-			return ::_waccess(p_sPossibleValue.c_str(), 0) == 0;
+			return true; //::_waccess(p_sPossibleValue.c_str(), 0) == 0;
 		case mmParam::mmTypeUnknown: 
 		default: 
 			return false;

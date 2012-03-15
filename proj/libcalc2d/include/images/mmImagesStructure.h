@@ -96,7 +96,7 @@ namespace mmImages
 		virtual bool DeleteLayer(mmID const & p_sID);
 		
 		virtual void SetMetadata(mmString const & p_sMetadata);
-		virtual mmString GetMetadata(void);
+		virtual mmString GetMetadata(void) const;
 	private: // mmLayerI::mmCallbackI implementation
 		virtual void OnLayerCreate(mmLayerI * p_psLayer);
 		virtual void OnLayerDestroy(mmLayerI * p_psLayer);

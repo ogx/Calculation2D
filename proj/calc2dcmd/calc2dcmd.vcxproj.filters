@@ -25,17 +25,17 @@
     <Filter Include="Source Files\Preview">
       <UniqueIdentifier>{fc442d74-f5b9-4aa2-aafe-ea2651ff5265}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header Files\External">
-      <UniqueIdentifier>{d7705a94-1421-45a8-9ea4-3c1e20e58ed2}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\External">
-      <UniqueIdentifier>{268eca46-5df6-47bc-ba8b-a513c7406b0b}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Header Files\Console">
       <UniqueIdentifier>{46f87fb6-79fc-4440-baf6-de07ce221089}</UniqueIdentifier>
     </Filter>
     <Filter Include="Source Files\Console">
       <UniqueIdentifier>{9265e5c1-9662-4c00-ab72-a0b6c2dbca2b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Formats">
+      <UniqueIdentifier>{3a0729e4-296a-4346-9d51-3bb28d50b613}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Formats">
+      <UniqueIdentifier>{2aa30f7c-8132-4781-9580-7a9a30ad8953}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -44,9 +44,6 @@
     </ClCompile>
     <ClCompile Include="src\commands\mmQuit.cpp">
       <Filter>Source Files\Commands</Filter>
-    </ClCompile>
-    <ClCompile Include="src\external\bmpfile.cpp">
-      <Filter>Source Files\External</Filter>
     </ClCompile>
     <ClCompile Include="src\preview\mmImagePreviewOGL.cpp">
       <Filter>Source Files\Preview</Filter>
@@ -81,6 +78,15 @@
     <ClCompile Include="src\console\mmClient.cpp">
       <Filter>Source Files\Console</Filter>
     </ClCompile>
+    <ClCompile Include="src\formats\mmBitmap.cpp">
+      <Filter>Source Files\Formats</Filter>
+    </ClCompile>
+    <ClCompile Include="src\formats\mmPNG.cpp">
+      <Filter>Source Files\Formats</Filter>
+    </ClCompile>
+    <ClCompile Include="src\formats\mmImageXML.cpp">
+      <Filter>Source Files\Formats</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\commands\mmCommand.h">
@@ -104,9 +110,6 @@
     <ClInclude Include="include\commands\mmParam.h">
       <Filter>Header Files\Commands</Filter>
     </ClInclude>
-    <ClInclude Include="include\external\bmpfile.h">
-      <Filter>Header Files\External</Filter>
-    </ClInclude>
     <ClInclude Include="include\preview\mmImagePreviewOGL.h">
       <Filter>Header Files\Preview</Filter>
     </ClInclude>
@@ -121,6 +124,18 @@
     </ClInclude>
     <ClInclude Include="include\console\mmClient.h">
       <Filter>Header Files\Console</Filter>
+    </ClInclude>
+    <ClInclude Include="include\formats\mmBitmap.h">
+      <Filter>Header Files\Formats</Filter>
+    </ClInclude>
+    <ClInclude Include="include\formats\mmIFormat.h">
+      <Filter>Header Files\Formats</Filter>
+    </ClInclude>
+    <ClInclude Include="include\formats\mmImageXML.h">
+      <Filter>Header Files\Formats</Filter>
+    </ClInclude>
+    <ClInclude Include="include\formats\mmPNG.h">
+      <Filter>Header Files\Formats</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

@@ -20,6 +20,14 @@ mmString mmSerializer<mmInt>::ToString(mmInt const & p_sValue) {
 	return mmStringUtilities::MMIntToString(p_sValue);
 }
 
+mmUInt mmSerializer<mmUInt>::FromString(mmString const & p_sString) {
+	return mmStringUtilities::StringToMMInt(p_sString);
+}
+
+mmString mmSerializer<mmUInt>::ToString(mmUInt const & p_sValue) {
+	return mmStringUtilities::MMIntToString(p_sValue);
+}
+
 mmReal mmSerializer<mmReal>::FromString(mmString const & p_sString) {
 	return mmStringUtilities::StringToMMReal(p_sString);
 }

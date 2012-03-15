@@ -650,7 +650,7 @@ void mmImages::mmImage::SetMetadata(mmString const & p_sMetadata) {
 	m_sMetadata = p_sMetadata;
 }
 
-mmString mmImages::mmImage::GetMetadata(void) {
+mmString mmImages::mmImage::GetMetadata(void) const {
 	return m_sMetadata;
 }
 

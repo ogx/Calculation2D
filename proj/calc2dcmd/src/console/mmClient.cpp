@@ -39,6 +39,7 @@ mmConsole::mmClient::mmClient(std::wstring const & p_sTitle)
 
 	AddCommand(new mmCommands::mmQuit());
 	AddCommand(new mmCommands::mmLoad(m_psImageStructure.get()));
+	AddCommand(new mmCommands::mmSave(m_psImageStructure.get()));
 	AddCommand(new mmCommands::mmPreview(m_psImageStructure.get()));
 	AddCommand(new mmCommands::mmStructureInfo(m_psImageStructure.get()));
 	AddCommand(new mmCommands::mmImageUtils::mmRename(m_psImageStructure.get()));

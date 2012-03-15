@@ -20,6 +20,13 @@ public:
 };
 
 template<>
+class mmSerializer<mmUInt> {
+public:
+	static mmUInt FromString(mmString const & p_sString);
+	static mmString ToString(mmUInt const & p_sValue);
+};
+
+template<>
 class mmSerializer<mmReal> {
 public:
 	static mmReal FromString(mmString const & p_sString);
