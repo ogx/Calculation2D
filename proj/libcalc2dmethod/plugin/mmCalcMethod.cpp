@@ -53,7 +53,7 @@ void mmImages::mmCalcMethod::SerializeParameters()
 void mmImages::mmCalcMethod::DeserializeParameters(mmImagesCalculationMethodI::sCalculationAutomationParams const & p_sAutomationParams)
 {
 	mmImages::DeserializeParameters(p_sAutomationParams.sInParams, m_sInputParams);
-	mmImages::DeserializeParameters(p_sAutomationParams.sOutParams, m_sOutputParams);
+	//mmImages::DeserializeParameters(p_sAutomationParams.sOutParams, m_sOutputParams);
 }
 
 mmImages::mmImagesCalculationMethodI::sCalculationMethodParams mmImages::mmCalcMethod::GetCalculationMethodInfo(void)
