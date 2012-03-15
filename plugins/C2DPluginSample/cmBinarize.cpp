@@ -23,7 +23,7 @@ mmCalcMethod(p_psLogReceiver, L"cmBinarize")
 	m_sCMParams = cmBinarizeParams;
 
 	// members initialization
-	m_rThreshold = 127.0;
+	m_rThreshold = 0.5;
 
 	// input parameters
 	BindInputParam(g_UIParam_ImageName, mmGenericParamI::mmImageNameType, m_sImageName); 
@@ -76,7 +76,7 @@ bool mmImages::cmBinarize::Calculate()
 	// set layer name to `binarized'
 	m_sLayerName = L"binarized";
 	// create new layer
-	mmLayerI* v_psNewLayer = v_psImage->CreateLayer(m_sLayerName, 0.0);
+	mmLayerI* v_psNewLayer = v_psImage->CreateLayer(m_sLayerName, -1.0);
 	// if creating the layer failed, clear output parameter and say there's an error
 	if (!v_psNewLayer) {
 		m_sLayerName = L"";
