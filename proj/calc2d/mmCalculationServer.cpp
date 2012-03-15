@@ -344,7 +344,10 @@ Json::Value mmCalculationServer::WrapResults( mmImages::mmImageStructure const *
 		else // TODO: doing small steps - remove this overhead!
 			image_json_channels[2] = image_json_channels[1] = image_json_channels[0];
 
-		// TODO: serialize layers
+		// layers
+		mmImages::mmLayerI* layer = NULL;
+		while(layer = image->FindLayer(layer))
+			image_json_layers.append(LayerToJSON(layer));
 
 		isr.append(image_json);
 	}

@@ -18,7 +18,10 @@ C2D.client = {
 			return image_structure.loadImage(img, name);
 		};
 		this.getImagesCount = function() {
-			return image_structure.images.length;
+			var num_images = 0;
+			for(var id in image_structure.images)
+				num_images++;
+			return num_images;
 		};
 		this.forImages = function(callback) {
 			for(var id in image_structure.images)
