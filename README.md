@@ -2,11 +2,7 @@
 **Extensible image processing framework for C++**
 ***
 
-## Installation
-
-## Quick start
-
-## Features
+Please head to [our Wiki page](https://github.com/ogx/Calculation2D/wiki) for information about the Calculation2D framework. 
 
 
 ***
