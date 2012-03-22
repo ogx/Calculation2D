@@ -1,14 +1,12 @@
 <HTML DIR="LTR">
 
 <HEAD>
-	<TITLE>'C2DPlugin Project'</TITLE>
+	<TITLE>C2DPlugin Wizard</TITLE>
 	<META NAME="vs_targetSchema" CONTENT="http://schemas.microsoft.com/intellisense/ie5">
+	<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=iso-8859-1">
+	<META HTTP-EQUIV="MSThemeCompatible" CONTENT="Yes">
 	<LINK ID="LINKURL" REL="stylesheet" HREF="../../1033/NewStyles.css">
 
-	<!--  -->
-	<!-- The SYMBOL tag is used to set the default values for the user-defined symbols.-->
-	<!--  -->
-	                         
 	<SYMBOL NAME='STUDENT_FIRSTNAME' TYPE=text VALUE='John'></SYMBOL>
 	<SYMBOL NAME='STUDENT_LASTNAME' TYPE=text VALUE='Doe'></SYMBOL>
 	<SYMBOL NAME='STUDENT_ID' TYPE=text VALUE='0'></SYMBOL>
@@ -337,7 +335,10 @@ function InitDocument(document)
 
 	if (window.external.FindSymbol('DOCUMENT_FIRST_LOAD'))
 	{
-	  VerifyCalculation2DDir();
+		var L_WizardDialogTitle_Text = "C2DPlugin Wizard";
+		window.external.AddSymbol("WIZARD_DIALOG_TITLE", L_WizardDialogTitle_Text);
+
+		VerifyCalculation2DDir();
 		// This function sets the default symbols based 
 		// on the values specified in the SYMBOL tags above
 		//
