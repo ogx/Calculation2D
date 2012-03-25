@@ -14,10 +14,10 @@
 var C2D = C2D || {};
 
 
-C2D.Layer = function(name, width, height, values, def_value, draw_buffer) {
+C2D.Layer = function(image, name, width, height, values, def_value, draw_buffer) {
 	var next_layer_id = 1;
-	C2D.Layer = function(name, width, height, values, def_value, draw_buffer) {
-		this.id = '' + (next_layer_id++);
+	C2D.Layer = function(image, name, width, height, values, def_value, draw_buffer) {
+		this.id = image.id + '|' + (next_layer_id++);
 		this.name = name || '';
 		this.width = width || 0;
 		this.height = height || 0;
@@ -85,12 +85,22 @@ C2D.Layer = function(name, width, height, values, def_value, draw_buffer) {
 			return draw_buffer;
 		};
 	};
-	return new C2D.Layer(name, width, height, values, def_value, draw_buffer);
+	return new C2D.Layer(image, name, width, height, values, def_value, draw_buffer);
 };
 
 C2D.Image = function(name, width, height, content) {
 	var next_image_id = 1;
 	C2D.Image = function(name, width, height, content) {
+		console.groupCollapsed('Created an image');
+		
+		var self = this;
+
+		this.id = '' + (next_image_id++);
+		this.name = name || '(no-name)';
+		this.width = width; 
+		this.height = height;
+		
+		
 		/* PRIVATE SECTION */
 		var draw_buffer = {}, 
 			channels = [],
@@ -108,6 +118,7 @@ C2D.Image = function(name, width, height, content) {
 			},
 			unwrapLayer = function(channel) {
 				return new C2D.Layer(
+					self,
 					channel.name,
 					channel.width,
 					channel.height,
@@ -128,6 +139,14 @@ C2D.Image = function(name, width, height, content) {
 				getCanvasContext().createImageData(width, height); // TODO: needs to be done differently - this is a mess
 			
 			channels = content.channels.map(unwrapLayer);
+			console.debug('Created channels', channels, 'from a wrapped bundle', content.channels);
+			
+			if(content.data_layers) {
+				content.data_layers.map(unwrapLayer).forEach(function(l) {
+					data_layers[l.id] = l;
+				});
+				console.debug('Created layers', data_layers, 'from a wrapped bundle', content.data_layers);
+			}
 		} else if(content.imade_data) {
 			// (create from ImageData canvas buffer)
 			// - extract RGB channels from canvas buffer
@@ -144,8 +163,8 @@ C2D.Image = function(name, width, height, content) {
 				g[i] = rgba[j++]/255;
 				b[i] = rgba[j++]/255;
 			}
-			
 			channels = [r, g, b];
+			
 			draw_buffer = canvas_data;
 		
 			var num_channels = channels.length,
@@ -162,6 +181,7 @@ C2D.Image = function(name, width, height, content) {
 				
 			channels = channels.map(function(arr) {
 				return new C2D.Layer(
+					self,
 					channel_names[this.i++],
 					width, 
 					height,
@@ -170,17 +190,10 @@ C2D.Image = function(name, width, height, content) {
 					draw_buffer
 				);
 			}, {i:0});
+			console.debug('Created channels', channels, 'from a canvas buffer', canvas_data);
 		} else 
 			throw new Error('No apropriate content for the image.');
 		
-		
-		var self = this;
-		
-
-		this.id = '' + (next_image_id++);
-		this.name = name || '(no-name)';
-		this.width = width; 
-		this.height = height;
 		
 		// converts the image to be displayed on a canvas
 		this.getRGBA = function() {
@@ -222,6 +235,10 @@ C2D.Image = function(name, width, height, content) {
 			return draw_buffer;
 		};
 		
+		// debug
+		this._c = channels;
+		this._l = data_layers;
+		
 		/* LAYER MANIPULATION */
 		this.getLayer = function(id) {
 			return data_layers[id];
@@ -254,6 +271,8 @@ C2D.Image = function(name, width, height, content) {
 				data_layers: self.mapLayers(wrapLayer),
 			};
 		};
+		
+		console.groupEnd();
 	};
 	return new C2D.Image(name, width, height, content);
 };

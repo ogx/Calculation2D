@@ -118,16 +118,34 @@ namespace mmImages
 		};
 	public:
 		////////////////////////////////////////////////////////////////////////////////
-		/// Invalid value.
+		/// Layer global ID.
 		////////////////////////////////////////////////////////////////////////////////
-		static mmUInt const iInvalid;
+		struct sID
+		{
+			mmID m_sImageID;
+			mmID m_sLayerID;
+
+			inline bool operator == (sID const & ano) const
+			{
+				return (m_sImageID == ano.m_sImageID) && (m_sLayerID == ano.m_sLayerID);
+			}
+			inline bool operator < (sID const & ano) const
+			{
+				return (m_sImageID < ano.m_sImageID) || 
+					((m_sImageID == ano.m_sImageID) && (m_sLayerID < ano.m_sLayerID));
+			}
+
+			static sID const invalid;
+		};
+		static inline sID MakeID(mmID iid, mmID lid) { sID id = { iid, lid }; return id; }
+	
 	public:
 		////////////////////////////////////////////////////////////////////////////////
 		/// Returns layer ID. ID is unique for the image it belongs to.  
 		///
 		/// @return layer ID
 		////////////////////////////////////////////////////////////////////////////////
-		virtual mmID GetID(void) const = 0;
+		virtual sID GetID(void) const = 0;
 		////////////////////////////////////////////////////////////////////////////////
 		/// Returns layer width, in pixels. 
 		///
@@ -285,12 +303,17 @@ namespace mmImages
 		/// 32 bits (4 channels). The enumeration can also be used the number of channels in the image. 
 		////////////////////////////////////////////////////////////////////////////////
 		enum mmPixelType {mmP8=1, mmP24=3, mmP32=4};
-	public:
+
+		////////////////////////////////////////////////////////////////////////////////
+		/// Image global ID.
+		////////////////////////////////////////////////////////////////////////////////
+		typedef mmID sID;
+
 		////////////////////////////////////////////////////////////////////////////////
 		/// Invalid value
 		////////////////////////////////////////////////////////////////////////////////
 		static mmUInt const iInvalid;
-	public:
+
 		////////////////////////////////////////////////////////////////////////////////
 		/// Returns image width, in pixels. 
 		///
@@ -308,7 +331,7 @@ namespace mmImages
 		///
 		/// @return image ID
 		////////////////////////////////////////////////////////////////////////////////
-		virtual mmID GetID(void) const = 0;
+		virtual sID GetID(void) const = 0;
 		////////////////////////////////////////////////////////////////////////////////
 		/// Resizes the image. Old values are copied to new canvas where possible. 
 		/// If new size is larger, new pixels are filled with (0) and layers with 
@@ -507,7 +530,7 @@ namespace mmImages
 		/// @param[in] p_sID image index 
 		/// @return pointer to image or NULL if image does not exist
 		////////////////////////////////////////////////////////////////////////////////
-		virtual mmImageI * GetImage(mmID const & p_sID) const = 0;
+		virtual mmImageI * GetImage(mmImageI::sID const & p_sID) const = 0;
 		////////////////////////////////////////////////////////////////////////////////
 		/// Returns ID of first image of given name occuring after image with given ID. 
 		/// Can be used to iterate through all images. 
@@ -523,7 +546,7 @@ namespace mmImages
 		/// @param[in] p_sID image index
 		/// @return true if the call succeeded, false if image does not exist
 		////////////////////////////////////////////////////////////////////////////////
-		virtual bool DeleteImage(mmID const & p_sID) = 0;
+		virtual bool DeleteImage(mmImageI::sID const & p_sID) = 0;
 	protected:
 		virtual ~mmImageStructureI(void) {};
 	};

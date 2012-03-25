@@ -2,17 +2,21 @@
 
 static mmImages::mmImagesCalculationMethodI::sCalculationMethodParams cmGenericParams =
 {
-	L"Generic (example)",
-	L"{TODO: insert GUID here}",
-	L"Sample: Generic",
-	false,
-	{0, 0}
+	L"TODO: method name",
+	L"{TODO: GUID}",
+	L"TODO: method description",
+	false, // multi-threaded?
+	{}, 
+	{
+		-1, 
+		L"TODO: author's first name", 
+		L"TODO: author's last name",
+		L"TODO: author's e-mail address"
+	}
 };
 
-mmImages::cmGeneric::cmGeneric(mmLog::mmLogReceiverI* p_psLogReceiver):
-                                   mmCalcMethod(p_psLogReceiver, 
-                                                 L"cmGeneric")
-
+mmImages::cmGeneric::cmGeneric(mmLog::mmLogReceiverI* p_psLogReceiver) :
+	mmCalcMethod(p_psLogReceiver, L"cmGeneric")
 {
 	m_sCMParams = cmGenericParams;
 
@@ -24,7 +28,7 @@ mmImages::cmGeneric::cmGeneric(mmLog::mmLogReceiverI* p_psLogReceiver):
 
 bool mmImages::cmGeneric::Calculate()
 {
-	// TODO: add calculations
+	// TODO: perform processing on m_psImageStructure
 
 	return true;
 }

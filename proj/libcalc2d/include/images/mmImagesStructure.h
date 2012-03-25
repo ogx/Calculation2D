@@ -21,12 +21,12 @@ namespace mmImages
 {
 	class mmLayer : public mmLayerI {
 	public:
-		mmLayer(mmID const & p_sID, mmString const & p_sName, mmUInt const p_iWidth, mmUInt const p_iHeight, mmReal const p_rDefaultValue, mmCallbackI * const p_psCallback);
+		mmLayer(sID const & p_sID, mmString const & p_sName, mmUInt const p_iWidth, mmUInt const p_iHeight, mmReal const p_rDefaultValue, mmCallbackI * const p_psCallback);
 		~mmLayer(void);
 	public:
 		void Resize(mmUInt const p_iWidth, mmUInt const p_iHeight);
 	public: // mmLayerI implementation
-		virtual mmID GetID(void) const;
+		virtual sID GetID(void) const;
 		virtual mmUInt GetWidth(void) const;
 		virtual mmUInt GetHeight(void) const;
 		virtual mmReal GetDefaultValue(void) const;
@@ -42,7 +42,7 @@ namespace mmImages
 		virtual bool GetPixels(mmRect const & p_sRect, mmReal p_prValues[]) const;
 		virtual bool SetPixels(mmRect const & p_sRect, mmReal const p_prValues[]);
 	private:
-		mmID const m_sID;
+		sID const m_sID;
 		mmUInt m_iWidth;
 		mmUInt m_iHeight;
 		mmString m_sName;

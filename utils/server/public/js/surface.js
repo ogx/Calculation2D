@@ -98,7 +98,7 @@ C2D.surface = {
 					element.list_object= this;
 					//console.log('GenericList from', element);
 					var empty_item = new item_ctor(),
-						items = this._i = {}
+						items = this._i = {};
 					
 					// fields
 					this.element = $(element);
@@ -121,6 +121,20 @@ C2D.surface = {
 						this.element.append(item.element);
 						return item;
 					};
+					this.populate = function(item_objects) {
+						this.empty();
+						var self = this;
+						if(item_objects.length > 0)
+							item_objects.forEach(function(item_object) {
+								self.add(item_object);
+							});
+						else
+							this.element.empty().append(empty_item.element);
+					};
+					this.endPopulation = function() {
+						if(this.isEmpty())
+							this.element.empty().append(empty_item.element);
+					};
 					this.remove = function(item_object) {
 						var item = items[item_object.list_item_id];
 						this.element.remove(item.element);
@@ -132,6 +146,11 @@ C2D.surface = {
 					this.empty = function() {
 						for(var id in items)
 							delete items[id];
+					};
+					this.isEmpty = function() {
+						for(var id in items)
+							return false;
+						return true;
 					};
 					this.getSelectedItem = function() {
 						var selected = $(this.element).
@@ -166,6 +185,7 @@ C2D.surface = {
 				},
 				ImageList: function(element) {
 					var list = new html_types.GenericList(element, html_types.ImageItem);
+					list.element.addClass('image-list');
 					
 					// populate with all images
 					if(C2D.client.getImagesCount() > 0) {
@@ -179,23 +199,50 @@ C2D.surface = {
 				},
 				LayerList: function(element) {
 					var list = new html_types.GenericList(element, html_types.LayerItem);
+					list.element.addClass('layer-list');
 					
 					// additional methods
-					list.populate = function(image) {
-						console.log(image);
+					list.populate = function(options) {
+						var local_layers = options.image ? true : false,
+							for_param = options.for_param || false;
+						
 						list.element.empty();
 						list.empty();
-						list.add(image).element.text('(image)'); // RGBA image
-						image.forEachChannel(function(channel) {
-							var item = list.add(channel);
-							item.element.text('('+channel.name+' channel)');
-						});
-						image.forEachLayer(function(layer) {
-							list.add(layer);
-						});
+						
+						if(!for_param)
+							list.add(options.image).element.text('(image)'); // RGBA image
+							
+						var forImage = function(image) {
+							// add channels
+							image.forEachChannel(function(channel) {
+								var item = list.add(channel),
+									label = channel.name + ' channel';
+								if(!local_layers)
+									label = image.name + ': ' + label;
+								item.element.text(label);
+								console.log('\tCreated layer item:', item, 'for a channel:', channel);
+							});
+							// add layers
+							image.forEachLayer(function(layer) {
+								var item = list.add(layer),
+									label = layer.name;
+								if(!local_layers)
+									label = image.name + ': ' + label;
+								item.element.text(label);
+								console.log('\tCreated layer item:', item, 'for a layer:', layer);
+							});
+						};
+						if(local_layers)
+							forImage(options.image);
+						else
+							C2D.client.forImages(forImage);
+							
+						list.endPopulation();
 						
 						list.element.children().first().attr('selected', true);
 						list.element.change();
+						
+						console.log('Created a list for options =',options,':', list);
 						
 						return list;
 					};
@@ -225,24 +272,28 @@ C2D.surface = {
 				},
 				main_image_list: _main_image_list,
 				main_layer_list: _main_layer_list,
-				image_lists: {
-					lists: $('select.image-list').
+				param_image_lists: {
+					lists: $('.parameters-form select.image-list').
 						map(function(ind, elem) {
 							return new html_types.ImageList($(elem));
 						}).
 						get(),
 					push: function(element) {
-						this.lists.push(new html_types.ImageList(element));
+						var list = new html_types.ImageList(element);
+						this.lists.push(list);
+						return list;
 					},
 				},
-				layer_lists: {
-					lists: $('select.layer-list').
+				param_layer_lists: {
+					lists: $('.parameters-form select.layer-list').
 						map(function(ind, elem) {
 							return new html_types.LayerList($(elem));
 						}).
 						get(),
 					push: function(element) {
-						this.lists.push(new html_types.LayerList(element));
+						var list = new html_types.LayerList(element);
+						this.lists.push(list);
+						return list;
 					},
 				}
 			};
@@ -269,21 +320,23 @@ C2D.surface = {
 						})[0];
 					},
 					comboCtors = {
-						'image-list': html_types.ImageList,
-						'layer-list': html_types.LayerList
-					},
-					comboContainers = {
-						'image-list': html_objects.image_lists,
-						'layer-list': html_objects.layer_lists
-					},
-					createCombo = function(cl) {
-						return function(param) {
-							var list = new comboCtors[cl](),
-								elem = $(list.element).
-									addClass(cl).
-									addClass('wide-ctl');
-							comboContainers[cl].push(elem);
+						'image-list': function() {
+							var list = new html_types.ImageList(),
+								elem = $(list.element).addClass('wide-ctl');
+							html_objects.param_image_lists.push(elem);
 							return elem;
+						},
+						'layer-list': function() {
+							var list = new html_types.LayerList(),
+								elem = $(list.element).addClass('wide-ctl');
+							html_objects.param_layer_lists.push(elem);
+							list.populate({ for_param: true });
+							return elem;
+						},
+					},
+					createCombo = function(cl, unique) { // TODO: use 'unique'
+						return function(param) {
+							return comboCtors[cl]();
 						};
 					}, 
 					getValue = function(node) {
@@ -295,6 +348,12 @@ C2D.surface = {
 					getValueFromCombo = function(node) {
 						return $('#'+node.id+' option:selected').text();
 					},
+					getObjectFromCombo = function(node) {
+						var list = $('#'+node.id)[0].list_object,
+							sel_object = list.getSelected();
+						return sel_object.id;
+					},
+					
 					edit = {
 						create: createEdit,
 						parse: getValue
@@ -303,11 +362,17 @@ C2D.surface = {
 						create: createCheckbox,
 						parse: isChecked
 					}, 
-					combo = function(cl) {
+					combo = function(cl, unique) {
 						return {
-							create: createCombo(cl),
-							parse: getValueFromCombo
+							create: createCombo(cl, unique),
+							parse: getObjectFromCombo
 						};
+					},
+					getLayerID = function(node) {
+						var list = $('#'+node.id)[0].list_object,
+							sel_object = list.getSelected();
+						console.log(sel_object);
+						return sel_object.id;
 					};
 				return {
 					'real': edit,
@@ -315,7 +380,12 @@ C2D.surface = {
 					'string': edit,
 					'bool': checkbox,
 					'image': combo('image-list'),
-					'layer': combo('layer-list'),
+					'image-name': combo('image-list', true),
+					'layer': {
+						create: createCombo('layer-list'),
+						parse: getLayerID
+					},
+					'layer-name': combo('layer-list', true),
 					'default': edit
 				};
 			})(),
@@ -332,22 +402,23 @@ C2D.surface = {
 					createParamInput = this.createParamInput,
 					self = this;
 					
-				default_params.forEach(function(param, i) {
-					var input = self.createParamInput(param, 'param_'+i),
-						label = $(document.createElement('label')).attr({
-							'for': input.id,
-							'class': 'param_label' 
-						}).text(param.name),
-						cell1 = $(document.createElement('td')).addClass('param-label-cell'),
-						cell2 = $(document.createElement('td')).addClass('param-value-cell'),
-						row = $(document.createElement('tr'));
+				if(default_params.length == 0)
+					table.append($(document.createElement('tr')).append($(document.createElement('td')).text('(no params)').addClass('no-params')));
+				else
+					default_params.forEach(function(param, i) {
+						var input = self.createParamInput(param, 'param_'+i),
+							label = $(document.createElement('label')).attr({
+								'for': input.id,
+								'class': 'param_label' 
+							}).text(param.name),
+							cell1 = $(document.createElement('td')).addClass('param-label-cell'),
+							cell2 = $(document.createElement('td')).addClass('param-value-cell'),
+							row = $(document.createElement('tr'));
+							
+						table.append(row.append(cell1.append(label)).append(cell2.append(input)));
 						
-					table.append(row.append(cell1.append(label)).append(cell2.append(input)));
-					
-					return row;
-				});
-				
-				// TODO: layer-list for selected image
+						return row;
+					});
 				
 				return table;
 			},
@@ -375,10 +446,14 @@ C2D.surface = {
 				// - add the image to all image lists
 				// - select loaded image on the main image list
 				
-				html_objects.image_lists.lists.forEach(function(list) {
+				html_objects.param_image_lists.lists.concat([html_objects.main_image_list]).forEach(function(list) {
 					list.add(image);
 				});
 				html_objects.main_image_list.select(image.list_item_id);
+				
+				html_objects.param_layer_lists.lists.forEach(function(list) {
+					list.populate({ for_param: true });
+				});
 			},
 			
 			selectImage: function(image_id) {
@@ -439,6 +514,7 @@ C2D.surface = {
 			var option = $('#available_methods option:selected'),
 				method_id = option.attr(resource_id_key),
 				method = C2D.client.getMethod(method_id);
+			console.log('Selected method:', method);
 			if(!method) {
 				$('#method_details').hide();
 				throw new Exception('Selected method not found!');
@@ -557,20 +633,32 @@ C2D.surface = {
 		}
 		this.onCalculationFinished = function(results) {
 			// TODO: indicate calculation success
-			console.log('Calculation succeeded:', results);
+			console.group('Calculation succeeded');
+			console.log('Results:', results);
 			try {
 				var diff = C2D.client.digestResults(results);
+				console.debug('Image structure after digest:', C2D._is);
+				console.log('Digested diff:', diff);
+				console.group('Images merge to the surface');
 				diff.new_images.forEach(function(new_image) {
-					html_objects.image_lists.lists.forEach(function(list) {
+					console.groupCollapsed('Adding image', new_image, 'to all image lists...');
+					html_objects.param_image_lists.lists.concat([html_objects.main_image_list]).forEach(function(list) {
 						list.add(new_image);
+						console.log('Added to list', list);
 					});
+					console.groupEnd();
 				});
-				if(diff.new_images.length > 0)
-					html_objects.main_image_list.select(diff.new_images[0].list_item_id);
+				console.groupEnd();
+				if(diff.new_images.length > 0) {
+					var first_image_list_item_id = diff.new_images[0].list_item_id;
+					html_objects.main_image_list.select(first_image_list_item_id);
+					console.debug('Selected image of list item ID:', first_image_list_item_id);
+				}
 			} catch(e) {
 				// TODO: indicate indigestion
 				console.error('Cannot digest results!\nReason:', e.message, '\nCall stack:', e.stack);
 			}
+			console.groupEnd();
 		}
 		this.onCalculationNotRunning = function() {
 			// TODO: impl
@@ -589,7 +677,7 @@ C2D.surface = {
 		});
 		html_objects.main_image_list.element.change(function() {
 			var image = html_objects.main_image_list.getSelected();
-			html_objects.main_layer_list.populate(image);
+			html_objects.main_layer_list.populate({ image: image });
 			//html_objects.main_canvas.drawImage(image);
 		});
 		html_objects.main_layer_list.element.change(function() {

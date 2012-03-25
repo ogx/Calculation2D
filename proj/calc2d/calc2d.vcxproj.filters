@@ -1,30 +1,23 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <Filter Include="Source Files">
-      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
-      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
-    </Filter>
-    <Filter Include="Header Files">
-      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
-      <Extensions>h;hpp;hxx;hm;inl;inc;xsd</Extensions>
-    </Filter>
     <Filter Include="json">
       <UniqueIdentifier>{d7039edd-86bc-4ccc-b8d9-c53a06a61dfc}</UniqueIdentifier>
     </Filter>
     <Filter Include="base64">
       <UniqueIdentifier>{2ae58455-e54a-455d-9287-3631232317cb}</UniqueIdentifier>
     </Filter>
+    <Filter Include="headers">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">
-      <Filter>Header Files</Filter>
+      <Filter>headers</Filter>
     </ClInclude>
     <ClInclude Include="targetver.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="mmCalculationServer.h">
-      <Filter>Header Files</Filter>
+      <Filter>headers</Filter>
     </ClInclude>
     <ClInclude Include="mmCodecBase64.h">
       <Filter>base64</Filter>
@@ -35,19 +28,16 @@
     <ClInclude Include="json\json.h">
       <Filter>json</Filter>
     </ClInclude>
+    <ClInclude Include="mmCalculationServer.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="calc2d.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="mmCalculationServer.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="mmCodecBase64.cpp">
       <Filter>base64</Filter>
     </ClCompile>
     <ClCompile Include="jsoncpp.cpp">
       <Filter>json</Filter>
     </ClCompile>
+    <ClCompile Include="calc2d.cpp" />
+    <ClCompile Include="mmCalculationServer.cpp" />
   </ItemGroup>
 </Project>

@@ -5,6 +5,7 @@
 #include <serialization\mmGenericParam.h>
 #include "json\json.h"
 #include <map>
+#include <set>
 
 class mmCalculationServer
 {
@@ -21,7 +22,16 @@ private:
 	Json::Value RunCalculationMethod(Json::Value&);
 
 	// method params conversion
-	Json::Value Params_XML2JSON(mmString const & params_xml) const;
+	typedef std::set<mmID> LayersToWrap;
+	struct ImageToWrap 
+	{
+		LayersToWrap layers;
+	};
+	typedef std::map<mmID, ImageToWrap> ImagesToWrap;
+	Json::Value Params_XML2JSON(
+		mmString const & params_xml, 
+		ImagesToWrap* images_to_wrap = NULL
+		) const;
 	mmString Params_JSON2XML(Json::Value const & params_json) const;
 	
 	// image data encoding/deconding

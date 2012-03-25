@@ -11,7 +11,7 @@ var C2D = C2D || {};
 C2D.client = {
 	init: function() {
 		var image_structure = C2D._is = new C2D.ImageStructure(),
-			methods_lookup = {};
+			methods_lookup = C2D._m = {};
 		
 		/* IMAGES MANAGEMENT */
 		this.loadImage = function(img, name) {

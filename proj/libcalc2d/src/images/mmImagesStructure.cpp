@@ -27,19 +27,26 @@ private:
 	mmString const m_sName;
 };
 
-struct FindByID {
-	FindByID(mmID const & p_sID) : m_sID(p_sID) {}
-	bool operator () (mmImages::mmLayer * const p_psLayer) {
-		return p_psLayer->GetID() == m_sID;
-	}
-	bool operator () (mmImages::mmImage * const p_psImage) {
-		return p_psImage->GetID() == m_sID;
+template <class _Id> // templated finder-by-id class, used only within this file
+struct _FinderByID {
+	_FinderByID(_Id const & p_sID) : m_sID(p_sID) {}
+
+	template <class _Identifiable>
+	bool operator () (_Identifiable * const p_psIdentifiable) {
+		return p_psIdentifiable->GetID() == m_sID;
 	}
 private:
-	mmID const m_sID;
+	_Id const m_sID;
 };
+template <class _Id> // helper function enabling implicit template argument
+inline _FinderByID<_Id> FindByID(_Id const & p_sID)
+{
+	return _FinderByID<_Id>(p_sID);
+}
 
-mmImages::mmLayer::mmLayer(mmID const & p_sID, mmString const & p_sName, mmUInt const p_iWidth, mmUInt const p_iHeight, mmReal const p_rDefaultValue, mmCallbackI * const p_psCallback) :
+mmImages::mmLayerI::sID const mmImages::mmLayerI::sID::invalid = { mmID::invalid, mmID::invalid };
+
+mmImages::mmLayer::mmLayer(sID const & p_sID, mmString const & p_sName, mmUInt const p_iWidth, mmUInt const p_iHeight, mmReal const p_rDefaultValue, mmCallbackI * const p_psCallback) :
 	m_sID(p_sID),
 	m_sName(p_sName),
 	m_rDefaultValue(p_rDefaultValue),
@@ -62,7 +69,7 @@ mmImages::mmLayer::~mmLayer(void) {
 		m_psCallback->OnLayerDestroy(this);
 }
 
-mmID mmImages::mmLayer::GetID(void) const {
+mmImages::mmLayerI::sID mmImages::mmLayer::GetID(void) const {
 	return m_sID;
 }
 
@@ -196,7 +203,7 @@ bool mmImages::mmLayer::SetPixels(mmRect const & p_sRect, mmReal const p_prValue
 	return true;
 }
 
-mmImages::mmImage::mmImage(mmID const & p_sID, mmString const & p_sName, mmUInt const p_iWidth, mmUInt const p_iHeight, mmPixelType const p_ePixelType, mmImageI::mmCallbackI * const p_psCallback) :
+mmImages::mmImage::mmImage(sID const & p_sID, mmString const & p_sName, mmUInt const p_iWidth, mmUInt const p_iHeight, mmPixelType const p_ePixelType, mmImageI::mmCallbackI * const p_psCallback) :
 	m_sID(p_sID),
 	m_sName(p_sName),
 	m_iWidth(p_iWidth), m_iHeight(p_iHeight), 
@@ -206,18 +213,18 @@ mmImages::mmImage::mmImage(mmID const & p_sID, mmString const & p_sName, mmUInt 
 {
 	switch(m_ePixelType) {
 		case mmP8:
-			m_sChannels.push_back(new mmLayer(++m_sLastLayerID, L"I", m_iWidth, m_iHeight, 0.0, NULL));
+			m_sChannels.push_back(new mmLayer(mmLayerI::MakeID(p_sID, ++m_sLastLayerID), L"I", m_iWidth, m_iHeight, 0.0, NULL));
 			break;
 		case mmP24:
-			m_sChannels.push_back(new mmLayer(++m_sLastLayerID, L"R", m_iWidth, m_iHeight, 0.0, NULL));
-			m_sChannels.push_back(new mmLayer(++m_sLastLayerID, L"G", m_iWidth, m_iHeight, 0.0, NULL));
-			m_sChannels.push_back(new mmLayer(++m_sLastLayerID, L"B", m_iWidth, m_iHeight, 0.0, NULL));
+			m_sChannels.push_back(new mmLayer(mmLayerI::MakeID(p_sID, ++m_sLastLayerID), L"R", m_iWidth, m_iHeight, 0.0, NULL));
+			m_sChannels.push_back(new mmLayer(mmLayerI::MakeID(p_sID, ++m_sLastLayerID), L"G", m_iWidth, m_iHeight, 0.0, NULL));
+			m_sChannels.push_back(new mmLayer(mmLayerI::MakeID(p_sID, ++m_sLastLayerID), L"B", m_iWidth, m_iHeight, 0.0, NULL));
 			break;
 		case mmP32:
-			m_sChannels.push_back(new mmLayer(++m_sLastLayerID, L"R", m_iWidth, m_iHeight, 0.0, NULL));
-			m_sChannels.push_back(new mmLayer(++m_sLastLayerID, L"G", m_iWidth, m_iHeight, 0.0, NULL));
-			m_sChannels.push_back(new mmLayer(++m_sLastLayerID, L"B", m_iWidth, m_iHeight, 0.0, NULL));
-			m_sChannels.push_back(new mmLayer(++m_sLastLayerID, L"A", m_iWidth, m_iHeight, 0.0, NULL));
+			m_sChannels.push_back(new mmLayer(mmLayerI::MakeID(p_sID, ++m_sLastLayerID), L"R", m_iWidth, m_iHeight, 0.0, NULL));
+			m_sChannels.push_back(new mmLayer(mmLayerI::MakeID(p_sID, ++m_sLastLayerID), L"G", m_iWidth, m_iHeight, 0.0, NULL));
+			m_sChannels.push_back(new mmLayer(mmLayerI::MakeID(p_sID, ++m_sLastLayerID), L"B", m_iWidth, m_iHeight, 0.0, NULL));
+			m_sChannels.push_back(new mmLayer(mmLayerI::MakeID(p_sID, ++m_sLastLayerID), L"A", m_iWidth, m_iHeight, 0.0, NULL));
 			break;
 		default:
 			break;
@@ -601,7 +608,7 @@ mmRect mmImages::mmImage::GetRegionOfInterest(void) const {
 }
 
 mmImages::mmLayerI* mmImages::mmImage::CreateLayer(mmString const & p_sName, mmReal const p_rDefaultValue) {
-	m_sLayers.push_back(new mmLayer(++m_sLastLayerID, p_sName, m_iWidth, m_iHeight, p_rDefaultValue, this));
+	m_sLayers.push_back(new mmLayer(mmLayerI::MakeID(m_sID, ++m_sLastLayerID), p_sName, m_iWidth, m_iHeight, p_rDefaultValue, this));
 	return m_sLayers.back();
 }
 
@@ -610,11 +617,14 @@ mmUInt mmImages::mmImage::GetLayerCount(void) const {
 }
 
 mmImages::mmLayerI * mmImages::mmImage::GetLayer(mmID const & p_sID) const {
-	std::list<mmLayer*>::const_iterator v_sLayer = std::find_if(m_sLayers.begin(), m_sLayers.end(), FindByID(p_sID));
+	mmImages::mmLayerI::sID v_sLayerID = mmImages::mmLayerI::MakeID(m_sID, p_sID);
+	std::list<mmLayer*>::const_iterator v_sLayer = std::find_if(m_sLayers.begin(), m_sLayers.end(), FindByID(v_sLayerID));
 	if(v_sLayer != m_sLayers.end())
 		return *v_sLayer;
-	else
-		return NULL;
+	v_sLayer = std::find_if(m_sChannels.begin(), m_sChannels.end(), FindByID(v_sLayerID));
+	if(v_sLayer != m_sChannels.end())
+		return *v_sLayer;
+	return NULL;
 }
 
 mmImages::mmLayerI * mmImages::mmImage::FindLayer(mmLayerI const * const p_psPreviousLayer, mmString const & p_sName) const {
@@ -637,7 +647,8 @@ mmImages::mmLayerI * mmImages::mmImage::FindLayer(mmLayerI const * const p_psPre
 }
 
 bool mmImages::mmImage::DeleteLayer(mmID const & p_sID) {
-	std::list<mmLayer*>::iterator v_sLayer = std::find_if(m_sLayers.begin(), m_sLayers.end(), FindByID(p_sID));
+	mmImages::mmLayerI::sID v_sLayerID = mmImages::mmLayerI::MakeID(m_sID, p_sID);
+	std::list<mmLayer*>::iterator v_sLayer = std::find_if(m_sLayers.begin(), m_sLayers.end(), FindByID(v_sLayerID));
 	if(v_sLayer != m_sLayers.end()) {
 		delete *v_sLayer;
 		m_sLayers.erase(v_sLayer);

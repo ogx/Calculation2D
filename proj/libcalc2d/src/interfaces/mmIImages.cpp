@@ -3,7 +3,6 @@
 #include <limits>
 
 mmUInt const mmImages::mmImageI::iInvalid = std::numeric_limits<mmUInt>::max();
-mmUInt const mmImages::mmLayerI::iInvalid = std::numeric_limits<mmUInt>::max();
 
 mmReal const mmImages::mmStats::rInvalid = std::numeric_limits<mmReal>::quiet_NaN();
 

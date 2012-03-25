@@ -10,6 +10,7 @@
 #include <serialization/mmGenericParam.h>
 #include <serialization/mmSerializeID.h>
 #include <serialization/mmBasicSerialization.h>
+#include <math/mmMath.h>
 
 using namespace mmImages;
 
@@ -30,8 +31,13 @@ mmCalculationServer::mmCalculationServer(void) :
 	param_type_lookup[L"int"] = mmGenericParamI::mmIntType;
 	param_type_lookup[L"string"] = mmGenericParamI::mmStringType;
 	param_type_lookup[L"bool"] = mmGenericParamI::mmBoolType;
-	param_type_lookup[L"image"] = mmGenericParamI::mmImageNameType;
-	param_type_lookup[L"layer"] = mmGenericParamI::mmLayerNameType;
+	param_type_lookup[L"image"] = mmGenericParamI::mmImageType;
+	param_type_lookup[L"image-name"] = mmGenericParamI::mmImageNameType;
+	param_type_lookup[L"layer"] = mmGenericParamI::mmLayerType;
+	param_type_lookup[L"layer-name"] = mmGenericParamI::mmLayerNameType;
+	param_type_lookup[L"rect"] = mmGenericParamI::mmRectType;
+	param_type_lookup[L"point"] = mmGenericParamI::mmPointType;
+	param_type_lookup[L"list"] = mmGenericParamI::mmListType;
 	param_type_lookup[L"unknown"] = mmGenericParamI::mmUnknownType;
 
 	success_response = failure_response = Json::Value(Json::objectValue);
@@ -97,7 +103,7 @@ Json::Value mmCalculationServer::GetMethods()
 		method_info[L"author"][L"email"] = method_infos[i].sAuthorInfo.sEmail;
 		method_info[L"params"] = Json::Value(Json::objectValue);
 		method_info[L"params"][L"in"] = Params_XML2JSON(method_infos[i].sAutoParams.sInParams);
-		method_info[L"params"][L"out"] = Params_XML2JSON(method_infos[i].sAutoParams.sOutParams);
+		method_info[L"params"][L"out"] = Json::Value(Json::arrayValue);//Params_XML2JSON(method_infos[i].sAutoParams.sOutParams);
 		res[i] = method_info;
 	}
 	return res;
@@ -155,7 +161,7 @@ Json::Value mmCalculationServer::RunCalculationMethod( Json::Value& params )
 	return response;
 }
 
-Json::Value mmCalculationServer::Params_XML2JSON( mmString const & params_xml ) const
+Json::Value mmCalculationServer::Params_XML2JSON(mmString const & params_xml, ImagesToWrap* images_to_wrap) const
 {
 	// get child nodes with parameters
 	mmXML::mmXMLDocI* _v_sInputXML = mmInterfaceInitializers::CreateXMLDocument(NULL);
@@ -191,22 +197,58 @@ Json::Value mmCalculationServer::Params_XML2JSON( mmString const & params_xml ) 
 		case mmGenericParamI::mmIntType:
 			param[L"value"] = mmSerializer<mmInt>::FromString(v_tValue);
 			break;
-		case mmGenericParamI::mmStringType:
-			param[L"value"] = v_tValue;
-			break;
 		case mmGenericParamI::mmBoolType:
 			param[L"value"] = mmSerializer<bool>::FromString(v_tValue);
 			break;
-		case mmGenericParamI::mmImageNameType:
-			param[L"value"] = v_tValue;
+		case mmGenericParamI::mmRectType:
+			{
+				mmRect rect = mmSerializer<mmRect>::FromString(v_tValue);
+				param[L"value"] = Json::Value(Json::objectValue);
+				param[L"value"][L"x"] = rect.iLeft;
+				param[L"value"][L"y"] = rect.iTop;
+				param[L"value"][L"width"] = rect.iWidth;
+				param[L"value"][L"height"] = rect.iHeight;
+			}
 			break;
-		case mmGenericParamI::mmLayerNameType:
-			param[L"value"] = v_tValue;
+		case mmGenericParamI::mmPointType:
+			{
+				mmMath::sPoint2D point = mmSerializer<mmMath::sPoint2D>::FromString(v_tValue);
+				param[L"value"] = Json::Value(Json::objectValue);
+				param[L"value"][L"x"] = point.rX;
+				param[L"value"][L"y"] = point.rY;
+			}
 			break;
 		default:
 			param[L"value"] = v_tValue;
 		}
 		converted.append(param);
+
+		// note down images and layers
+		if(images_to_wrap && image_structure)
+		{
+			if(v_eDataType == mmGenericParamI::mmImageType)
+			{
+				// Output image. Need to export all layers of that image.
+
+				mmID id = mmSerializer<mmID>::FromString(v_tValue);
+				ImageToWrap& itr = (*images_to_wrap)[id];
+				mmImageI const * image = image_structure->GetImage(id);
+
+				mmLayerI const * layer = NULL;
+				while(layer = image->FindLayer(layer))
+					itr.layers.insert(layer->GetID().m_sLayerID);
+			}
+			else if(v_eDataType == mmGenericParamI::mmLayerType)
+			{
+				// Output layer. Need to export this particular layer.
+
+				mmImages::mmLayerI::sID lid = mmSerializer<mmImages::mmLayerI::sID>::FromString(v_tValue);
+				mmImageI const * image = image_structure->GetImage(lid.m_sImageID);
+				if(image && image->GetLayer(lid.m_sLayerID))
+					(*images_to_wrap)[lid.m_sImageID].layers.insert(lid.m_sLayerID);
+			}
+			// TODO: elif mmLayerNameType - layers of given name across all images
+		}
 	}
 
 	delete _v_sInputXML;
@@ -322,11 +364,18 @@ Json::Value mmCalculationServer::WrapResults( mmImages::mmImageStructure const *
 {
 	Json::Value result = Json::Value(Json::objectValue);
 
+	// form output params
+	ImagesToWrap images_to_wrap;
+	result[L"params"] = Params_XML2JSON(output_params, &images_to_wrap);
+
 	// form image structure
 	Json::Value& isr = result[L"image_structure"] = Json::Value(Json::arrayValue);
-	mmImages::mmImageI* image = NULL;
-	while(image = image_structure->FindImage(image))
+	for(ImagesToWrap::const_iterator image_to_wrap=images_to_wrap.begin(), 
+		end=images_to_wrap.end(); 
+		image_to_wrap!=end; ++image_to_wrap)
 	{
+		mmImages::mmImageI* image = image_structure->GetImage(image_to_wrap->first);
+
 		Json::Value image_json(Json::objectValue);
 		image_json[L"id"] = ToString(image->GetID());
 		image_json[L"name"] = image->GetName();
@@ -345,15 +394,16 @@ Json::Value mmCalculationServer::WrapResults( mmImages::mmImageStructure const *
 			image_json_channels[2] = image_json_channels[1] = image_json_channels[0];
 
 		// layers
-		mmImages::mmLayerI* layer = NULL;
-		while(layer = image->FindLayer(layer))
+		LayersToWrap const & layers_to_wrap = image_to_wrap->second.layers;
+		for(LayersToWrap::const_iterator layer_to_wrap=layers_to_wrap.begin(), lend=layers_to_wrap.end(); 
+			layer_to_wrap!=lend; ++layer_to_wrap)
+		{
+			mmImages::mmLayerI* layer = image->GetLayer(*layer_to_wrap);
 			image_json_layers.append(LayerToJSON(layer));
+		}
 
 		isr.append(image_json);
 	}
-
-	// form output params
-	result[L"params"] = Params_XML2JSON(output_params);
 
 	return result;
 }
