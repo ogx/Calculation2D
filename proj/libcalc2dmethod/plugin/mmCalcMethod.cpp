@@ -3,6 +3,8 @@
 #include <mmStringUtilities.h>
 #include <plugin/mmCalcMethod.h>
 
+mmImages::mmErrorHandlerI* g_psErrorHandler = NULL;
+
 ////////////////////////////////////////////////////////////////////////////////
 /// Additional tool class simplifying edition of method's parameters 
 ////////////////////////////////////////////////////////////////////////////////
@@ -95,8 +97,16 @@ void mmImages::mmCalcMethod::SetCalculationMethodParameters(mmImages::mmImageStr
 bool mmImages::mmCalcMethod::Execute(void)
 {
 	SendLogMessage(mmLog::debug,mmString(L"Start Execute"));
-
-	bool v_bResult = Calculate();
+	
+	bool v_bResult = false;
+	try {
+		v_bResult = Calculate();
+	} catch(mmError const & err) {
+		if(g_psErrorHandler)
+			g_psErrorHandler->HandleError(err.GetErrorString(), err.GetErrorCode());
+		else
+			throw;
+	}
 
 	SendLogMessage(mmLog::debug,mmString(L"End Execute"));
 

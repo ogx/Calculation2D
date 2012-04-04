@@ -50,6 +50,25 @@ namespace mmImages {
 	};
 
 
+
+	class mmErrorHandlerI 
+	{
+	public:
+		virtual void HandleError(mmString const & p_sErrorText, mmInt p_iErrorCode) = 0;
+	};
+			
+	////////////////////////////////////////////////////////////////////////////////
+	/// Register error handler. Returns the previous handler.
+	////////////////////////////////////////////////////////////////////////////////
+	inline mmErrorHandlerI* SetErrorHandler(mmErrorHandlerI* p_psErrorHandler)
+	{
+		extern mmErrorHandlerI* g_psErrorHandler;
+		std::swap(g_psErrorHandler, p_psErrorHandler);
+		return p_psErrorHandler;
+	}
+	
+
+
 	////////////////////////////////////////////////////////////////////////////////
 	/// Implementation of calculation method interface
 	////////////////////////////////////////////////////////////////////////////////

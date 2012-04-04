@@ -20,9 +20,11 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="C2DPluginTest.cpp" />
+    <ClCompile Include="cmExceptionHandling.cpp" />
     <ClCompile Include="cmLayerTransport.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="cmExceptionHandling.h" />
     <ClInclude Include="cmLayerTransport.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">

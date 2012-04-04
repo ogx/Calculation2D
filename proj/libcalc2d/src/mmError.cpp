@@ -7,19 +7,24 @@
 //                                  	20100,
 //																		-1};
 
-mmError::mmError(mmInt p_iErrID)
+mmError::mmError(mmInt p_iErrID) :
+	m_iErrorID(p_iErrID),
+	m_sErrorText(L"No error description.") // TODO: provide error text lookup
 {
-	m_iErrorID = p_iErrID;
 }
 
-mmInt mmError::GetErrorCode(void)
+mmError::mmError(mmString const & p_sErrorText) :
+	m_iErrorID(mmeClientCustomError),
+	m_sErrorText(p_sErrorText)
+{
+}
+
+mmInt mmError::GetErrorCode(void) const
 {
 	return m_iErrorID;
 }
 
-mmString mmError::GetErrorString(void)
+mmString mmError::GetErrorString(void) const
 {
-	// TODO
-
-	return mmString(L"no error string");
+	return m_sErrorText;
 }

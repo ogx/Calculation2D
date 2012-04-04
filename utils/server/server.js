@@ -34,41 +34,88 @@ var c2d = {
 	// child process management
 	child: null,
 	child_busy: false,
-	spawnProcess: function() {
-		var spawn = require('child_process').spawn;
-		this.child = spawn(config.exePath);
-	},
-	sendCommand: function(cmd, params) {
-		//if(!this.child) not initialized...
-		//if(this.child_busy) another task...
-		
-		this.child_busy = true;
-		var deferred = q.defer(),
-			accu_str = '',
-			stdOut = this.child.stdout,
-			onStdoutData = function(str) {
-				//console.log('buffer length:', str.length);
-				str = str.toString('ascii');
-				var n = str.lastIndexOf('\n');
-				if(n == str.length-1) {
-					accu_str += str;
-					//console.log('accu_str is now ', accu_str.length, 'and flushed.');
-					try {
-						deferred.resolve(JSON.parse(accu_str));
-					} catch(e) {
-						var accu_str_ws = accu_str.replace(/\s/g, '.');
-						console.error('Caught error \'', e, '\'.\n'+
-							'The object being parsed is:\n', accu_str_ws);
-					}
+	child_finalizing: false,
+	receiveFromChild: function(stream, callback) {
+		var accumulated = '', 
+			listener = function(partial) {
+				//console.log('buffer length:', partial.length);
+				partial = partial.toString('ascii');
+				var n = partial.lastIndexOf('\n');
+				if(n == partial.length-1) {
+					accumulated += partial;
+					//console.log('accumulated is now ', accumulated.length, 'and flushed.');
+					
+					callback(accumulated);
+					
 					this.child_busy = false;
-					accu_str = '';
-					stdOut.removeListener('data', onStdoutData);
+					accumulated = '';
+					stream.removeListener('data', listener);
 				} else {
-					//console.log('accu_str is now ', accu_str.length);
-					accu_str += str;
+					//console.log('accumulated is now ', accumulated.length);
+					accumulated += partial;
 				}
 			};
-		stdOut.on('data', onStdoutData);
+		this.child_busy = true;
+		stream.on('data', listener);
+	},
+	spawnProcess: function() {
+		var spawn = require('child_process').spawn,
+			errorListener, 
+			registerErrorListener, 
+			self = this,
+			spawnChild = function() {
+				// spawn
+				self.child = spawn(config.exePath);
+				
+				// error listening
+				registerErrorListener = function() {
+					self.receiveFromChild(self.child.stderr, errorListener);
+				};
+				errorListener = function(error_line) {
+					console.error('Calculation server indicated an error: \n'+error_line);
+					registerErrorListener();
+				};
+				registerErrorListener();
+				
+				// crash control
+				self.child.on('exit', function(code, signal) {
+					if(code)
+						console.error('Calculation server exited with code '+code+'.');
+					if(signal)
+						console.error('Calculation server has been killed with the signal: \''+code+'\'.');
+					self.child = null;
+					if(!self.child_finalizing) {
+						console.log('Respawning.');
+						spawnChild();
+					}
+				});
+			};
+		spawnChild();
+	},
+	sendCommand: function(cmd, params) {
+		if(!this.child) {
+			console.warn('The command \''+cmd+'\' will not be sent. The child process is not running.');
+			var deferred = q.defer();
+			deferred.resolve({
+				success: false,
+				error: 'Calculation server crashed.'
+			});
+			return deferred.promise;
+		}
+		//if(this.child_busy) another task...
+		
+		var deferred = q.defer(),
+			stdOut = this.child.stdout,
+			onStdoutData = function(accu_str) {
+				try {
+					deferred.resolve(JSON.parse(accu_str));
+				} catch(e) {
+					var accu_str_ws = accu_str.replace(/\s/g, '.');
+					console.error('Caught error \'', e, '\'.\n'+
+						'The object being parsed is:\n', accu_str_ws);
+				}
+			};
+		this.receiveFromChild(stdOut, onStdoutData);
 		if(params && params.method) {
 			//params.method = params.method.replace(/ /g, '_');
 			//console.log('sent exactly:', JSON.stringify(params.method));
@@ -92,6 +139,7 @@ var c2d = {
 		return this.sendCommand('getstatus');
 	},
 	finalize: function() {
+		this.child_finalizing = true;
 		return this.sendCommand('finalize');
 	},
 };

@@ -5,6 +5,9 @@
     <ClCompile Include="cmLayerTransport.cpp">
       <Filter>layers</Filter>
     </ClCompile>
+    <ClCompile Include="cmExceptionHandling.cpp">
+      <Filter>error_handling</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="layers">
@@ -16,10 +19,16 @@
     <Filter Include="encoding">
       <UniqueIdentifier>{a78632c2-e1d9-47ad-ad38-36b00f4007f0}</UniqueIdentifier>
     </Filter>
+    <Filter Include="error_handling">
+      <UniqueIdentifier>{1b358345-d246-47dc-a2a6-9fc213eb3527}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="cmLayerTransport.h">
       <Filter>layers</Filter>
+    </ClInclude>
+    <ClInclude Include="cmExceptionHandling.h">
+      <Filter>error_handling</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
