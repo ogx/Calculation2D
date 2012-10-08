@@ -684,6 +684,7 @@ mmImages::mmImageStructure::~mmImageStructure(void) {
 
 mmImages::mmImageI* mmImages::mmImageStructure::CreateImage(mmString const & p_sName, mmUInt const p_iWidth, mmUInt const p_iHeight, mmImageI::mmPixelType const p_ePixelType) {
 	m_sImages.push_back(new mmImage(++m_sLastImageID, p_sName, p_iWidth, p_iHeight, p_ePixelType, m_psCallback));
+	m_sLastImageID = (*m_sImages.rbegin())->GetID();
 	return m_sImages.back();
 }
 
@@ -723,6 +724,7 @@ bool mmImages::mmImageStructure::DeleteImage(mmID const & p_sID) {
 	if(v_sImage != m_sImages.end()) {
 		delete *v_sImage;
 		m_sImages.erase(v_sImage);
+		m_sLastImageID = (*m_sImages.rbegin())->GetID();
 		return true;
 	} else
 		return false;

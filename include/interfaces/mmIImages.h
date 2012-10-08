@@ -524,6 +524,13 @@ namespace mmImages
 		/// @return true if the call succeeded, false if image does not exist
 		////////////////////////////////////////////////////////////////////////////////
 		virtual bool DeleteImage(mmID const & p_sID) = 0;
+
+		////////////////////////////////////////////////////////////////////////////////
+		/// Returns ID of the last image. It can be used to iterate through images using FindImage 
+		///
+		/// @return ID of the last image
+		////////////////////////////////////////////////////////////////////////////////
+		virtual const mmID& GetLastImageID() = 0;
 	protected:
 		virtual ~mmImageStructureI(void) {};
 	};

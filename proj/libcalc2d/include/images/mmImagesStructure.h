@@ -126,6 +126,10 @@ namespace mmImages
 		virtual mmImageI * GetImage(mmID const & p_sID) const;
 		virtual mmImageI * FindImage(mmImageI const * const p_psPreviousImage=NULL, mmString const & p_sName=L"") const;
 		virtual bool DeleteImage(mmID const & p_sID);
+		virtual const mmID& GetLastImageID()
+		{
+			return m_sLastImageID;
+		}
 	private: 
 		mmID m_sLastImageID;
 		std::list<mmImage*> m_sImages;

@@ -38,6 +38,8 @@ mmCalculationServer::mmCalculationServer(void) :
 	success_response[L"success"] = true;
 	failure_response[L"success"] = false;
 	failure_response[L"error"] = L"No error message provided.";
+
+	image_structure = new mmImages::mmImageStructure(NULL);
 }
 
 mmCalculationServer::~mmCalculationServer(void)
@@ -64,8 +66,14 @@ int mmCalculationServer::Serve()
 		}
 		else if(obj_in[L"cmd"].asString() == L"getmethods")
 			obj_out = this->GetMethods();
+		else if(obj_in[L"cmd"].asString() == L"query_images")
+			obj_out = QueryImages(obj_in[L"params"]);
+		else if(obj_in[L"cmd"].asString() == L"update_image")
+			obj_out = UpdateImage(obj_in[L"params"]);
 		else if(obj_in[L"cmd"].asString() == L"run")
 			obj_out = this->RunCalculationMethod(obj_in[L"params"]);
+		else if(obj_in[L"cmd"].asString() == L"sync_images_from_client")
+			obj_out = SyncImagesOut(obj_in[L"params"]);
 		else if(obj_in[L"cmd"].asString() == L"getstatus")
 			obj_out = this->GetStatus();
 		else 
@@ -81,7 +89,7 @@ Json::Value mmCalculationServer::GetMethods()
 {
 	typedef std::vector<mmImages::mmImagesCalculationMethodI::sCalculationMethodParams> method_infos_t;
 
-	Json::Value res(Json::arrayValue), method_info;
+	Json::Value res(Json::arrayValue), method_info, response;
 
 	method_infos_t method_infos = methods_mgr.GetAvailableImagesCalculationMethods();
 	for(Json::ArrayIndex i=0, n=method_infos.size(); i<n; ++i)
@@ -100,7 +108,8 @@ Json::Value mmCalculationServer::GetMethods()
 		method_info[L"params"][L"out"] = Params_XML2JSON(method_infos[i].sAutoParams.sOutParams);
 		res[i] = method_info;
 	}
-	return res;
+	response[L"methods"] = res;
+	return response;
 }
 
 Json::Value mmCalculationServer::GetStatus()
@@ -113,8 +122,8 @@ Json::Value mmCalculationServer::GetStatus()
 		else
 		{
 			response[L"status"] = L"finished";
-			response[L"result"] = WrapResults(image_structure, 
-				calculation_method->GetCalculationMethodInfo().sAutoParams.sOutParams);
+			/*response[L"result"] = WrapResults(image_structure, 
+				calculation_method->GetCalculationMethodInfo().sAutoParams.sOutParams);*/
 
 			delete calculation_method; calculation_method = NULL;
 			delete utils_factory; utils_factory = NULL;
@@ -127,15 +136,15 @@ Json::Value mmCalculationServer::GetStatus()
 
 Json::Value mmCalculationServer::RunCalculationMethod( Json::Value& params )
 {
-	Json::Value& method_id = params[L"method"];
+	Json::Value& method_id = params[L"id"];
 	Json::Value response = success_response;
 
-	image_structure = new mmImages::mmImageStructure(NULL);
 	utils_factory = mmInterfaceInitializers::CreateUtilsFactory();
 	calculation_method = methods_mgr.InitializeImagesCalculationMethod(method_id.asString());
 
-	mmString params_xml;
-	UnwrapArguments(params, image_structure, params_xml);
+	// prep input params
+	mmString params_xml = Params_JSON2XML(params[L"params"]);
+	//UnwrapArguments(params, image_structure, params_xml);
 
 	// prep params
 	mmImages::mmImagesCalculationMethodI::sCalculationMethodParams method_info = 
@@ -149,6 +158,67 @@ Json::Value mmCalculationServer::RunCalculationMethod( Json::Value& params )
 
 	response[L"message"] = L"The calculation has been queued.";
 	return response;
+}
+
+Json::Value mmCalculationServer::QueryImages( Json::Value& img_struct )
+{
+	Json::Value response = success_response;
+	Json::Value images = img_struct[L"images_structure"];
+	Json::Value missing_images = Json::Value(Json::arrayValue);
+	// compare input structure with existing one
+	for (int i = 0; i < images.size(); ++i) {
+		if (!ImageHasMatch(images[i])) {
+			missing_images.append(images[i]);
+		}
+	}
+	// send definition of missimg images
+	response[L"images_structure"] = missing_images;
+	return response;
+}
+
+Json::Value mmCalculationServer::UpdateImage( Json::Value& image_node )
+{
+	Json::Value response = success_response;
+	return response;
+}
+
+Json::Value mmCalculationServer::SyncImagesOut( Json::Value& params )
+{
+	Json::Value response = success_response;
+	return response;
+}
+
+bool mmCalculationServer::ImageHasMatch(Json::Value const& json_image) const
+{
+	Json::Value const & layers = json_image[L"layers"];
+	bool has_match = true;
+	mmImageI* previous_image = NULL;
+	mmImageI* current_image = NULL;
+	do {
+		current_image = image_structure->FindImage(previous_image, json_image[L"name"].asString());
+		// image with specified name not found
+		if (current_image == NULL) has_match = false;
+		// image with specified name found, but has different id
+		else if (current_image->GetID() != mmID(json_image[L"id"].asInt())) has_match = false;
+		// found image matching in name and id but its layers do not match
+		else {
+			for (int i = 0; i < layers.size(); ++i) {
+				mmLayerI* previous_layer = NULL;
+				mmLayerI* current_layer = NULL;
+				do {
+					current_layer = current_image->FindLayer(previous_layer, layers[i][L"name"].asString());
+					if (current_layer == NULL) has_match = false;
+					else if (current_layer->GetID() != mmID(layers[i][L"id"].asInt())) has_match = false;
+					previous_layer = current_layer;
+				}
+				while (current_layer != NULL || has_match);
+			}
+		}
+		previous_image = current_image;
+	}
+	//while (current_image->GetID() != image_structure->GetLastImageID());
+	while (current_image != NULL || has_match);
+	return has_match;
 }
 
 Json::Value mmCalculationServer::Params_XML2JSON( mmString const & params_xml ) const

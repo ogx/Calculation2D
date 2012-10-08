@@ -19,6 +19,9 @@ private:
 	Json::Value GetMethods();
 	Json::Value GetStatus();
 	Json::Value RunCalculationMethod(Json::Value&);
+	Json::Value QueryImages( Json::Value& params );
+	Json::Value UpdateImage( Json::Value& image_node );
+	Json::Value SyncImagesOut( Json::Value& params );
 
 	// method params conversion
 	Json::Value Params_XML2JSON(mmString const & params_xml) const;
@@ -27,6 +30,7 @@ private:
 	// image data encoding/deconding
 	Json::Value LayerToJSON(mmImages::mmLayerI const * layer) const;
 	void LayerFromJSON(Json::Value const & json, mmImages::mmLayerI * layer) const;
+	bool ImageHasMatch(Json::Value const& json_image) const;
 
 	// calculation environment
 	mmImages::mmImagesCalculationManagement calc_mgr;
