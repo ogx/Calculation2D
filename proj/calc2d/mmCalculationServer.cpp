@@ -230,7 +230,6 @@ Json::Value mmCalculationServer::QueryImage( Json::Value& image_json )
 		int height = image->GetHeight();
 		mmImages::mmImageI::mmPixelType pixel_type = image->GetPixelType();
 		unsigned int pixel_size = pixel_type;
-
 		if (width == image_json[L"width"].asInt() && height == image_json[L"height"].asInt()) {
 			mmReal* pixels = new mmReal[width*height*pixel_size];
 			int* out_buffer = new int[width*height];
