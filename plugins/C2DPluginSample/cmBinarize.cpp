@@ -1,4 +1,5 @@
 #include "cmBinarize.h"
+#include <algorithm>
 
 static mmImages::mmImagesCalculationMethodI::sCalculationMethodParams cmBinarizeParams =
 {

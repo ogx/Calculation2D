@@ -20,6 +20,7 @@
 #include <interfaces\mmIImages.h>
 #include <interfaces\mmICalculationMethodContainer.h>
 #include <interfaces\mmIUtilsFactory.h>
+#include <interfaces\mmIFormat.h>
 
 ////////////////////////////////////////////////////////////////////////////////
 /// Namespace for interface initializers.
@@ -116,6 +117,14 @@ namespace mmInterfaceInitializers
 	/// @return pointer to initialized object
 	////////////////////////////////////////////////////////////////////////////////
 	mmFactories::mmUtilsFactoryI* CreateUtilsFactory(void);
+
+	////////////////////////////////////////////////////////////////////////////////
+	/// Creates importer/exporter which supports multiple formats for images
+	/// In case of bad alloc error throws mmError(mmeBadAlloc).
+	///
+	/// @return pointer to initialized object
+	////////////////////////////////////////////////////////////////////////////////
+	mmFormats::mmFormatI* CreateRWFormat();
 
 };
 

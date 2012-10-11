@@ -54,14 +54,16 @@ bool mmImages::cmFlipImage::Calculate()
 	if (m_bHorizontal) m_sNewImageName += L"_H";
 	if (m_bVertical) m_sNewImageName += L"_V";
 
+	
 	v_psNewImage = m_psImageStructure->CreateImage(m_sNewImageName,
-																												 v_iWidth,
-																												 v_iHeight,
-																												 v_iPixelType);
+																													v_iWidth,
+																													v_iHeight,
+																													v_iPixelType);
 	if (!v_psNewImage) return false;
+	
 
-	const mmInt v_iPixelCount = v_iWidth*v_iHeight;
 	const mmRect v_sROI = v_psImage->GetRegionOfInterest();
+	const mmInt v_iPixelCount = v_sROI.GetSize();
 
 	// create pixel array for reading
 	mmReal *v_prPixels = new mmReal[v_iPixelCount];
@@ -82,11 +84,11 @@ bool mmImages::cmFlipImage::Calculate()
 		v_psChannel->GetPixels(v_sROI, v_prPixels);
 
 		// loop over all pixels
-		for (mmUInt j = 0; j < v_iHeight; j++) {
-			for (mmUInt i = 0; i < v_iWidth; i++) {
+		for (mmUInt j = 0; j < v_sROI.iHeight; j++) {
+			for (mmUInt i = 0; i < v_sROI.iWidth; i++) {
 
-				mmUInt v_iPixelID = j*v_iWidth + i;
-				mmUInt v_iNewPixelID = (m_bHorizontal ? v_iWidth - 1 - i : i) + v_iWidth*(m_bVertical ? v_iHeight - 1 - j : j);
+				mmUInt v_iPixelID = j*v_sROI.iWidth + i;
+				mmUInt v_iNewPixelID = (m_bHorizontal ? v_sROI.iWidth - 1 - i : i) + v_sROI.iWidth*(m_bVertical ? v_sROI.iHeight - 1 - j : j);
 
 				v_prNewPixels[v_iNewPixelID] = v_prPixels[v_iPixelID];
 			}
@@ -105,11 +107,11 @@ bool mmImages::cmFlipImage::Calculate()
 		v_psLayer->GetPixels(v_sROI, v_prPixels);
 
 		// loop over all pixels
-		for (mmUInt j = 0; j < v_iHeight; j++) {
-			for (mmUInt i = 0; i < v_iWidth; i++) {
+		for (mmUInt j = 0; j < v_sROI.iHeight; j++) {
+			for (mmUInt i = 0; i < v_sROI.iWidth; i++) {
 
-				mmUInt v_iPixelID = j*v_iWidth + i;
-				mmUInt v_iNewPixelID = (m_bHorizontal ? v_iWidth - 1 - i : i) + v_iWidth*(m_bVertical ? v_iHeight - 1 - j : j);
+				mmUInt v_iPixelID = j*v_sROI.iWidth + i;
+				mmUInt v_iNewPixelID = (m_bHorizontal ? v_sROI.iWidth - 1 - i : i) + v_sROI.iWidth*(m_bVertical ? v_sROI.iHeight - 1 - j : j);
 
 				v_prNewPixels[v_iNewPixelID] = v_prPixels[v_iPixelID];
 

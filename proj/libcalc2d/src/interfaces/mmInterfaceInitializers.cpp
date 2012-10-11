@@ -11,6 +11,8 @@
 
 #include <factories\mmUtilsFactory.h>
 
+#include <formats\mmMultiFormat.h>
+
 mmSynchronize::mmExclusiveLockI* mmInterfaceInitializers::CreateExclusiveLock(mmLog::mmLogReceiverI *p_psLogReceiver)
 {
 	try
@@ -131,5 +133,14 @@ mmFactories::mmUtilsFactoryI* mmInterfaceInitializers::CreateUtilsFactory(void)
 	};
 }
 
-
-
+mmFormats::mmFormatI* mmInterfaceInitializers::CreateRWFormat()
+{
+	try
+	{
+		return (new mmFormats::mmMultiFormat());
+	}
+	catch(std::bad_alloc)
+	{
+		throw mmError(mmeBadAlloc);
+	};
+}
