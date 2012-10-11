@@ -51,3 +51,4 @@
 !C2DPluginSample.vcxproj.user
 /proj/Calculation2D_MFC_new
 /proj/calc2d/Win32/Debug/calc2d_manifest.rc
+*.class
