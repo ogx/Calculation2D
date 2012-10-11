@@ -2,6 +2,7 @@ package ogx.view;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.Iterator;
 import java.util.Vector;
 
 import javax.swing.BorderFactory;
@@ -78,7 +79,6 @@ public class MethodListView implements
 	}
 	
 	public MethodModel getCurrentMethodModel() {
-		// TODO: this method is meant to query view and return selected method with params to the controller
 		// TODO: test this method
 		MethodModel result = null;
 		int index = method_panels.indexOf(current_component);
@@ -92,10 +92,6 @@ public class MethodListView implements
 						break;
 					}
 				}
-			}
-			
-			for (int i = 0; i < result.getParams().size(); ++i) {
-				
 			}
 		}
 		return result;
@@ -118,22 +114,30 @@ public class MethodListView implements
 	}
 
 	@Override
-	public void actionPerformed(ActionEvent arg0) {
-		// TODO: test automatic layer names in combo
-		// currently not working -> check this out
-//		if (arg0.getSource().getClass().equals(JComboBox.class)) {
-//			String image_name = ((JComboBox)arg0.getSource()).getSelectedItem().toString();
-//			Vector<String> layer_names = images_struct.getLayerNames(image_name);
-//			for (int i = 0; i < method_panels.size(); ++i) {
-//				JPanel method_panel = method_panels.get(i);
-//				for (int j = 0; j < method_panel.getComponentCount(); ++j) {
-//					ParamPanel current_panel = (ParamPanel)method_panel.getComponent(j);
-//					if (current_panel.getParamType().get() == ParamType.LAYERNAME) {
-//						current_panel.setContent(layer_names, 0);
-//					}
-//				}
-//			}
-//		}
+	public void actionPerformed(ActionEvent arg0) {	
+		if (arg0.getSource().getClass().equals(JComboBox.class)) {
+			Object selected_item = ((JComboBox)arg0.getSource()).getSelectedItem();
+			if (selected_item != null) {
+				String image_name = selected_item.toString();
+				Vector<String> layer_names = images_struct.getLayerNames(image_name);
+				Vector<String> existing_layers = new Vector<String>();
+				for (int i = 0; i < method_panels.size(); ++i) {
+					JPanel method_panel = method_panels.get(i);
+					for (int j = 0; j < method_panel.getComponentCount(); ++j) {
+						ParamPanel current_panel = (ParamPanel)method_panel.getComponent(j);
+						if (current_panel.getParamType().get() == ParamType.LAYERNAME) {
+							for (int k = 0; k < layer_names.size(); ++k) {
+								if (layer_names.get(k).equals("R") || layer_names.get(k).equals("G") || layer_names.get(k).equals("B")) {  
+									continue;
+								}
+								existing_layers.add(layer_names.get(k));
+							}
+							current_panel.setContent(existing_layers, 0);
+						}
+					}
+				}
+			}
+		}
 	}
 
 }

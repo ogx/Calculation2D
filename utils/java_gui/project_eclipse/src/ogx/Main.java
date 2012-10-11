@@ -55,7 +55,7 @@ public class Main implements MouseListener, ActionListener {
 	JPanel bottomcalcpanel = new JPanel();
 	JPanel paramspanel = new JPanel();
 	JList methodlist = new JList();
-	JButton runbutton = new JButton("Run", new ImageIcon("resources/run.png"));
+	JButton runbutton = new JButton("Run", new ImageIcon("../resources/run.png"));
 	ImageModel current_image = null;
 	MethodListView listview = null;
 	
@@ -99,18 +99,10 @@ public class Main implements MouseListener, ActionListener {
 	    frame.setVisible(true);
 	}
 	
-	public void setupController(String[] args) {
-		
-//		System.err.println("Working Directory = " +
-//		           System.getProperty("user.dir"));
-		
+	public void setupController(String[] args) {	
 		controller = new Control(images_struct, args[0]);
 	    MethodListModel listmodel = controller.getMethods();
 		methodlist.setModel(listmodel);
-		//
-		// DEBUG
-		//
-		//MethodListModel listmodel = new MethodListModel();
 		
 		listview = new MethodListView(listmodel, paramspanel, images_struct);
 		methodlist.addListSelectionListener(listview);
@@ -156,16 +148,16 @@ public class Main implements MouseListener, ActionListener {
 	    bar.add(help);
 	    
 	 // fill  toolbar
-	    toolbar.add(addToolbarButton(load_label, new ImageIcon("resources/load.png")));
-	    toolbar.add(addToolbarButton(save_label, new ImageIcon("resources/save.png")));
+	    toolbar.add(addToolbarButton(load_label, new ImageIcon("../resources/load.png")));
+	    toolbar.add(addToolbarButton(save_label, new ImageIcon("../resources/save.png")));
 	    toolbar.addSeparator();
-	    toolbar.add(addToolbarButton(zoomin_label, new ImageIcon("resources/zoomin.png")));
-	    toolbar.add(addToolbarButton(zoomout_label, new ImageIcon("resources/zoomout.png")));
-	    toolbar.add(addToolbarButton(fitview_label, new ImageIcon("resources/fitview.png")));
-	    toolbar.add(addToolbarButton(nominal_label, new ImageIcon("resources/nominalview.png")));
+	    toolbar.add(addToolbarButton(zoomin_label, new ImageIcon("../resources/zoomin.png")));
+	    toolbar.add(addToolbarButton(zoomout_label, new ImageIcon("../resources/zoomout.png")));
+	    toolbar.add(addToolbarButton(fitview_label, new ImageIcon("../resources/fitview.png")));
+	    toolbar.add(addToolbarButton(nominal_label, new ImageIcon("../resources/nominalview.png")));
 	    toolbar.addSeparator();
-	    toolbar.add(addToolbarButton(set_roi_label, new ImageIcon("resources/setroi.png")));
-	    toolbar.add(addToolbarButton(clear_roi_label, new ImageIcon("resources/clearroi.png")));
+	    toolbar.add(addToolbarButton(set_roi_label, new ImageIcon("../resources/setroi.png")));
+	    toolbar.add(addToolbarButton(clear_roi_label, new ImageIcon("../resources/clearroi.png")));
 	    toolbar.setFloatable(false);
 	    toolbar.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
 	    

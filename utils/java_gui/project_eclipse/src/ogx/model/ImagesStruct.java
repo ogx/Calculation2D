@@ -172,9 +172,11 @@ public class ImagesStruct {
 	public Vector<String> getLayerNames(String image_name) {
 		Vector<String> layer_names = new Vector<String>();
 		DefaultMutableTreeNode image_node = findImageNode(image_name);
-		for (int i = 0; i < image_node.getChildCount(); ++i) {
-			String name = ((DefaultMutableTreeNode)image_node.getChildAt(i)).getUserObject().toString();
-			layer_names.add(name);
+		if (image_node != null) {
+			for (int i = 0; i < image_node.getChildCount(); ++i) {
+				String name = ((DefaultMutableTreeNode)image_node.getChildAt(i)).getUserObject().toString();
+				layer_names.add(name);
+			}
 		}
 		return layer_names;
 	}

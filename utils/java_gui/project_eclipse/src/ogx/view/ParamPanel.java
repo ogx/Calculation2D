@@ -60,6 +60,7 @@ public class ParamPanel extends JPanel {
 			comp = new JComboBox();
 			comp.setAlignmentX(Component.LEFT_ALIGNMENT);
 			((JComboBox)comp).addActionListener(combo_selection);
+			((JComboBox)comp).setEditable(true);
 			this.add(comp);
 			break;
 		case ParamType.LAYERNAME:
@@ -67,6 +68,7 @@ public class ParamPanel extends JPanel {
 			this.add(captionlabel);
 			comp = new JComboBox();
 			comp.setAlignmentX(Component.LEFT_ALIGNMENT);
+			((JComboBox)comp).setEditable(true);
 			this.add(comp);
 			break;
 		}
@@ -98,7 +100,12 @@ public class ParamPanel extends JPanel {
 			break;
 		case ParamType.IMAGENAME:
 		case ParamType.LAYERNAME:
-			result = ((JComboBox)comp).getSelectedItem().toString();
+			if (((JComboBox)comp).getSelectedItem() != null) {
+				result = ((JComboBox)comp).getSelectedItem().toString();
+			}
+			else {
+				result = "";
+			}
 			break;
 		}
 		

@@ -2,18 +2,12 @@ package ogx.control;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
-import java.io.PipedInputStream;
-import java.io.PipedOutputStream;
 import java.nio.ByteBuffer;
-import java.nio.ByteOrder;
-import java.nio.IntBuffer;
 import java.util.Arrays;
 
 import javax.swing.tree.DefaultMutableTreeNode;
@@ -50,9 +44,6 @@ public class Control {
 	OutputStream stdin = null;
 	BufferedReader reader = null;
 	BufferedWriter writer = null;
-	//DataInputStream reader_bin = null;
-	//DataOutputStream writer_bin = null;
-	PipedInputStream reader_bin = null;
 	
 	public Control(ImagesStruct images_struct, String calc2d_path) {
 		this.images_struct = images_struct;
@@ -69,9 +60,6 @@ public class Control {
 			stdout = calc2d.getInputStream();
 			reader = new BufferedReader(new InputStreamReader(stdout));
 			writer = new BufferedWriter(new OutputStreamWriter(stdin));
-			
-			//reader_bin = new DataInputStream(stdout);
-			//writer_bin = new DataOutputStream(stdin);
 		}
 	}
 	
@@ -169,17 +157,12 @@ public class Control {
 						current_image_node = images_struct.addImage(name, width, height, id);
 					}
 					
-					ByteBuffer byte_buffer = ByteBuffer.allocate(width*height*4);
-					//byte_buffer.order(ByteOrder.LITTLE_ENDIAN);
-					//IntBuffer int_buffer = byte_buffer.asIntBuffer();
-					//int[] int_array = new int[width*height];
-					
+					ByteBuffer byte_buffer = ByteBuffer.allocate(width*height*4);				
 					// 1.
 					JSONObject img_request = new JSONObject(images_to_read.getJSONObject(i), Arrays.asList("name", "id", "width", "height").toArray(new String[0]));
 					sendCommand(new Command("query_image", img_request));	
 					// 2.
 					if (readBinaryData(byte_buffer.array(), width*height*4)) {
-						//int_buffer.get(int_array);
 						images_struct.fillImage(current_image_node, byte_buffer.array(), width, height, 4);
 						// 4.
 						layers_to_read = images_to_read.getJSONObject(i).getJSONArray("layers");
@@ -193,13 +176,9 @@ public class Control {
 							
 							// 5. confirmation is a request for another piece of data
 							JSONObject layer_request = new JSONObject(layers_to_read.getJSONObject(j), Arrays.asList("name", "id", "owner").toArray(new String[0]));
-							//layer_request.put("owner", images_to_read.getJSONObject(i).getString("name"));
-							//layer_request.remove("layers");
 							sendCommand(new Command("query_layer", layer_request));
 							// 6.
 							if (readBinaryData(byte_buffer.array(), width*height)) {
-								//int_buffer = byte_buffer.asIntBuffer();
-								//int_buffer.get(int_array);
 								images_struct.fillLayer(current_layer_node, byte_buffer.array(), width, height);
 							}
 						}
