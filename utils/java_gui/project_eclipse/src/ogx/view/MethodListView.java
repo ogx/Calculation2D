@@ -2,7 +2,6 @@ package ogx.view;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.Iterator;
 import java.util.Vector;
 
 import javax.swing.BorderFactory;
@@ -28,16 +27,13 @@ public class MethodListView implements
 	JPanel empty_panel = new JPanel();
 	JPanel current_component = null;
 	JComponent container;
-	JList list = null;
+	JList<MethodModel> list = null;
 	final ImagesStruct images_struct;
-	final MethodListModel methodlist;
+	MethodListModel methodlist;
 	
 	public MethodListView(MethodListModel methodlist, JComponent owner_container, ImagesStruct images_struct) {
 		this.images_struct = images_struct;
 		this.methodlist = methodlist;
-		MethodModel method = null;
-		ParamModel param = null;
-		JPanel panel = null;
 		empty_panel.setBorder(BorderFactory.createTitledBorder("Parameters"));
 		((TitledBorder)empty_panel.getBorder()).setTitleJustification(TitledBorder.CENTER);
 		container = owner_container;
@@ -46,22 +42,37 @@ public class MethodListView implements
 		current_component.setPreferredSize(container.getSize());
 		
 		for (int i = 0; i < methodlist.getSize(); ++i) {
-			method = (MethodModel)methodlist.getElementAt(i);
-			panel = new JPanel();
-			BoxLayout boxlayout = new BoxLayout(panel, BoxLayout.Y_AXIS);
-			panel.setLayout(boxlayout);
-			panel.setBorder(BorderFactory.createTitledBorder("Parameters"));
-		    ((TitledBorder)panel.getBorder()).setTitleJustification(TitledBorder.CENTER);
-		    for (int j = 0; j < method.getParams().size(); ++j) {
-		    	param = method.getParams().get(j);
-		    	panel.add(new ParamPanel(param.getName(), param.getType(), param.getValue(), this));
-		    }
-		    method_panels.add(panel);
+			addMethodModelView((MethodModel)methodlist.getElementAt(i));
 		}
 		
 	}
 	
-	public void bindList(JList list) {
+	public void addMethodModelView(MethodModel method_model) {
+		JPanel panel = new JPanel();
+		BoxLayout boxlayout = new BoxLayout(panel, BoxLayout.Y_AXIS);
+		panel.setLayout(boxlayout);
+		panel.setBorder(BorderFactory.createTitledBorder("Parameters"));
+	    ((TitledBorder)panel.getBorder()).setTitleJustification(TitledBorder.CENTER);
+	    for (int j = 0; j < method_model.getParams().size(); ++j) {
+	    	ParamModel param = method_model.getParams().get(j);
+	    	panel.add(new ParamPanel(param.getName(), param.getType(), param.getValue(), this));
+	    }
+	    method_panels.add(panel);
+	}
+	
+	public void removeMethodModelView(int index) {
+		//if (index >= 0 && index < method_panels.size()) {
+			method_panels.remove(index);
+			valueChanged(null);
+		//}
+	}
+	
+	public void clearMethodModelView() {
+		method_panels.removeAllElements();
+		valueChanged(null);
+	}
+	
+	public void bindList(JList<MethodModel> list) {
 		this.list = list;
 	}
 	
@@ -102,14 +113,14 @@ public class MethodListView implements
 		
 		container.remove(current_component);
 		current_component = empty_panel;
-//		if (arg0.getFirstIndex() == arg0.getLastIndex()) {
-			if (!method_panels.isEmpty() && list != null) {
-				current_component = method_panels.get(list.getSelectedIndex());
+		if (!method_panels.isEmpty() && list != null) {
+			int index = list.getSelectedIndex();
+			if (index >= 0 && index < method_panels.size()) {
+				current_component = method_panels.get(index);
 			}
-//		}
+		}
 		container.add(current_component);
 		container.setPreferredSize(current_component.getPreferredSize());
-		container.updateUI();
 		container.updateUI();
 	}
 

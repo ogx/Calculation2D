@@ -2,10 +2,8 @@ package ogx.model;
 
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
-import java.awt.image.Raster;
 import java.util.Vector;
 
-import javax.imageio.spi.ImageWriterSpi;
 import javax.swing.tree.DefaultMutableTreeNode;
 
 import org.json.JSONArray;

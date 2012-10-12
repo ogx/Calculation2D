@@ -5,10 +5,29 @@ import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.Rectangle;
+import java.awt.datatransfer.DataFlavor;
+import java.awt.datatransfer.Transferable;
+import java.awt.datatransfer.UnsupportedFlavorException;
+import java.awt.dnd.DnDConstants;
+import java.awt.dnd.DragGestureEvent;
+import java.awt.dnd.DragGestureListener;
+import java.awt.dnd.DragGestureRecognizer;
+import java.awt.dnd.DragSource;
+import java.awt.dnd.DragSourceDragEvent;
+import java.awt.dnd.DragSourceDropEvent;
+import java.awt.dnd.DragSourceEvent;
+import java.awt.dnd.DragSourceListener;
+import java.awt.dnd.DropTarget;
+import java.awt.dnd.DropTargetDragEvent;
+import java.awt.dnd.DropTargetDropEvent;
+import java.awt.dnd.DropTargetEvent;
+import java.awt.dnd.DropTargetListener;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.io.FileFilter;
+import java.io.IOException;
 
 import javax.swing.BorderFactory;
 import javax.swing.Box;
@@ -34,10 +53,16 @@ import ogx.control.Control;
 import ogx.model.MethodListModel;
 import ogx.model.ImageModel;
 import ogx.model.ImagesStruct;
+import ogx.model.MethodModel;
 import ogx.view.ImageLabel;
 import ogx.view.MethodListView;
+import ogx.view.MethodSelection;
 
-public class Main implements MouseListener, ActionListener {
+public class Main implements MouseListener, 
+							 ActionListener, 
+							 DragGestureListener,
+							 DragSourceListener,
+							 DropTargetListener {
 	
 	ImagesStruct images_struct = new ImagesStruct();
 	Control controller = null;
@@ -54,10 +79,13 @@ public class Main implements MouseListener, ActionListener {
 	JPanel topcalcpanel = new JPanel();
 	JPanel bottomcalcpanel = new JPanel();
 	JPanel paramspanel = new JPanel();
-	JList methodlist = new JList();
+	JList<MethodModel> methodlist = new JList<MethodModel>();
+	JList<MethodModel> methodsequence = new JList<MethodModel>();
 	JButton runbutton = new JButton("Run", new ImageIcon("../resources/run.png"));
 	ImageModel current_image = null;
 	MethodListView listview = null;
+	DragSource dragsource;
+	DropTarget droptarget;
 	
 	final JFileChooser fc = new JFileChooser();
 	
@@ -72,9 +100,10 @@ public class Main implements MouseListener, ActionListener {
 	
 	Main() {
 		setupGUI();
+		dragsource = new DragSource();
+	    dragsource.createDefaultDragGestureRecognizer(methodlist, DnDConstants.ACTION_COPY, this);
+	    droptarget = new DropTarget(methodsequence, this);
 	  }
-	
-	
 
 	/**
 	 * @param args
@@ -101,12 +130,14 @@ public class Main implements MouseListener, ActionListener {
 	
 	public void setupController(String[] args) {	
 		controller = new Control(images_struct, args[0]);
-	    MethodListModel listmodel = controller.getMethods();
-		methodlist.setModel(listmodel);
+	    MethodListModel methods = controller.getMethods();
+	    MethodListModel sequence = new MethodListModel();
+		methodlist.setModel(methods);
+		methodsequence.setModel(sequence);
 		
-		listview = new MethodListView(listmodel, paramspanel, images_struct);
-		methodlist.addListSelectionListener(listview);
-		listview.bindList(methodlist);
+		listview = new MethodListView(sequence, paramspanel, images_struct);
+		methodsequence.addListSelectionListener(listview);
+		listview.bindList(methodsequence);
 		methodlist.setSelectedIndex(0);
 	}
 	
@@ -178,6 +209,8 @@ public class Main implements MouseListener, ActionListener {
 	    
 	    // set up components for executing methods
 	    methodlist.setAlignmentX(Component.CENTER_ALIGNMENT);
+	    methodsequence.setAlignmentX(Component.CENTER_ALIGNMENT);
+	    methodsequence.addMouseListener(this);
 	    runbutton.setAlignmentX(Component.CENTER_ALIGNMENT);
 	    runbutton.addActionListener(this);
 	    runbutton.setActionCommand("run_method");
@@ -198,13 +231,51 @@ public class Main implements MouseListener, ActionListener {
 	    
 	    BoxLayout boxlayout = new BoxLayout(topcalcpanel, BoxLayout.Y_AXIS);
 	    topcalcpanel.setLayout(boxlayout);
-	    topcalcpanel.setBorder(BorderFactory.createTitledBorder("Calculation method"));
+	    topcalcpanel.setPreferredSize(new Dimension(300, 300));
+	    topcalcpanel.setBorder(BorderFactory.createTitledBorder("Operations"));
 	    ((TitledBorder)topcalcpanel.getBorder()).setTitleJustification(TitledBorder.CENTER);
-	    topcalcpanel.add(methodlist);
-	    topcalcpanel.add(new JScrollPane(methodlist));
-	    topcalcpanel.add(Box.createVerticalStrut(10));
-	    topcalcpanel.add(runbutton);
-	    topcalcpanel.add(Box.createVerticalStrut(10));
+	    
+	    Box verticalBox = Box.createVerticalBox();
+	    
+	    JPanel buttons_panel = new JPanel(new GridLayout(1,3));
+	    JPanel methodlist_panel = new JPanel(new BorderLayout());
+	    JPanel methodsequence_panel = new JPanel(new BorderLayout());
+
+	    JButton load_sequence_btn = new JButton("Load");
+	    JButton save_sequence_btn = new JButton("Save");
+	    load_sequence_btn.addActionListener(this);
+	    load_sequence_btn.setActionCommand("load_sequence");
+	    save_sequence_btn.addActionListener(this);
+	    save_sequence_btn.setActionCommand("save_sequence");
+	    
+	    buttons_panel.add(runbutton);
+	    buttons_panel.add(load_sequence_btn);
+	    buttons_panel.add(save_sequence_btn);
+	    
+	    methodlist_panel.add(new JLabel("Available calculation methods:"), BorderLayout.NORTH);
+	    methodlist_panel.add(new JScrollPane(methodlist), BorderLayout.CENTER);
+	    
+	    methodsequence_panel.add(new JLabel("Current calculation sequence:"), BorderLayout.NORTH);
+	    methodsequence_panel.add(new JScrollPane(methodsequence), BorderLayout.CENTER);
+	    
+	    verticalBox.add(methodlist_panel);
+	    verticalBox.add(Box.createVerticalStrut(5));
+	    verticalBox.add(methodsequence_panel);
+	    verticalBox.add(Box.createVerticalStrut(5));
+	    verticalBox.add(buttons_panel);
+	    verticalBox.add(Box.createVerticalStrut(5));
+	    
+	    topcalcpanel.add(verticalBox);
+	    
+//	    topcalcpanel.add(new JLabel("Available calculation methods:"));
+//	    topcalcpanel.add(methodlist);
+//	    topcalcpanel.add(new JLabel("Current calculation sequence:"));
+//	    topcalcpanel.add(methodsequence);
+	    //topcalcpanel.add(new JScrollPane(methodlist));
+	    //topcalcpanel.add(new JScrollPane(methodsequence));
+	    //topcalcpanel.add(Box.createVerticalStrut(10));
+	    //topcalcpanel.add(runbutton);
+	    //topcalcpanel.add(Box.createVerticalStrut(10));
 	    
 	    boxlayout = new BoxLayout(bottomcalcpanel, BoxLayout.Y_AXIS);
 	    bottomcalcpanel.setLayout(boxlayout);
@@ -239,8 +310,8 @@ public class Main implements MouseListener, ActionListener {
 	// MouseListener
 	@Override
 	public void mouseClicked(MouseEvent arg0) {
+		int button = arg0.getButton();
 		if (arg0.getComponent().equals(treeview)) {
-			int button = arg0.getButton();
 			treeview.setSelectionPath(treeview.getClosestPathForLocation(arg0.getX(), arg0.getY()));
 			DefaultMutableTreeNode chosen_node = (DefaultMutableTreeNode)treeview.getLastSelectedPathComponent();
 			if (!chosen_node.equals(images_struct.getRoot())) {
@@ -278,6 +349,18 @@ public class Main implements MouseListener, ActionListener {
 				imagelabel.updateUI();
 				histogramlabel.setIcon(null);
 				histogramlabel.updateUI();
+			}
+		}
+		else {
+			if (arg0.getComponent().equals(methodsequence)) {
+				if (button == MouseEvent.BUTTON3) {
+					methodsequence.setSelectedIndex( methodsequence.locationToIndex(arg0.getPoint()) );
+					int selected_index = methodsequence.getSelectedIndex();
+					((MethodListModel)methodsequence.getModel()).removeElement(selected_index);
+					listview.removeMethodModelView(selected_index);
+					methodsequence.updateUI();
+					//paramspanel.updateUI();
+				}
 			}
 		}
 	}
@@ -386,13 +469,35 @@ public class Main implements MouseListener, ActionListener {
 			imagelabel.updateUI();
 		}
 		else if (command == "run_method") {
-			controller.runMethod(listview.getCurrentMethodModel());
+			for (int i = 0; i < methodsequence.getModel().getSize(); ++i) {
+				methodsequence.setSelectedIndex(i);
+				controller.runMethod(listview.getCurrentMethodModel());
+			}
+			//controller.runMethod(listview.getCurrentMethodModel());
 			treeview.updateUI();
 			imagelabel.updateUI();
 			listview.update();
 		}
+		else if (command == "load_sequence") {
+			int returnVal = fc.showOpenDialog(fc);
+	        if (returnVal == JFileChooser.APPROVE_OPTION) {
+	        	listview.clearMethodModelView();
+	        	MethodListModel sequencemodel = (MethodListModel)methodsequence.getModel();
+	        	sequencemodel.load(fc.getSelectedFile().getPath(), (MethodListModel) methodlist.getModel());
+	        	for (int i = 0; i < sequencemodel.getSize(); ++i) {
+	        		listview.addMethodModelView(sequencemodel.getElementAt(i));
+	        	}
+	        	methodsequence.updateUI();
+	        }
+		}
+		else if (command == "save_sequence") {
+			int returnVal = fc.showSaveDialog(fc);
+	        if (returnVal == JFileChooser.APPROVE_OPTION) {
+	        	((MethodListModel)methodsequence.getModel()).save(fc.getSelectedFile().getPath());
+	        }
+		}
 		else {
-			System.out.println("Invoked command: " + command);
+			System.err.println("Invoked command: " + command);
 		}
 	}
 	
@@ -409,5 +514,89 @@ public class Main implements MouseListener, ActionListener {
 			}
 			histogramlabel.setIcon(new ImageIcon(current_image.getHistogramImage()));
 		}
+	}
+
+	@Override
+	public void dragGestureRecognized(DragGestureEvent dge) {
+		MethodSelection transferable = new MethodSelection(methodlist.getSelectedValue());
+	    dragsource.startDrag(dge, DragSource.DefaultCopyDrop, transferable, this);
+	}
+
+	@Override
+	public void dragEnter(DropTargetDragEvent dtde) {
+		
+	}
+
+	@Override
+	public void dragExit(DropTargetEvent dte) {
+		
+	}
+
+	@Override
+	public void dragOver(DropTargetDragEvent dtde) {
+		
+	}
+
+	@Override
+	public void drop(DropTargetDropEvent dtde) {
+		Transferable tr = dtde.getTransferable();
+	    DataFlavor[] flavors = tr.getTransferDataFlavors();
+	    
+	    for (int i = 0; i < flavors.length; ++i) {
+	    	try {
+				Object obj = tr.getTransferData(flavors[i]);
+				if (obj != null) {
+					if (obj instanceof MethodModel) {
+						((MethodListModel)methodsequence.getModel()).addMethodModel((MethodModel)obj);
+						listview.addMethodModelView((MethodModel)obj);
+						listview.update();
+						methodsequence.updateUI();
+						paramspanel.updateUI();
+						break;
+					}
+				}
+			} catch (UnsupportedFlavorException e) {
+				e.printStackTrace();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+	    }
+	    dtde.dropComplete(true);
+	    return;
+	}
+
+	@Override
+	public void dropActionChanged(DropTargetDragEvent dtde) {
+		
+	}
+
+	@Override
+	public void dragDropEnd(DragSourceDropEvent dsde) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void dragEnter(DragSourceDragEvent dsde) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void dragExit(DragSourceEvent dse) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void dragOver(DragSourceDragEvent dsde) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void dropActionChanged(DragSourceDragEvent dsde) {
+		// TODO Auto-generated method stub
+		
 	}
 }

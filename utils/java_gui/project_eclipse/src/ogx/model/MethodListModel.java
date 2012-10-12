@@ -5,10 +5,7 @@ import java.util.Vector;
 import javax.swing.ListModel;
 import javax.swing.event.ListDataListener;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
-public class MethodListModel implements ListModel {
+public class MethodListModel implements ListModel<MethodModel> {
 	
 	Vector<MethodModel> list = new Vector<MethodModel>();
 	
@@ -37,8 +34,8 @@ public class MethodListModel implements ListModel {
 	}
 
 	@Override
-	public Object getElementAt(int arg0) {
-		Object result = null;
+	public MethodModel getElementAt(int arg0) {
+		MethodModel result = null;
 		try {
 			result = list.get(arg0);
 		}
@@ -52,10 +49,22 @@ public class MethodListModel implements ListModel {
 	public int getSize() {
 		return list.size();
 	}
+	
+	public void removeElement(int index) {
+		list.remove(index);
+	}
 
 	@Override
 	public void removeListDataListener(ListDataListener arg0) {
 
+	}
+	
+	public void save(String path) {
+		
+	}
+	
+	public void load(String path, MethodListModel available_methods) {
+		
 	}
 
 }

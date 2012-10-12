@@ -84,7 +84,7 @@ public class Control {
 		// synchronize regions of interest in all images
 		sendCommand(new Command("sync_roi", images_struct.serialize()));
 		result = getStatus().isSuccess();
-		if (result) {
+		if (result && current_method_model != null) {
 			// send command "run"
 			sendCommand(new Command("run", current_method_model.getSerialMethod()));
 			Status current_status = getStatus();
