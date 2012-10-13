@@ -64,28 +64,30 @@ int mmCalculationServer::Serve()
 	while(std::getline(is, input).good())
 	{
 		reader.parse(input, obj_in);
-		if(obj_in[L"cmd"].asString() == L"finalize")
+		const mmString cmd = obj_in[L"cmd"].asString();
+
+		if(cmd == L"finalize")
 		{
 			os << fwriter.write(SuccessResponse(L"finish"));
 			break;
 		}
-		else if(obj_in[L"cmd"].asString() == L"getmethods")
+		else if(cmd == L"getmethods")
 			obj_out = this->GetMethods();
-		else if(obj_in[L"cmd"].asString() == L"load")
+		else if(cmd == L"load")
 			obj_out = ImportImage(obj_in[L"params"]);
-		else if(obj_in[L"cmd"].asString() == L"sync_roi")
+		else if(cmd == L"sync_roi")
 			obj_out = SyncROI(obj_in[L"params"]);
-		else if(obj_in[L"cmd"].asString() == L"sync_images")
+		else if(cmd == L"sync_images")
 			obj_out = SyncImages(obj_in[L"params"]);
-		else if(obj_in[L"cmd"].asString() == L"query_image")
+		else if(cmd == L"query_image")
 			obj_out = QueryImage(obj_in[L"params"]);
-		else if(obj_in[L"cmd"].asString() == L"query_layer")
+		else if(cmd == L"query_layer")
 			obj_out = QueryLayer(obj_in[L"params"]);
-		else if(obj_in[L"cmd"].asString() == L"data_received")
+		else if(cmd == L"data_received")
 			obj_out = DataReceived(obj_in[L"params"]);
-		else if(obj_in[L"cmd"].asString() == L"run")
+		else if(cmd == L"run")
 			obj_out = this->RunCalculationMethod(obj_in[L"params"]);
-		else if(obj_in[L"cmd"].asString() == L"getstatus")
+		else if(cmd == L"getstatus")
 			obj_out = this->GetStatus();
 		else 
 			obj_out = FailureResponse(L"Unknown command.");

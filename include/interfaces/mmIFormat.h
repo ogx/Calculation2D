@@ -8,14 +8,13 @@
 namespace mmFormats {
 	class mmFormatI {
 	public:
+		typedef std::list<mmString> Extensions;
 		////////////////////////////////////////////////////////////////////////////////
 		/// Returns list of file extensions supported by this format
 		///
 		/// @return list of supported formats as strings
 		////////////////////////////////////////////////////////////////////////////////
-		std::list<mmString> GetSupportedExensions(void) {
-			return m_sSupportedExtensions;
-		}
+		virtual Extensions GetSupportedExensions(void) = 0;
 
 		////////////////////////////////////////////////////////////////////////////////
 		/// Loads image from specified file into images structure
@@ -25,7 +24,7 @@ namespace mmFormats {
 		/// @param[in] p_sName name for newly loaded image
 		/// @return true if success, false otherwise
 		////////////////////////////////////////////////////////////////////////////////
-		virtual bool Read(mmString const & p_sFileName, mmImages::mmImageStructureI * const p_psImageStructure, mmString const & p_sName) = 0;
+		virtual bool Read(mmString const & p_sFileName, mmImages::mmImageStructureI * const p_psImageStructure, mmString const & p_sName = mmString()) = 0;
 		
 		////////////////////////////////////////////////////////////////////////////////
 		/// Saves specified image into file
@@ -40,8 +39,8 @@ namespace mmFormats {
 		/// Virtual destructor
 		////////////////////////////////////////////////////////////////////////////////
 		virtual ~mmFormatI(void) {};
-	protected:
-		std::list<mmString> m_sSupportedExtensions;
+	//protected:
+	//	std::list<mmString> m_sSupportedExtensions;
 	};
 };
 
