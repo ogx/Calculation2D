@@ -1,9 +1,17 @@
 package ogx.model;
 
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.Vector;
 
 import javax.swing.ListModel;
 import javax.swing.event.ListDataListener;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 public class MethodListModel implements ListModel<MethodModel> {
 	
@@ -59,12 +67,70 @@ public class MethodListModel implements ListModel<MethodModel> {
 
 	}
 	
-	public void save(String path) {
-		
+	public boolean save(String path) {
+		JSONObject output = new JSONObject();
+		JSONArray method_list = new JSONArray();
+		for (int i = 0; i < list.size(); ++i) {
+			method_list.put(list.get(i).getSerialMethod());
+		}
+		try {
+			output.put("methods", method_list);
+		} catch (JSONException e) {
+			e.printStackTrace();
+			return false;
+		}
+		try {
+			FileWriter fw = new FileWriter(path);
+			fw.write(output.toString());
+			fw.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+			return false;
+		}
+		return true;
 	}
 	
-	public void load(String path, MethodListModel available_methods) {
-		
+	public boolean load(String path, MethodListModel available_methods) {
+		try {
+			FileReader fr = new FileReader(path);
+			char[] buffer = new char[1000];
+			int chars_to_read = 0;
+			String input_data = "";
+			do {
+				chars_to_read = fr.read(buffer);
+				input_data += new String(buffer);
+			}
+			while (chars_to_read != -1);
+			JSONObject input = new JSONObject(input_data);
+			JSONArray method_list = input.getJSONArray("methods");
+			for (int i = 0; i < method_list.length(); ++i) {
+				boolean match_found = false;
+				MethodModel method = new MethodModel((JSONObject) method_list.get(i));
+				for (int j = 0; j < available_methods.getSize(); ++j) {
+					if (method.getID().equals(available_methods.getElementAt(j).getID())) {
+						match_found = true;
+						break;
+					}
+				}
+				if (match_found) {
+					list.add(method);
+				}
+				else {
+					return false;
+				}
+			}
+			
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+			return false;
+		} catch (IOException e) {
+			e.printStackTrace();
+			return false;
+		} catch (JSONException e) {
+			e.printStackTrace();
+			return false;
+		}
+		return true;
 	}
 
 }

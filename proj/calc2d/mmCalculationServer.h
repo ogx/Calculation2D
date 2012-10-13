@@ -47,5 +47,6 @@ private:
 	std::map<std::wstring, mmImages::mmGenericParamI::mmType> param_type_lookup;
 	Json::Value success_response, failure_response;
 	Json::Value FailureResponse(std::wstring const & error) const;
+	Json::Value SuccessResponse( std::wstring const & message ) const;
 };
 

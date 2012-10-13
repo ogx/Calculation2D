@@ -66,7 +66,7 @@ int mmCalculationServer::Serve()
 		reader.parse(input, obj_in);
 		if(obj_in[L"cmd"].asString() == L"finalize")
 		{
-			os << fwriter.write(success_response);
+			os << fwriter.write(SuccessResponse(L"finish"));
 			break;
 		}
 		else if(obj_in[L"cmd"].asString() == L"getmethods")
@@ -470,5 +470,12 @@ Json::Value mmCalculationServer::FailureResponse( std::wstring const & error ) c
 {
 	Json::Value result = failure_response;
 	result[L"error"] = error;
+	return result;
+}
+
+Json::Value mmCalculationServer::SuccessResponse( std::wstring const & message ) const
+{
+	Json::Value result = success_response;
+	result[L"status"] = message;
 	return result;
 }

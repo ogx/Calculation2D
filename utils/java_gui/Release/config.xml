@@ -1,11 +1,11 @@
 <launch4jConfig>
   <dontWrapJar>true</dontWrapJar>
   <headerType>gui</headerType>
-  <jar>..\calc2d.jar</jar>
+  <jar>..\project_eclipse\calc2d.jar</jar>
   <outfile>C:\Users\maczek\Documents\GitHub\Calculation2D\utils\java_gui\Release\calc2dgui.exe</outfile>
   <errTitle></errTitle>
-  <cmdLine>..\\..\\bin\\Release\\calc2d.exe</cmdLine>
-  <chdir>..</chdir>
+  <cmdLine>..\\..\\..\\bin\\Release\\calc2d.exe</cmdLine>
+  <chdir>.</chdir>
   <priority>normal</priority>
   <downloadUrl>http://java.com/download</downloadUrl>
   <supportUrl></supportUrl>

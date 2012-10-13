@@ -94,18 +94,36 @@ public class MethodListView implements
 		MethodModel result = null;
 		int index = method_panels.indexOf(current_component);
 		if (index >= 0) {
+			updateMethodModel(index);
 			result = (MethodModel) methodlist.getElementAt(index);
-			for (int i = 0; i < current_component.getComponentCount(); ++i) {
-				ParamPanel current_panel = (ParamPanel)current_component.getComponent(i);
-				for (int j = 0; j < result.getParams().size(); ++j) {
-					if (current_panel.getParamName().equals(result.getParams().get(j).getName())) {
-						result.getParams().get(j).setValue(current_panel.getContent());
+			
+//			for (int i = 0; i < current_component.getComponentCount(); ++i) {
+//				ParamPanel current_panel = (ParamPanel)current_component.getComponent(i);
+//				for (int j = 0; j < result.getParams().size(); ++j) {
+//					if (current_panel.getParamName().equals(result.getParams().get(j).getName())) {
+//						result.getParams().get(j).setValue(current_panel.getContent());
+//						break;
+//					}
+//				}
+//			}
+		}
+		return result;
+	}
+	
+	public void updateMethodModel(int index) {
+		if (index >= 0 && index < method_panels.size()) {
+			JPanel method_view = method_panels.get(index);
+			MethodModel method_model = (MethodModel) methodlist.getElementAt(index);
+			for (int i = 0; i < method_view.getComponentCount(); ++i) {
+				ParamPanel current_panel = (ParamPanel) method_view.getComponent(i);
+				for (int j = 0; j < method_model.getParams().size(); ++j) {
+					if (current_panel.getParamName().equals(method_model.getParams().get(j).getName())) {
+						method_model.getParams().get(j).setValue(current_panel.getContent());
 						break;
 					}
 				}
 			}
 		}
-		return result;
 	}
 
 	@Override

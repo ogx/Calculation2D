@@ -11,7 +11,6 @@ import java.awt.datatransfer.UnsupportedFlavorException;
 import java.awt.dnd.DnDConstants;
 import java.awt.dnd.DragGestureEvent;
 import java.awt.dnd.DragGestureListener;
-import java.awt.dnd.DragGestureRecognizer;
 import java.awt.dnd.DragSource;
 import java.awt.dnd.DragSourceDragEvent;
 import java.awt.dnd.DragSourceDropEvent;
@@ -26,7 +25,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
-import java.io.FileFilter;
+import java.awt.event.WindowEvent;
 import java.io.IOException;
 
 import javax.swing.BorderFactory;
@@ -42,6 +41,7 @@ import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.AbstractAction;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JToolBar;
@@ -55,6 +55,7 @@ import ogx.model.ImageModel;
 import ogx.model.ImagesStruct;
 import ogx.model.MethodModel;
 import ogx.view.ImageLabel;
+import ogx.view.JSONFilter;
 import ogx.view.MethodListView;
 import ogx.view.MethodSelection;
 
@@ -110,6 +111,8 @@ public class Main implements MouseListener,
 	 */
 	public static void main(String[] args) {
 		Main gui = new Main();
+		//System.err.println(System.getProperty("user.dir"));
+		//System.err.println(args[0]);
 		gui.setupController(args);
 		gui.setupAndShowWindow();
 	}
@@ -117,6 +120,13 @@ public class Main implements MouseListener,
 	public void setupAndShowWindow() {
 		// set up frame
 	    frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+	    frame.addWindowListener(new java.awt.event.WindowAdapter() {
+	        public void windowClosing(WindowEvent winEvt) {
+	            if (controller.disconnectCalcServer()) System.exit(0);
+	            System.exit(1);
+	        }
+	    });
+
 	    frame.setJMenuBar(bar);
 	    frame.setLayout(new BorderLayout());
 	    frame.getContentPane().add(toolbar, BorderLayout.NORTH);
@@ -394,6 +404,8 @@ public class Main implements MouseListener,
 	public void actionPerformed(ActionEvent e) {
 		String command = e.getActionCommand();
 		if (command == load_label) {
+			javax.swing.filechooser.FileFilter ff = new ogx.view.ImageFilter();
+			fc.setFileFilter(ff);
 			int returnVal = fc.showOpenDialog(fc);
 	        if (returnVal == JFileChooser.APPROVE_OPTION) {
 	        	controller.loadImage(fc.getSelectedFile().getPath());
@@ -479,20 +491,31 @@ public class Main implements MouseListener,
 			listview.update();
 		}
 		else if (command == "load_sequence") {
+			javax.swing.filechooser.FileFilter ff = new JSONFilter();
+			fc.setFileFilter(ff);
 			int returnVal = fc.showOpenDialog(fc);
 	        if (returnVal == JFileChooser.APPROVE_OPTION) {
 	        	listview.clearMethodModelView();
 	        	MethodListModel sequencemodel = (MethodListModel)methodsequence.getModel();
-	        	sequencemodel.load(fc.getSelectedFile().getPath(), (MethodListModel) methodlist.getModel());
-	        	for (int i = 0; i < sequencemodel.getSize(); ++i) {
-	        		listview.addMethodModelView(sequencemodel.getElementAt(i));
+	        	if (sequencemodel.load(fc.getSelectedFile().getPath(), (MethodListModel) methodlist.getModel())) {
+		        	for (int i = 0; i < sequencemodel.getSize(); ++i) {
+		        		listview.addMethodModelView(sequencemodel.getElementAt(i));
+		        	}
+		        	methodsequence.updateUI();
 	        	}
-	        	methodsequence.updateUI();
+	        	else {
+	        		JOptionPane.showMessageDialog(null, "Invalid file or some of calculation methods are not available.", "Error loading file.", JOptionPane.ERROR_MESSAGE);
+	        	}
 	        }
 		}
 		else if (command == "save_sequence") {
+			javax.swing.filechooser.FileFilter ff = new JSONFilter();
+			fc.setFileFilter(ff);
 			int returnVal = fc.showSaveDialog(fc);
 	        if (returnVal == JFileChooser.APPROVE_OPTION) {
+	        	for (int i = 0; i < methodsequence.getModel().getSize(); ++i) {
+	        		listview.updateMethodModel(i);
+	        	}
 	        	((MethodListModel)methodsequence.getModel()).save(fc.getSelectedFile().getPath());
 	        }
 		}
@@ -547,8 +570,9 @@ public class Main implements MouseListener,
 				Object obj = tr.getTransferData(flavors[i]);
 				if (obj != null) {
 					if (obj instanceof MethodModel) {
-						((MethodListModel)methodsequence.getModel()).addMethodModel((MethodModel)obj);
-						listview.addMethodModelView((MethodModel)obj);
+						MethodModel new_method = new MethodModel((MethodModel)obj);
+						((MethodListModel)methodsequence.getModel()).addMethodModel(new_method);
+						listview.addMethodModelView(new_method);
 						listview.update();
 						methodsequence.updateUI();
 						paramspanel.updateUI();
@@ -572,31 +596,26 @@ public class Main implements MouseListener,
 
 	@Override
 	public void dragDropEnd(DragSourceDropEvent dsde) {
-		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
 	public void dragEnter(DragSourceDragEvent dsde) {
-		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
 	public void dragExit(DragSourceEvent dse) {
-		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
 	public void dragOver(DragSourceDragEvent dsde) {
-		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
 	public void dropActionChanged(DragSourceDragEvent dsde) {
-		// TODO Auto-generated method stub
 		
 	}
 }

@@ -78,6 +78,12 @@ public class Control {
 		return method_list;
 	}
 	
+	public boolean disconnectCalcServer() {
+		sendCommand(new Command("finalize", new JSONObject()));
+		if (getStatus().isSuccess()) return true;
+		return false;
+	}
+	
 	public boolean runMethod(MethodModel current_method_model) {
 		boolean result = false;
 		String message;

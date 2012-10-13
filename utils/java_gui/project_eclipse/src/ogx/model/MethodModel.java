@@ -8,10 +8,18 @@ import org.json.JSONObject;
 
 public class MethodModel {
 	
-	final JSONObject method;
+	JSONObject method = null;
 
 	public MethodModel(JSONObject serial_method) {
 		method = serial_method;
+	}
+	
+	public MethodModel(MethodModel source) {
+		try {
+			this.method = new JSONObject(source.method.toString());
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
 	}
 	
 	public String getName() {
