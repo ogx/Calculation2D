@@ -14,6 +14,7 @@ static mmImages::mmImagesCalculationMethodI::sCalculationMethodParams cmFlipImag
 static const wchar_t* g_UIParam_ImageName = L"Image";
 static const wchar_t* g_UIParam_Horizontal = L"Horizontally?";
 static const wchar_t* g_UIParam_Vertical = L"Vertically?";
+static const wchar_t* g_UIParam_NewImage = L"Create new image?";
 
 static const wchar_t* g_UIParam_NewImageName = L"Flipped image";
 
@@ -25,11 +26,13 @@ mmCalcMethod(p_psLogReceiver, L"cmFlipImage")
 	// members initialization
 	m_bHorizontal = true;
 	m_bVertical = true;
+	m_bNewImage = false;
 
 	// input parameters
 	BindInputParam(g_UIParam_ImageName, mmGenericParamI::mmImageNameType, m_sImageName); 
 	BindInputParam(g_UIParam_Horizontal, mmGenericParamI::mmBoolType, m_bHorizontal); 
 	BindInputParam(g_UIParam_Vertical, mmGenericParamI::mmBoolType, m_bVertical); 
+	BindInputParam(g_UIParam_NewImage, mmGenericParamI::mmBoolType, m_bNewImage);
 	// output parameters
 	BindOutputParam(g_UIParam_NewImageName, mmGenericParamI::mmImageNameType, m_sNewImageName);
 }
@@ -48,18 +51,20 @@ bool mmImages::cmFlipImage::Calculate()
 
 	const mmImageI::mmPixelType v_iPixelType = v_psImage->GetPixelType();
 
-	// append suffixes to image name
-	m_sNewImageName = m_sImageName + L"_flipped";
+	if (m_bNewImage) {
+		// append suffixes to image name
+		m_sNewImageName = m_sImageName + L"_flipped";
 
-	if (m_bHorizontal) m_sNewImageName += L"_H";
-	if (m_bVertical) m_sNewImageName += L"_V";
+		if (m_bHorizontal) m_sNewImageName += L"_H";
+		if (m_bVertical) m_sNewImageName += L"_V";
 
 	
-	v_psNewImage = m_psImageStructure->CreateImage(m_sNewImageName,
-																													v_iWidth,
-																													v_iHeight,
-																													v_iPixelType);
-	if (!v_psNewImage) return false;
+		v_psNewImage = m_psImageStructure->CreateImage(m_sNewImageName,
+																														v_iWidth,
+																														v_iHeight,
+																														v_iPixelType);
+		if (!v_psNewImage) return false;
+	}
 	
 
 	const mmRect v_sROI = v_psImage->GetRegionOfInterest();
@@ -95,37 +100,43 @@ bool mmImages::cmFlipImage::Calculate()
 			m_rProgress =  100.0 * ++v_iCalculatedRows / v_rAllRows;
 		}
 
-		mmLayerI *v_psNewChannel = v_psNewImage->GetChannel(v_iChannel);
+		mmLayerI *v_psNewChannel;
+		if (m_bNewImage) {
+			v_psNewChannel = v_psNewImage->GetChannel(v_iChannel);
+		}
+		else {
+			v_psNewChannel = v_psImage->GetChannel(v_iChannel);
+		}
 
 		// write channel
 		v_psNewChannel->SetPixels(v_sROI, v_prNewPixels);
 	}
 
 	// loop over all additional data layers
-	for (mmLayerI* v_psLayer = v_psImage->FindLayer(); NULL != v_psLayer; v_psLayer = v_psImage->FindLayer(v_psLayer)) {
+	//for (mmLayerI* v_psLayer = v_psImage->FindLayer(); NULL != v_psLayer; v_psLayer = v_psImage->FindLayer(v_psLayer)) {
 
-		v_psLayer->GetPixels(v_sROI, v_prPixels);
+	//	v_psLayer->GetPixels(v_sROI, v_prPixels);
 
-		// loop over all pixels
-		for (mmUInt j = 0; j < v_sROI.iHeight; j++) {
-			for (mmUInt i = 0; i < v_sROI.iWidth; i++) {
+	//	// loop over all pixels
+	//	for (mmUInt j = 0; j < v_sROI.iHeight; j++) {
+	//		for (mmUInt i = 0; i < v_sROI.iWidth; i++) {
 
-				mmUInt v_iPixelID = j*v_sROI.iWidth + i;
-				mmUInt v_iNewPixelID = (m_bHorizontal ? v_sROI.iWidth - 1 - i : i) + v_sROI.iWidth*(m_bVertical ? v_sROI.iHeight - 1 - j : j);
+	//			mmUInt v_iPixelID = j*v_sROI.iWidth + i;
+	//			mmUInt v_iNewPixelID = (m_bHorizontal ? v_sROI.iWidth - 1 - i : i) + v_sROI.iWidth*(m_bVertical ? v_sROI.iHeight - 1 - j : j);
 
-				v_prNewPixels[v_iNewPixelID] = v_prPixels[v_iPixelID];
+	//			v_prNewPixels[v_iNewPixelID] = v_prPixels[v_iPixelID];
 
-			}
-			m_rProgress = 100.0 * ++v_iCalculatedRows / v_rAllRows;
-		}
+	//		}
+	//		m_rProgress = 100.0 * ++v_iCalculatedRows / v_rAllRows;
+	//	}
 
-		mmLayerI *v_psNewLayer= v_psNewImage->CreateLayer(v_psLayer->GetName(), v_psLayer->GetDefaultValue());
+	//	mmLayerI *v_psNewLayer= v_psNewImage->CreateLayer(v_psLayer->GetName(), v_psLayer->GetDefaultValue());
 
-		if(!v_psNewLayer) return false;
-		// write data layer
-		v_psNewLayer->SetPixels(v_sROI, v_prNewPixels);
+	//	if(!v_psNewLayer) return false;
+	//	// write data layer
+	//	v_psNewLayer->SetPixels(v_sROI, v_prNewPixels);
 
-	}
+	//}
 
 	delete [] v_prPixels;
 	delete [] v_prNewPixels;

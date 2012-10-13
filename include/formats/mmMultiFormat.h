@@ -9,6 +9,9 @@ namespace mmFormats {
 	class mmMultiFormat : public mmFormatI {
 	public:
 		mmMultiFormat(void);
+		virtual ~mmMultiFormat(void);
+
+		virtual Extensions mmFormatI::GetSupportedExensions();
 		virtual bool Read(mmString const & p_sFileName, mmImages::mmImageStructureI * const p_psImageStructure, mmString const & p_sName);
 		virtual bool Write(mmString const & p_sFileName, mmImages::mmImageI const * const p_psImage);
 
