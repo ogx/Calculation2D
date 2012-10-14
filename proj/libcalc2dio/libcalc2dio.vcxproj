@@ -73,7 +73,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
     <Lib>
-      <AdditionalLibraryDirectories>$(ProjectDir)\lib</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(SolutionDir)proj\calc2dcmd\lib</AdditionalLibraryDirectories>
       <AdditionalDependencies>libpng15.lib; zlib.lib</AdditionalDependencies>
     </Lib>
     <ProjectReference>
@@ -98,7 +98,7 @@
       <OptimizeReferences>true</OptimizeReferences>
     </Link>
     <Lib>
-      <AdditionalLibraryDirectories>$(ProjectDir)\lib</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(SolutionDir)proj\calc2dcmd\lib</AdditionalLibraryDirectories>
       <AdditionalDependencies>libpng15.lib; zlib.lib</AdditionalDependencies>
     </Lib>
     <ProjectReference>
