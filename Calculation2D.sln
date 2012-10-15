@@ -29,6 +29,7 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libcalc2dmethod", "proj\lib
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libcalc2d", "proj\libcalc2d\libcalc2d.vcxproj", "{81764A51-4B0F-4310-ACD1-059BFC9BEDDE}"
 	ProjectSection(ProjectDependencies) = postProject
+		{A566B21B-3AA1-476A-BEA4-4641F4919371} = {A566B21B-3AA1-476A-BEA4-4641F4919371}
 		{8879B4A9-91B5-44C4-BC21-CD9737B3D37B} = {8879B4A9-91B5-44C4-BC21-CD9737B3D37B}
 	EndProjectSection
 EndProject
