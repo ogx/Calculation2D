@@ -127,11 +127,13 @@ public class Control {
 		} catch (JSONException e) {
 			e.printStackTrace();
 		}
-		sendCommand(new Command("load", params));
-		JSONObject response = readResponse();
-		if (response == null) return;
-				
-		readImages(response);	
+		sendCommand(new Command("sync_roi", images_struct.serialize()));
+		if (getStatus().isSuccess()) {
+			sendCommand(new Command("load", params));
+			JSONObject response = readResponse();
+			if (response == null) return;
+			readImages(response);
+		}
 	}
 	
 	private boolean readImages(JSONObject missing_struct) {

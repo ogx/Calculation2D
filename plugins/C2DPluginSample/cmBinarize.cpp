@@ -59,6 +59,8 @@ bool mmImages::cmBinarize::Calculate()
 	// loop over all channels
 	for (mmUInt v_iChannel = 0; v_iChannel < v_iChannels; ++v_iChannel) {
 		mmLayerI *v_psChannel = v_psImage->GetChannel(v_iChannel);
+		// discard alpha channel
+		if (v_psChannel->GetName() == L"A") continue;
 		// read channel
 		v_psChannel->GetPixels(v_sROI, v_prPixels);
 		// loop over all pixels
@@ -77,7 +79,10 @@ bool mmImages::cmBinarize::Calculate()
 	// set layer name to `binarized'
 	m_sLayerName = L"binarized";
 	// create new layer
-	mmLayerI* v_psNewLayer = v_psImage->CreateLayer(m_sLayerName, -1.0);
+	mmLayerI* v_psNewLayer = NULL;
+	if ((v_psNewLayer = v_psImage->FindLayer(NULL, m_sLayerName)) == NULL) {
+		v_psNewLayer = v_psImage->CreateLayer(m_sLayerName, 0.0);
+	}
 	// if creating the layer failed, clear output parameter and say there's an error
 	if (!v_psNewLayer) {
 		m_sLayerName = L"";

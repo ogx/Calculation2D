@@ -292,7 +292,8 @@ Json::Value mmCalculationServer::QueryLayer( Json::Value& layer_json )
 			mmReal max_val = *(std::max_element(pixels, pixels + width*height));
 			mmReal min_val = *(std::min_element(pixels, pixels + width*height));
 			for (int i = 0; i < width*height; ++i) {
-				out_buffer[i] = (char)(255.0*(pixels[i] - min_val)/(max_val - min_val));
+				if (max_val != min_val) out_buffer[i] = (char)(255.0*(pixels[i] - min_val)/(max_val - min_val));
+				else out_buffer[i] = (char)(255.0*(pixels[i] - min_val));
 			}
 			// enter binary mode
 			_setmode(_fileno( stdout ), _O_BINARY);

@@ -54,9 +54,10 @@ public class ImagesStruct {
 				current_image = ((ImageModel)(image_node.getUserObject())).getImage();
 				if (current_image.getWidth() == width && current_image.getHeight() == height) {
 					Rectangle current_roi = ((ImageModel)(image_node.getUserObject())).getROI();
+					//Rectangle current_roi = new Rectangle(0, 0, width, height);
 					int pixel;
-					for (int i = current_roi.x; i < current_roi.width; ++i) {
-						for (int j = current_roi.y; j < current_roi.height; ++j) {
+					for (int i = current_roi.x; i < current_roi.x + current_roi.width; ++i) {
+						for (int j = current_roi.y; j < current_roi.y + current_roi.height; ++j) {
 							pixel = 0xFF000000 | 
 									((int)buffer[pixel_size*(j*width + i) + 3] << 16 & 0x00FF0000) | 		// red
 									((int)buffer[pixel_size*(j*width + i) + 2] << 8  & 0x0000FF00) | 		// green
@@ -98,8 +99,8 @@ public class ImagesStruct {
 				current_image = ((ImageModel)(layer_node.getUserObject())).getImage();
 				Rectangle current_roi = ((ImageModel)(layer_node.getUserObject())).getROI();
 				int pixel;
-				for (int i = current_roi.x; i < current_roi.width; ++i) {
-					for (int j = current_roi.y; j < current_roi.height; ++j) {
+				for (int i = current_roi.x; i < current_roi.x + current_roi.width; ++i) {
+					for (int j = current_roi.y; j < current_roi.y + current_roi.height; ++j) {
 						pixel = 0xFF000000 | 
 								(buffer[j*width + i] << 16 & 0x00FF0000) | 
 								(buffer[j*width + i] << 8  & 0x0000FF00) | 

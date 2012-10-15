@@ -724,7 +724,8 @@ bool mmImages::mmImageStructure::DeleteImage(mmID const & p_sID) {
 	if(v_sImage != m_sImages.end()) {
 		delete *v_sImage;
 		m_sImages.erase(v_sImage);
-		m_sLastImageID = (*m_sImages.rbegin())->GetID();
+		if (m_sImages.empty()) m_sLastImageID = mmID(0);
+		else m_sLastImageID = (*m_sImages.rbegin())->GetID();
 		return true;
 	} else
 		return false;

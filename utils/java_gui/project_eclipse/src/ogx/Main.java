@@ -483,7 +483,10 @@ public class Main implements MouseListener,
 				controller.runMethod(listview.getCurrentMethodModel());
 			}
 			//controller.runMethod(listview.getCurrentMethodModel());
+			//setCurrentImageROI(null);
+			//setCurrentImageROI(current_image.getROI());
 			treeview.updateUI();
+			histogramlabel.updateUI();
 			imagelabel.updateUI();
 			listview.update();
 		}
