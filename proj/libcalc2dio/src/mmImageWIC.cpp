@@ -235,16 +235,16 @@ namespace mmFormats
 			v_sImage.vBuffer.resize(v_uiPixelCount*v_sImage.ucBPP);
 			unsigned char* v_pcBuffer = &v_sImage.vBuffer.front();
 
-			for (mmUInt c = 0; c < v_ucChannels; ++c)
+			for (mmUInt v_iChannel = 0; v_iChannel < v_ucChannels; ++v_iChannel)
 			{
-				p_psImage->GetChannel(c)->GetRows(0, v_sImage.uiHeight, v_prBuf);
+				p_psImage->GetChannel(v_iChannel)->GetRows(0, v_sImage.uiHeight, v_prBuf);
 
 				// RGB to BGR conversion
-				unsigned char v_ucSwappedChannel = c;
+				unsigned char v_ucSwappedChannel = v_iChannel;
 				if (2 < v_ucChannels)
 				{
-					if (0 == c) c = 2;
-					else if (2 == c) c = 0;
+					if (0 == v_iChannel) v_ucSwappedChannel = 2;
+					else if (2 == v_iChannel) v_ucSwappedChannel = 0;
 				}
 
 				for (mmUInt i = 0; i < v_uiPixelCount; ++i) {
