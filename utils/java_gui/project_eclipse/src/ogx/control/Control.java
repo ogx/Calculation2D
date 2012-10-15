@@ -44,6 +44,7 @@ public class Control {
 	OutputStream stdin = null;
 	BufferedReader reader = null;
 	BufferedWriter writer = null;
+	private String last_error = "";
 	
 	public Control(ImagesStruct images_struct) {
 		this.images_struct = images_struct;
@@ -90,6 +91,10 @@ public class Control {
 		return false;
 	}
 	
+	public String getLastError() {
+		return last_error;
+	}
+	
 	public boolean runMethod(MethodModel current_method_model) {
 		boolean result = false;
 		String message;
@@ -126,20 +131,22 @@ public class Control {
 		return result;
 	}
 	
-	public void loadImage(String path) {
+	public boolean loadImage(String path) {
 		JSONObject params = new JSONObject();
 		try {
 			params.put("path", path);
 		} catch (JSONException e) {
 			e.printStackTrace();
+			return false;
 		}
 		sendCommand(new Command("sync_roi", images_struct.serialize()));
 		if (getStatus().isSuccess()) {
 			sendCommand(new Command("load", params));
 			JSONObject response = readResponse();
-			if (response == null) return;
-			readImages(response);
+			if (response.has("error")) return false;
+			if (!readImages(response)) return false;
 		}
+		return true;
 	}
 	
 	private boolean readImages(JSONObject missing_struct) {
@@ -238,8 +245,8 @@ public class Control {
 		try {
 			result = new JSONObject(reader.readLine());
 			if (result.has("error")) {
-				System.err.println("Error received from client: " + result.getString("error"));
-				return null;
+				last_error = "Error received from server: " + result.getString("error");
+				//System.err.println("Error received from server: " + result.getString("error"));
 			}
 		} catch (JSONException e) {
 			e.printStackTrace();
@@ -276,6 +283,22 @@ public class Control {
 			}
 		}
 		return result;
+	}
+
+	public boolean saveImage(String path, DefaultMutableTreeNode image_node) {
+		JSONObject params = new JSONObject();
+		try {
+			params.put("path", path);
+			params.put("image", images_struct.serializeImage(image_node));
+		} catch (JSONException e) {
+			e.printStackTrace();
+			return false;
+		}
+		sendCommand(new Command("save", params));
+		if (getStatus().isSuccess()) {
+			return true;
+		}
+		return false;
 	}
 	
 }

@@ -21,6 +21,7 @@ private:
 	Json::Value GetStatus();
 	Json::Value RunCalculationMethod(Json::Value&);
 	Json::Value ImportImage( Json::Value& img_path );
+	Json::Value ExportImage( Json::Value& params );
 	Json::Value QueryImage( Json::Value& image );
 	Json::Value QueryLayer( Json::Value& layer );
 	Json::Value DataReceived( Json::Value& params );

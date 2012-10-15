@@ -116,8 +116,12 @@ public class Main implements MouseListener,
 			gui.setupAndShowWindow();
 		}
 		else {
-			JOptionPane.showMessageDialog(null, "Could not start server 'calc2d.exe'. Did you forget to build it?", "Error", JOptionPane.ERROR_MESSAGE);
+			dispErrorMessage("Could not start server 'calc2d.exe'. Did you forget to build it?");
 		}
+	}
+	
+	public static void dispErrorMessage(String error_message) {
+		JOptionPane.showMessageDialog(null, error_message, "Error", JOptionPane.ERROR_MESSAGE);
 	}
 	
 	public void setupAndShowWindow() {
@@ -126,6 +130,7 @@ public class Main implements MouseListener,
 	    frame.addWindowListener(new java.awt.event.WindowAdapter() {
 	        public void windowClosing(WindowEvent winEvt) {
 	            if (controller.disconnectCalcServer()) System.exit(0);
+	            dispErrorMessage(controller.getLastError());
 	            System.exit(1);
 	        }
 	    });
@@ -145,15 +150,21 @@ public class Main implements MouseListener,
 		controller = new Control(images_struct);
 		if (controller.connectServer(args[0])) {
 		    MethodListModel methods = controller.getMethods();
-		    MethodListModel sequence = new MethodListModel();
-			methodlist.setModel(methods);
-			methodsequence.setModel(sequence);
-		
-			listview = new MethodListView(sequence, paramspanel, images_struct);
-			methodsequence.addListSelectionListener(listview);
-			listview.bindList(methodsequence);
-			methodlist.setSelectedIndex(0);
-			return true;
+		    String last_error = controller.getLastError();
+		    if (last_error.equals("")) {
+			    MethodListModel sequence = new MethodListModel();
+				methodlist.setModel(methods);
+				methodsequence.setModel(sequence);
+			
+				listview = new MethodListView(sequence, paramspanel, images_struct);
+				methodsequence.addListSelectionListener(listview);
+				listview.bindList(methodsequence);
+				methodlist.setSelectedIndex(0);
+				return true;
+		    }
+		    else {
+		    	dispErrorMessage(last_error);
+		    }
 		}
 		return false;
 	}
@@ -336,6 +347,7 @@ public class Main implements MouseListener,
 				int selected_index = methodsequence.getSelectedIndex();
 				((MethodListModel)methodsequence.getModel()).removeElement(selected_index);
 				listview.removeMethodModelView(selected_index);
+				methodsequence.clearSelection();
 				methodsequence.updateUI();
 				//paramspanel.updateUI();
 			}
@@ -411,12 +423,14 @@ public class Main implements MouseListener,
 	public void actionPerformed(ActionEvent e) {
 		String command = e.getActionCommand();
 		if (command == load_label) {
-			//javax.swing.filechooser.FileFilter ff = new ogx.view.ImageFilter();
-			//fc.setFileFilter(ff);
+			javax.swing.filechooser.FileFilter ff = new ogx.view.ImageFilter();
 			JFileChooser fc = new JFileChooser();
+			fc.setFileFilter(ff);
 			int returnVal = fc.showOpenDialog(fc);
 	        if (returnVal == JFileChooser.APPROVE_OPTION) {
-	        	controller.loadImage(fc.getSelectedFile().getPath());
+	        	if (!controller.loadImage(fc.getSelectedFile().getPath())) {
+	        		dispErrorMessage(controller.getLastError());
+	        	}
 
 	        	treeview.updateUI();
         		treeview.expandRow(treeview.getRowCount()-1);
@@ -429,6 +443,19 @@ public class Main implements MouseListener,
         		imagelabelsize.setSize(current_image.getImage().getWidth(), current_image.getImage().getHeight());
 				imagelabel.setPreferredSize(imagelabelsize);
 				imagelabel.updateUI();
+	        }
+		}
+		else if (command == save_label) {
+			javax.swing.filechooser.FileFilter ff = new ogx.view.ImageFilter();
+			JFileChooser fc = new JFileChooser();
+			fc.setFileFilter(ff);
+			int returnVal = fc.showSaveDialog(fc);
+	        if (returnVal == JFileChooser.APPROVE_OPTION) {
+	        	DefaultMutableTreeNode selected_node = (DefaultMutableTreeNode) treeview.getLastSelectedPathComponent();
+	        	if (selected_node.getLevel() == 2) selected_node = (DefaultMutableTreeNode) selected_node.getParent();
+	        	if (!controller.saveImage(fc.getSelectedFile().getPath(), selected_node)) {
+	        		dispErrorMessage(controller.getLastError());
+	        	}
 	        }
 		}
 		else if (command == fitview_label) {
@@ -517,7 +544,9 @@ public class Main implements MouseListener,
 		else if (command == "run_method") {
 			for (int i = 0; i < methodsequence.getModel().getSize(); ++i) {
 				methodsequence.setSelectedIndex(i);
-				controller.runMethod(listview.getCurrentMethodModel());
+				if (!controller.runMethod(listview.getCurrentMethodModel())) {
+					dispErrorMessage(controller.getLastError());
+				}
 			}
 			//controller.runMethod(listview.getCurrentMethodModel());
 			//setCurrentImageROI(null);
@@ -542,7 +571,7 @@ public class Main implements MouseListener,
 		        	methodsequence.updateUI();
 	        	}
 	        	else {
-	        		JOptionPane.showMessageDialog(null, "Invalid file or some of calculation methods are not available.", "Error loading file.", JOptionPane.ERROR_MESSAGE);
+	        		dispErrorMessage("Invalid file or some of calculation methods are not available.");
 	        	}
 	        }
 		}

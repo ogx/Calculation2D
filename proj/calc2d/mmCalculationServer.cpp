@@ -75,6 +75,8 @@ int mmCalculationServer::Serve()
 			obj_out = this->GetMethods();
 		else if(cmd == L"load")
 			obj_out = ImportImage(obj_in[L"params"]);
+		else if(cmd == L"save")
+			obj_out = ExportImage(obj_in[L"params"]);
 		else if(cmd == L"sync_roi")
 			obj_out = SyncROI(obj_in[L"params"]);
 		else if(cmd == L"sync_images")
@@ -187,10 +189,26 @@ Json::Value mmCalculationServer::ImportImage( Json::Value& img_path )
 
 	Json::Value image_array(Json::arrayValue);
 	image_array.append(ImageLabelToJSON(image_structure->FindImage(NULL, v_sName)));
+	response = SuccessResponse(L"Image loaded successfully");
 	response[L"images_structure"] = image_array;
 
 	text_response = true;
 	return response;
+}
+
+Json::Value mmCalculationServer::ExportImage( Json::Value& params )
+{
+	std::wstring path = params[L"path"].asString();
+
+	mmID image_id = mmID(params[L"image"][L"id"].asInt());
+	mmImages::mmImageI* current_image = image_structure->GetImage(image_id);
+	if (current_image != NULL) {
+		if( m_psRWFormat->Write(path, current_image)) {
+			return SuccessResponse(L"Image saved successfully");
+		}
+	}
+	text_response = true;
+	return FailureResponse(L"Saving file failed.");
 }
 
 Json::Value mmCalculationServer::ImageLabelToJSON(mmImages::mmImageI* const image) const

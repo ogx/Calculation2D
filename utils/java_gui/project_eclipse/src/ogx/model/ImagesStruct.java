@@ -12,7 +12,7 @@ import org.json.JSONObject;
 
 public class ImagesStruct {
 	
-	DefaultMutableTreeNode root = new DefaultMutableTreeNode("Images structure");
+	DefaultMutableTreeNode root = new DefaultMutableTreeNode("Image structure");
 	
 	public ImagesStruct() {
 		

@@ -6,10 +6,11 @@ import javax.swing.filechooser.FileFilter;
 
 public class ImageFilter extends FileFilter {
 	
-	private final String[] extensions = {"jpg", "bmp", "png", "gif", "jpeg"};
+	private final String[] extensions = {"jpg", "bmp", "png", "jpeg", "tif", "tiff", "ixml"};
 
 	@Override
 	public boolean accept(File f) {
+		if (f.isDirectory()) return true;
 		for (int i = 0; i < extensions.length; ++i) {
 			if (f.getName().toLowerCase().endsWith(extensions[i])) return true;
 		}
@@ -18,7 +19,7 @@ public class ImageFilter extends FileFilter {
 
 	@Override
 	public String getDescription() {
-		return "Image file";
+		return "Image file [jpg, bmp, png, tif, ixml]";
 	}
 
 }
