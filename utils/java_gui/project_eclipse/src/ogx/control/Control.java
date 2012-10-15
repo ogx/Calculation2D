@@ -45,9 +45,13 @@ public class Control {
 	BufferedReader reader = null;
 	BufferedWriter writer = null;
 	
-	public Control(ImagesStruct images_struct, String calc2d_path) {
+	public Control(ImagesStruct images_struct) {
 		this.images_struct = images_struct;
 		method_list = new MethodListModel();
+	}
+	
+	public boolean connectServer(String calc2d_path) {
+		boolean result = false;
 		ProcessBuilder proc_build = new ProcessBuilder(calc2d_path);
 		try {
 			calc2d = proc_build.start();
@@ -60,7 +64,9 @@ public class Control {
 			stdout = calc2d.getInputStream();
 			reader = new BufferedReader(new InputStreamReader(stdout));
 			writer = new BufferedWriter(new OutputStreamWriter(stdin));
+			result = true;
 		}
+		return result;
 	}
 	
 	public MethodListModel getMethods() {

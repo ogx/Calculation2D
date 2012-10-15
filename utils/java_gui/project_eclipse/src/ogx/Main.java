@@ -96,6 +96,7 @@ public class Main implements MouseListener,
 	static final String zoomout_label = "Zoom out";
 	static final String fitview_label = "Fit to window";
 	static final String nominal_label = "Nominal size (1:1)";
+	static final String delete_node = "Delete selected node from structure";
 	
 	Main() {
 		setupGUI();
@@ -111,8 +112,12 @@ public class Main implements MouseListener,
 		Main gui = new Main();
 		//System.err.println(System.getProperty("user.dir"));
 		//System.err.println(args[0]);
-		gui.setupController(args);
-		gui.setupAndShowWindow();
+		if (gui.setupController(args)) {
+			gui.setupAndShowWindow();
+		}
+		else {
+			JOptionPane.showMessageDialog(null, "Could not start server 'calc2d.exe'. Did you forget to build it?", "Error", JOptionPane.ERROR_MESSAGE);
+		}
 	}
 	
 	public void setupAndShowWindow() {
@@ -136,17 +141,21 @@ public class Main implements MouseListener,
 	    frame.setVisible(true);
 	}
 	
-	public void setupController(String[] args) {	
-		controller = new Control(images_struct, args[0]);
-	    MethodListModel methods = controller.getMethods();
-	    MethodListModel sequence = new MethodListModel();
-		methodlist.setModel(methods);
-		methodsequence.setModel(sequence);
+	public boolean setupController(String[] args) {	
+		controller = new Control(images_struct);
+		if (controller.connectServer(args[0])) {
+		    MethodListModel methods = controller.getMethods();
+		    MethodListModel sequence = new MethodListModel();
+			methodlist.setModel(methods);
+			methodsequence.setModel(sequence);
 		
-		listview = new MethodListView(sequence, paramspanel, images_struct);
-		methodsequence.addListSelectionListener(listview);
-		listview.bindList(methodsequence);
-		methodlist.setSelectedIndex(0);
+			listview = new MethodListView(sequence, paramspanel, images_struct);
+			methodsequence.addListSelectionListener(listview);
+			listview.bindList(methodsequence);
+			methodlist.setSelectedIndex(0);
+			return true;
+		}
+		return false;
 	}
 	
 	private void setupGUI() {
@@ -180,6 +189,7 @@ public class Main implements MouseListener,
 	    // fill menu tools
 	    tools.add(addMenuItem(set_roi_label));
 	    tools.add(addMenuItem(clear_roi_label));
+	    tools.add(addMenuItem(delete_node));
 	    bar.add(tools);
 
 	    // fill menu help
@@ -197,6 +207,7 @@ public class Main implements MouseListener,
 	    toolbar.addSeparator();
 	    toolbar.add(addToolbarButton(set_roi_label, new ImageIcon("../resources/setroi.png")));
 	    toolbar.add(addToolbarButton(clear_roi_label, new ImageIcon("../resources/clearroi.png")));
+	    toolbar.add(addToolbarButton(delete_node, new ImageIcon("../resources/remove.png")));
 	    toolbar.setFloatable(false);
 	    toolbar.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
 	    
@@ -368,22 +379,22 @@ public class Main implements MouseListener,
 					histogramlabel.updateUI();
 					
 				break;
-				case MouseEvent.BUTTON3 :
-					DefaultMutableTreeNode parent_node = (DefaultMutableTreeNode)chosen_node.getParent();
-					if (chosen_node.getLevel() > 0) {
-						if (chosen_node.getChildCount() > 0) {
-							chosen_node.removeAllChildren();
-						}
-						parent_node.remove(chosen_node);
-						treeview.clearSelection();
-					}
-					treeview.updateUI();
-					imagelabel.setImage(null);
-					imagelabel.updateUI();
-					histogramlabel.setIcon(null);
-					histogramlabel.updateUI();
-					listview.update();
-				break;
+//				case MouseEvent.BUTTON3 :
+//					DefaultMutableTreeNode parent_node = (DefaultMutableTreeNode)chosen_node.getParent();
+//					if (chosen_node.getLevel() > 0) {
+//						if (chosen_node.getChildCount() > 0) {
+//							chosen_node.removeAllChildren();
+//						}
+//						parent_node.remove(chosen_node);
+//						treeview.clearSelection();
+//					}
+//					treeview.updateUI();
+//					imagelabel.setImage(null);
+//					imagelabel.updateUI();
+//					histogramlabel.setIcon(null);
+//					histogramlabel.updateUI();
+//					listview.update();
+//				break;
 				}
 			}	
 			else {
@@ -476,6 +487,32 @@ public class Main implements MouseListener,
 			}
 			histogramlabel.updateUI();
 			imagelabel.updateUI();
+		}
+		else if (command == delete_node) {
+			DefaultMutableTreeNode chosen_node = (DefaultMutableTreeNode)treeview.getLastSelectedPathComponent();
+			if (chosen_node != null) {
+				DefaultMutableTreeNode parent_node = (DefaultMutableTreeNode)chosen_node.getParent();
+				if (chosen_node.getLevel() > 0) {
+					ImageModel current_obj = (ImageModel)chosen_node.getUserObject();
+					//if (chosen_node.getLevel() == 2) {
+						if (!current_obj.getName().equals("R") && 
+							!current_obj.getName().equals("G") && 
+							!current_obj.getName().equals("B")) {
+							if (chosen_node.getChildCount() > 0) {
+								chosen_node.removeAllChildren();
+							}
+							parent_node.remove(chosen_node);
+							treeview.clearSelection();
+							treeview.updateUI();
+							imagelabel.setImage(null);
+							imagelabel.updateUI();
+							histogramlabel.setIcon(null);
+							histogramlabel.updateUI();
+							listview.update();
+						}
+					//}
+				}
+			}
 		}
 		else if (command == "run_method") {
 			for (int i = 0; i < methodsequence.getModel().getSize(); ++i) {
