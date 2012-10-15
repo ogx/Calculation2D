@@ -253,7 +253,7 @@ Json::Value mmCalculationServer::QueryImage( Json::Value& image_json )
 				}
 				break;
 			case mmImages::mmImageI::mmP32 :
-				image->GetPixels(mmRect(0, 0, width, height), (mmPixel24*)pixels);
+				image->GetPixels(mmRect(0, 0, width, height), (mmPixel32*)pixels);
 				for (int i = 0; i < width*height; ++i) {
 					out_buffer[i] = (int)(pixels[4*i]*255) << 24 | (int)(pixels[4*i+1]*255) << 16 | (int)(pixels[4*i+2]*255) << 8 | (int)(pixels[4*i+3]*255);
 				}

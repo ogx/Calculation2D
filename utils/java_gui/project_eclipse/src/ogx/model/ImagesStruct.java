@@ -58,9 +58,9 @@ public class ImagesStruct {
 					for (int i = current_roi.x; i < current_roi.width; ++i) {
 						for (int j = current_roi.y; j < current_roi.height; ++j) {
 							pixel = 0xFF000000 | 
-									((int)buffer[pixel_size*(j*width + i) + 2] << 16 & 0x00FF0000) | 		// red
-									((int)buffer[pixel_size*(j*width + i) + 1] << 8  & 0x0000FF00) | 		// green
-									((int)buffer[pixel_size*(j*width + i)    ]       & 0x000000FF);			// blue
+									((int)buffer[pixel_size*(j*width + i) + 3] << 16 & 0x00FF0000) | 		// red
+									((int)buffer[pixel_size*(j*width + i) + 2] << 8  & 0x0000FF00) | 		// green
+									((int)buffer[pixel_size*(j*width + i) + 1]       & 0x000000FF);			// blue
 							current_image.setRGB(i, j, pixel);
 						}
 					}
@@ -72,15 +72,15 @@ public class ImagesStruct {
 					if (layerR != null && layerG != null && layerB != null) {
 						byte[] layer_buffer = new byte[width*height]; 
 						for (int i = 0; i < width*height; ++i) {
-							layer_buffer[i] = buffer[pixel_size*i+2];
+							layer_buffer[i] = buffer[pixel_size*i+3];
 						}
 						fillLayer(layerR, layer_buffer, width, height);
 						for (int i = 0; i < width*height; ++i) {
-							layer_buffer[i] = buffer[pixel_size*i+1];
+							layer_buffer[i] = buffer[pixel_size*i+2];
 						}
 						fillLayer(layerG, layer_buffer, width, height);
 						for (int i = 0; i < width*height; ++i) {
-							layer_buffer[i] = buffer[pixel_size*i];
+							layer_buffer[i] = buffer[pixel_size*i+1];
 						}
 						fillLayer(layerB, layer_buffer, width, height);
 						layer_buffer = null;

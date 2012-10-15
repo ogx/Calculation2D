@@ -88,8 +88,6 @@ public class Main implements MouseListener,
 	DragSource dragsource;
 	DropTarget droptarget;
 	
-	final JFileChooser fc = new JFileChooser();
-	
 	static final String load_label = "Load";
 	static final String save_label = "Save";
 	static final String set_roi_label = "Set region of interest";
@@ -321,6 +319,40 @@ public class Main implements MouseListener,
 	@Override
 	public void mouseClicked(MouseEvent arg0) {
 		int button = arg0.getButton();
+		if (arg0.getComponent().equals(methodsequence)) {
+			if (button == MouseEvent.BUTTON3) {
+				methodsequence.setSelectedIndex( methodsequence.locationToIndex(arg0.getPoint()) );
+				int selected_index = methodsequence.getSelectedIndex();
+				((MethodListModel)methodsequence.getModel()).removeElement(selected_index);
+				listview.removeMethodModelView(selected_index);
+				methodsequence.updateUI();
+				//paramspanel.updateUI();
+			}
+		}
+	}
+
+	// MouseListener
+	@Override
+	public void mouseEntered(MouseEvent arg0) {
+		
+	}
+
+	// MouseListener
+	@Override
+	public void mouseExited(MouseEvent arg0) {
+		
+	}
+
+	// MouseListener
+	@Override
+	public void mousePressed(MouseEvent arg0) {
+		
+	}
+
+	// MouseListener
+	@Override
+	public void mouseReleased(MouseEvent arg0) {
+		int button = arg0.getButton();
 		if (arg0.getComponent().equals(treeview)) {
 			treeview.setSelectionPath(treeview.getClosestPathForLocation(arg0.getX(), arg0.getY()));
 			DefaultMutableTreeNode chosen_node = (DefaultMutableTreeNode)treeview.getLastSelectedPathComponent();
@@ -361,42 +393,6 @@ public class Main implements MouseListener,
 				histogramlabel.updateUI();
 			}
 		}
-		else {
-			if (arg0.getComponent().equals(methodsequence)) {
-				if (button == MouseEvent.BUTTON3) {
-					methodsequence.setSelectedIndex( methodsequence.locationToIndex(arg0.getPoint()) );
-					int selected_index = methodsequence.getSelectedIndex();
-					((MethodListModel)methodsequence.getModel()).removeElement(selected_index);
-					listview.removeMethodModelView(selected_index);
-					methodsequence.updateUI();
-					//paramspanel.updateUI();
-				}
-			}
-		}
-	}
-
-	// MouseListener
-	@Override
-	public void mouseEntered(MouseEvent arg0) {
-		
-	}
-
-	// MouseListener
-	@Override
-	public void mouseExited(MouseEvent arg0) {
-		
-	}
-
-	// MouseListener
-	@Override
-	public void mousePressed(MouseEvent arg0) {
-		
-	}
-
-	// MouseListener
-	@Override
-	public void mouseReleased(MouseEvent arg0) {
-
 	}
 
 	// ActionListener
@@ -404,8 +400,9 @@ public class Main implements MouseListener,
 	public void actionPerformed(ActionEvent e) {
 		String command = e.getActionCommand();
 		if (command == load_label) {
-			javax.swing.filechooser.FileFilter ff = new ogx.view.ImageFilter();
-			fc.setFileFilter(ff);
+			//javax.swing.filechooser.FileFilter ff = new ogx.view.ImageFilter();
+			//fc.setFileFilter(ff);
+			JFileChooser fc = new JFileChooser();
 			int returnVal = fc.showOpenDialog(fc);
 	        if (returnVal == JFileChooser.APPROVE_OPTION) {
 	        	controller.loadImage(fc.getSelectedFile().getPath());
@@ -491,6 +488,7 @@ public class Main implements MouseListener,
 			listview.update();
 		}
 		else if (command == "load_sequence") {
+			JFileChooser fc = new JFileChooser();
 			javax.swing.filechooser.FileFilter ff = new JSONFilter();
 			fc.setFileFilter(ff);
 			int returnVal = fc.showOpenDialog(fc);
@@ -509,6 +507,7 @@ public class Main implements MouseListener,
 	        }
 		}
 		else if (command == "save_sequence") {
+			JFileChooser fc = new JFileChooser();
 			javax.swing.filechooser.FileFilter ff = new JSONFilter();
 			fc.setFileFilter(ff);
 			int returnVal = fc.showSaveDialog(fc);
