@@ -19,6 +19,7 @@ namespace mmFormats
 	EVEN_SMARTER(IWICStream);
 	EVEN_SMARTER(IWICBitmapEncoder);
 	EVEN_SMARTER(IWICBitmapFrameEncode);
+	EVEN_SMARTER(IWICBitmap);
 	
 	class ogxHelperWIC
 	{
@@ -30,7 +31,7 @@ namespace mmFormats
 			unsigned int uiWidth, uiHeight;
 			// bytes per pixel
 			unsigned char ucBPP;
-			// num of channels in pixel
+			// num of channels per pixel
 			unsigned char ucChannels;
 		};
 
@@ -66,11 +67,10 @@ namespace mmFormats
 			UINT v_uiStride(0);
 			UINT v_uiWidth(0), v_uiHeight(0);
 
-			WICPixelFormatGUID v_sTargetFormat(GUID_WICPixelFormat32bppRGBA), v_sPixelFormat(GUID_WICPixelFormatUndefined);
-
 			IWICBitmapDecoderPtr v_psDecoder;
 			IWICBitmapFrameDecodePtr v_psFrame;
 			IWICFormatConverterPtr v_psConverter;
+			WICPixelFormatGUID v_sTargetFormat(GUID_WICPixelFormat32bppRGBA), v_sPixelFormat(GUID_WICPixelFormatUndefined);
 
 			HR_RET(m_psFactory->CreateDecoderFromFilename(p_sFilePath.c_str(), NULL, 
 				GENERIC_READ, WICDecodeMetadataCacheOnDemand, &v_psDecoder));
@@ -85,13 +85,12 @@ namespace mmFormats
 			HR_RET(v_psConverter->CanConvert(v_sPixelFormat, v_sTargetFormat, &v_bCanConvert));
 			if (FALSE == v_bCanConvert) return false;
 
-			v_uiStride = v_uiWidth*4;
-
 			HR_RET(v_psConverter->Initialize(
 				v_psFrame, v_sTargetFormat, 
 				WICBitmapDitherTypeNone, NULL, 0.0, 
 				WICBitmapPaletteTypeCustom));
 				
+			v_uiStride = v_uiWidth*4;
 			p_sImage.vBuffer.resize(v_uiHeight*v_uiStride);
 
 			HR_RET(v_psConverter->CopyPixels(NULL, v_uiStride, p_sImage.vBuffer.size(), &p_sImage.vBuffer.front()));
@@ -102,57 +101,55 @@ namespace mmFormats
 			return true;
 		}
 
-			bool Save(const mmString& p_sFilePath, const Image& p_sImage) {
-				
-				IWICStreamPtr v_psStream;
-				IWICBitmapEncoderPtr v_psEncoder;
-				IWICBitmapFrameEncodePtr v_psFrame;
+		bool Save(const mmString& p_sFilePath, const Image& p_sImage) 
+		{	
+			IWICStreamPtr v_psStream;
+			IWICBitmapEncoderPtr v_psEncoder;
+			IWICBitmapFrameEncodePtr v_psFrame;
+			IWICBitmapPtr v_psBitmap;
 
-				// open output file
-				HR_RET(m_psFactory->CreateStream(&v_psStream));
-				HR_RET(v_psStream->InitializeFromFilename(p_sFilePath.c_str(), GENERIC_WRITE));
+			// open output file
+			HR_RET(m_psFactory->CreateStream(&v_psStream));
+			HR_RET(v_psStream->InitializeFromFilename(p_sFilePath.c_str(), GENERIC_WRITE));
 
-				// init encoder
-				HR_RET(m_psFactory->CreateEncoder( FindEncoderFromFileExt(p_sFilePath), 0, &v_psEncoder));
-				HR_RET(v_psEncoder->Initialize(v_psStream, WICBitmapEncoderNoCache));
+			// init encoder
+			HR_RET(m_psFactory->CreateEncoder( FindEncoderFromFileExt(p_sFilePath), 0, &v_psEncoder));
+			HR_RET(v_psEncoder->Initialize(v_psStream, WICBitmapEncoderNoCache));
 
-				// init frame
-				HR_RET(v_psEncoder->CreateNewFrame(&v_psFrame, 0));
-				HR_RET(v_psFrame->Initialize(0));
-				// http://msdn.microsoft.com/en-us/library/windows/desktop/ee719871(v=vs.85).aspx#encoder_options_examples
-				// use IPropertyBag2
+			// init frame
+			HR_RET(v_psEncoder->CreateNewFrame(&v_psFrame, NULL));
+			HR_RET(v_psFrame->Initialize(NULL));
 
-				HR_RET(v_psFrame->SetSize(p_sImage.uiWidth, p_sImage.uiHeight));
+			HR_RET(v_psFrame->SetSize(p_sImage.uiWidth, p_sImage.uiHeight));
 
-				WICPixelFormatGUID v_sPixelFormat = GUID_WICPixelFormatUndefined;
+			WICPixelFormatGUID v_sPixelFormat = GUID_WICPixelFormatUndefined;
 
-				switch (p_sImage.ucChannels)
-				{
-				case 1:
-					v_sPixelFormat = GUID_WICPixelFormat8bppGray;
-				case 3:
-					v_sPixelFormat = GUID_WICPixelFormat24bppRGB;
-				case 4:
-					v_sPixelFormat = GUID_WICPixelFormat32bppRGBA;
-				}
-				
-				WICPixelFormatGUID v_sPixelFormatChosen = v_sPixelFormat;
-				HR_RET(v_psFrame->SetPixelFormat(&v_sPixelFormatChosen));
-				// TODO: convert if (v_sPixelFormatChosen != v_sPixelFormat)
-
-				UINT v_uiStride = p_sImage.uiWidth*p_sImage.ucBPP;
-				BYTE* v_pcBuffer = (BYTE*) &p_sImage.vBuffer.front(); 
-
-				HR_RET(v_psFrame->WritePixels(
-						p_sImage.uiHeight, v_uiStride, 
-						p_sImage.vBuffer.size(), v_pcBuffer));
-
-				// frame and encoder commits done auto-magically
-				HR_RET(v_psFrame->Commit());
-				HR_RET(v_psEncoder->Commit());
-
-				return true;
+			switch (p_sImage.ucChannels)
+			{
+			case 1:
+				v_sPixelFormat = GUID_WICPixelFormat8bppGray;
+			case 3:
+				v_sPixelFormat = GUID_WICPixelFormat24bppRGB;
+			case 4:
+				v_sPixelFormat = GUID_WICPixelFormat32bppRGBA;
 			}
+				
+			UINT v_uiStride = p_sImage.uiWidth*p_sImage.ucBPP;
+			BYTE* v_pcBuffer = (BYTE*) &p_sImage.vBuffer.front(); 
+
+			HR_RET(m_psFactory->CreateBitmapFromMemory(
+				p_sImage.uiWidth, p_sImage.uiHeight, 
+				v_sPixelFormat, v_uiStride, 
+				p_sImage.vBuffer.size(), v_pcBuffer, 
+				&v_psBitmap));
+
+			HR_RET(v_psFrame->WriteSource(v_psBitmap, NULL));
+
+			HR_RET(v_psFrame->Commit());
+			HR_RET(v_psEncoder->Commit());
+
+			return true;
+		}
 
 	private:
 		IWICImagingFactoryPtr m_psFactory;
@@ -209,7 +206,7 @@ namespace mmFormats
 			for (mmUInt c = 0; c < v_ucChannels; ++c)
 			{
 				for (mmUInt i = 0; i < v_uiPixelCount; ++i) 
-					v_prBuf[i] = 1.0*v_pcBuffer[c + i*v_ucChannels]/255.0;
+					v_prBuf[i] = 1.0/255.0*v_pcBuffer[c + i*v_ucChannels];
 
 				v_psImage->GetChannel(c)->SetRows(0, v_sImage.uiHeight, v_prBuf);
 			}
@@ -235,29 +232,23 @@ namespace mmFormats
 			v_sImage.vBuffer.resize(v_uiPixelCount*v_sImage.ucBPP);
 			unsigned char* v_pcBuffer = &v_sImage.vBuffer.front();
 
-			for (mmUInt v_iChannel = 0; v_iChannel < v_ucChannels; ++v_iChannel)
+			for (mmUInt v_uiChannel = 0; v_uiChannel < v_ucChannels; ++v_uiChannel)
 			{
-				p_psImage->GetChannel(v_iChannel)->GetRows(0, v_sImage.uiHeight, v_prBuf);
+				p_psImage->GetChannel(v_uiChannel)->GetRows(0, v_sImage.uiHeight, v_prBuf);
 
-				// RGB to BGR conversion
-				unsigned char v_ucSwappedChannel = v_iChannel;
-				if (2 < v_ucChannels)
-				{
-					if (0 == v_iChannel) v_ucSwappedChannel = 2;
-					else if (2 == v_iChannel) v_ucSwappedChannel = 0;
-				}
+				for (mmUInt i = 0; i < v_uiPixelCount; ++i) 
+				{	
+					mmReal val = v_prBuf[i];
+					if (1.0 < val) val = 1.0;
+					else if (0.0 > val) val = 0.0;
 
-				for (mmUInt i = 0; i < v_uiPixelCount; ++i) {
-					mmInt val = (mmInt) (v_prBuf[i]*255.0 + 0.5);
-					if (255 < val) val = 255;
-					else if (0 > val) val = 0;
-
-					v_pcBuffer[v_ucSwappedChannel + i*v_ucChannels] = val;
+					v_pcBuffer[v_uiChannel + i*v_ucChannels] = static_cast<mmInt>(255.0*val + 0.5);
 				}
 			}
 
 			return m_sWIC.Save(p_sFilePath, v_sImage);
 		}
+
 		// members
 		ogxHelperWIC m_sWIC;
 	};
