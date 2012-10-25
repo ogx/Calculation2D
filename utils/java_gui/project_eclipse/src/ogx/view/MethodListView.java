@@ -1,5 +1,8 @@
 package ogx.view;
 
+import java.awt.BorderLayout;
+import java.awt.Component;
+import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Vector;
@@ -8,8 +11,12 @@ import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
+import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
+import javax.swing.JTextField;
 import javax.swing.border.TitledBorder;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
@@ -51,8 +58,18 @@ public class MethodListView implements
 		JPanel panel = new JPanel();
 		BoxLayout boxlayout = new BoxLayout(panel, BoxLayout.Y_AXIS);
 		panel.setLayout(boxlayout);
-		panel.setBorder(BorderFactory.createTitledBorder("Parameters"));
+		panel.setBorder(BorderFactory.createTitledBorder("Current method description"));
 	    ((TitledBorder)panel.getBorder()).setTitleJustification(TitledBorder.CENTER);
+	    JTextArea description = new JTextArea(method_model.getDescription());
+    	description.setEditable(false);
+    	description.setLineWrap(true);
+    	description.setWrapStyleWord(true);
+    	description.setBorder(null);
+    	description.setBackground(null);
+    	JPanel spring = new JPanel();
+    	spring.setPreferredSize(new Dimension(280, 1));
+    	panel.add(spring);
+    	panel.add(description);
 	    for (int j = 0; j < method_model.getParams().size(); ++j) {
 	    	ParamModel param = method_model.getParams().get(j);
 	    	panel.add(new ParamPanel(param.getName(), param.getType(), param.getValue(), this));
@@ -81,9 +98,12 @@ public class MethodListView implements
 		for (int i = 0; i < method_panels.size(); ++i) {
 			JPanel method_panel = method_panels.get(i);
 			for (int j = 0; j < method_panel.getComponentCount(); ++j) {
-				ParamPanel current_panel = (ParamPanel)method_panel.getComponent(j);
-				if (current_panel.getParamType().get() == ParamType.IMAGENAME) {
-					current_panel.setContent(image_names, 0);
+				Component panel_content = method_panel.getComponent(j);
+				if (panel_content instanceof ParamPanel) {
+					ParamPanel current_panel = (ParamPanel)panel_content;
+					if (current_panel.getParamType().get() == ParamType.IMAGENAME) {
+						current_panel.setContent(image_names, 0);
+					}
 				}
 			}
 		}
@@ -115,11 +135,14 @@ public class MethodListView implements
 			JPanel method_view = method_panels.get(index);
 			MethodModel method_model = (MethodModel) methodlist.getElementAt(index);
 			for (int i = 0; i < method_view.getComponentCount(); ++i) {
-				ParamPanel current_panel = (ParamPanel) method_view.getComponent(i);
-				for (int j = 0; j < method_model.getParams().size(); ++j) {
-					if (current_panel.getParamName().equals(method_model.getParams().get(j).getName())) {
-						method_model.getParams().get(j).setValue(current_panel.getContent());
-						break;
+				Component panel_content = method_view.getComponent(i);
+				if (panel_content instanceof ParamPanel) {
+					ParamPanel current_panel = (ParamPanel) panel_content;
+					for (int j = 0; j < method_model.getParams().size(); ++j) {
+						if (current_panel.getParamName().equals(method_model.getParams().get(j).getName())) {
+							method_model.getParams().get(j).setValue(current_panel.getContent());
+							break;
+						}
 					}
 				}
 			}
@@ -153,15 +176,18 @@ public class MethodListView implements
 				for (int i = 0; i < method_panels.size(); ++i) {
 					JPanel method_panel = method_panels.get(i);
 					for (int j = 0; j < method_panel.getComponentCount(); ++j) {
-						ParamPanel current_panel = (ParamPanel)method_panel.getComponent(j);
-						if (current_panel.getParamType().get() == ParamType.LAYERNAME) {
-							for (int k = 0; k < layer_names.size(); ++k) {
-								if (layer_names.get(k).equals("R") || layer_names.get(k).equals("G") || layer_names.get(k).equals("B")) {  
-									continue;
+						Component panel_content = method_panel.getComponent(j);
+						if (panel_content instanceof ParamPanel) {
+							ParamPanel current_panel = (ParamPanel)panel_content;
+							if (current_panel.getParamType().get() == ParamType.LAYERNAME) {
+								for (int k = 0; k < layer_names.size(); ++k) {
+									if (layer_names.get(k).equals("R") || layer_names.get(k).equals("G") || layer_names.get(k).equals("B")) {  
+										continue;
+									}
+									existing_layers.add(layer_names.get(k));
 								}
-								existing_layers.add(layer_names.get(k));
+								current_panel.setContent(existing_layers, 0);
 							}
-							current_panel.setContent(existing_layers, 0);
 						}
 					}
 				}
