@@ -523,19 +523,19 @@ bool mmImages::mmImage::SetPixels(mmRect const & p_sRect, mmPixel24 const p_psVa
 
 	for(mmUInt v_iRow = 0; v_iRow < p_sRect.iHeight; ++v_iRow)
 		for(mmUInt v_iPixel = 0; v_iPixel < p_sRect.iWidth; ++v_iPixel)
-			v_prValues[v_iRow * m_iWidth + v_iPixel] = p_psValues[v_iRow * m_iWidth + v_iPixel].rR;
+			v_prValues[v_iRow * p_sRect.iWidth + v_iPixel] = p_psValues[v_iRow * p_sRect.iWidth + v_iPixel].rR;
 	(*v_sChannel)->SetPixels(p_sRect, v_prValues);
 
 	++v_sChannel;
 	for(mmUInt v_iRow = 0; v_iRow < p_sRect.iHeight; ++v_iRow)
 		for(mmUInt v_iPixel = 0; v_iPixel < p_sRect.iWidth; ++v_iPixel)
-			v_prValues[v_iRow * m_iWidth + v_iPixel] = p_psValues[v_iRow * m_iWidth + v_iPixel].rG;
+			v_prValues[v_iRow * p_sRect.iWidth + v_iPixel] = p_psValues[v_iRow * p_sRect.iWidth + v_iPixel].rG;
 	(*v_sChannel)->SetPixels(p_sRect, v_prValues);
 
 	++v_sChannel;
 	for(mmUInt v_iRow = 0; v_iRow < p_sRect.iHeight; ++v_iRow)
 		for(mmUInt v_iPixel = 0; v_iPixel < p_sRect.iWidth; ++v_iPixel)
-			v_prValues[v_iRow * m_iWidth + v_iPixel] = p_psValues[v_iRow * m_iWidth + v_iPixel].rB;
+			v_prValues[v_iRow * p_sRect.iWidth + v_iPixel] = p_psValues[v_iRow * p_sRect.iWidth + v_iPixel].rB;
 	(*v_sChannel)->SetPixels(p_sRect, v_prValues);
 
 	delete [] v_prValues;
@@ -555,25 +555,25 @@ bool mmImages::mmImage::SetPixels(mmRect const & p_sRect, mmPixel32 const p_psVa
 
 	for(mmUInt v_iRow = 0; v_iRow < p_sRect.iHeight; ++v_iRow)
 		for(mmUInt v_iPixel = 0; v_iPixel < p_sRect.iWidth; ++v_iPixel)
-			v_prValues[v_iRow * m_iWidth + v_iPixel] = p_psValues[v_iRow * m_iWidth + v_iPixel].rR;
+			v_prValues[v_iRow * p_sRect.iWidth + v_iPixel] = p_psValues[v_iRow * p_sRect.iWidth + v_iPixel].rR;
 	(*v_sChannel)->SetPixels(p_sRect, v_prValues);
 
 	++v_sChannel;
 	for(mmUInt v_iRow = 0; v_iRow < p_sRect.iHeight; ++v_iRow)
 		for(mmUInt v_iPixel = 0; v_iPixel < p_sRect.iWidth; ++v_iPixel)
-			v_prValues[v_iRow * m_iWidth + v_iPixel] = p_psValues[v_iRow * m_iWidth + v_iPixel].rG;
+			v_prValues[v_iRow * p_sRect.iWidth + v_iPixel] = p_psValues[v_iRow * p_sRect.iWidth + v_iPixel].rG;
 	(*v_sChannel)->SetPixels(p_sRect, v_prValues);
 
 	++v_sChannel;
 	for(mmUInt v_iRow = 0; v_iRow < p_sRect.iHeight; ++v_iRow)
 		for(mmUInt v_iPixel = 0; v_iPixel < p_sRect.iWidth; ++v_iPixel)
-			v_prValues[v_iRow * m_iWidth + v_iPixel] = p_psValues[v_iRow * m_iWidth + v_iPixel].rB;
+			v_prValues[v_iRow * p_sRect.iWidth + v_iPixel] = p_psValues[v_iRow * p_sRect.iWidth + v_iPixel].rB;
 	(*v_sChannel)->SetPixels(p_sRect, v_prValues);
 
 	++v_sChannel;
 	for(mmUInt v_iRow = 0; v_iRow < p_sRect.iHeight; ++v_iRow)
 		for(mmUInt v_iPixel = 0; v_iPixel < p_sRect.iWidth; ++v_iPixel)
-			v_prValues[v_iRow * m_iWidth + v_iPixel] = p_psValues[v_iRow * m_iWidth + v_iPixel].rA;
+			v_prValues[v_iRow * p_sRect.iWidth + v_iPixel] = p_psValues[v_iRow * p_sRect.iWidth + v_iPixel].rA;
 	(*v_sChannel)->SetPixels(p_sRect, v_prValues);
 
 	delete [] v_prValues;
