@@ -433,7 +433,9 @@ public class Main implements MouseListener,
 	        	}
 
 	        	treeview.updateUI();
-        		treeview.expandRow(treeview.getRowCount()-1);
+	        	treeview.setSelectionRow(0);
+	        	treeview.expandRow(0);
+        		//treeview.expandRow(treeview.getRowCount()-1);
         		treeview.setSelectionRow(treeview.getRowCount()-1);
         		listview.update();
         		
@@ -568,6 +570,7 @@ public class Main implements MouseListener,
 		        	for (int i = 0; i < sequencemodel.getSize(); ++i) {
 		        		listview.addMethodModelView(sequencemodel.getElementAt(i));
 		        	}
+		        	listview.update();
 		        	methodsequence.updateUI();
 	        	}
 	        	else {

@@ -80,6 +80,9 @@ public class MethodListModel implements ListModel<MethodModel> {
 			return false;
 		}
 		try {
+			if (!path.endsWith(".json")) {
+				path += ".json";
+			}
 			FileWriter fw = new FileWriter(path);
 			fw.write(output.toString());
 			fw.close();
