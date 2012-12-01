@@ -13,17 +13,13 @@
   <ItemGroup>
     <ClInclude Include="..\..\include\formats\mmMultiFormat.h" />
     <ClInclude Include="..\..\include\interfaces\mmIFormat.h" />
-    <ClInclude Include="include\mmBitmap.h" />
     <ClInclude Include="include\mmImageWIC.h" />
     <ClInclude Include="include\mmImageXML.h" />
-    <ClInclude Include="include\mmPNG.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\mmBitmap.cpp" />
     <ClCompile Include="src\mmImageWIC.cpp" />
     <ClCompile Include="src\mmImageXML.cpp" />
     <ClCompile Include="src\mmMultiFormat.cpp" />
-    <ClCompile Include="src\mmPNG.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{A566B21B-3AA1-476A-BEA4-4641F4919371}</ProjectGuid>

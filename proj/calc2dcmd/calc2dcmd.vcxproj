@@ -163,9 +163,6 @@
     <ClCompile Include="src\console\mmClient.cpp" />
     <ClCompile Include="src\console\mmCommandLine.cpp" />
     <ClCompile Include="src\console\mmCommandName.cpp" />
-    <ClCompile Include="src\formats\mmBitmap.cpp" />
-    <ClCompile Include="src\formats\mmImageXML.cpp" />
-    <ClCompile Include="src\formats\mmPNG.cpp" />
     <ClCompile Include="src\preview\mmImagePreviewOGL.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -180,11 +177,12 @@
     <ClInclude Include="include\console\mmClient.h" />
     <ClInclude Include="include\console\mmCommandLine.h" />
     <ClInclude Include="include\console\mmCommandName.h" />
-    <ClInclude Include="include\formats\mmBitmap.h" />
-    <ClInclude Include="include\formats\mmIFormat.h" />
-    <ClInclude Include="include\formats\mmImageXML.h" />
-    <ClInclude Include="include\formats\mmPNG.h" />
     <ClInclude Include="include\preview\mmImagePreviewOGL.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\libcalc2dio\libcalc2dio.vcxproj">
+      <Project>{a566b21b-3aa1-476a-bea4-4641f4919371}</Project>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

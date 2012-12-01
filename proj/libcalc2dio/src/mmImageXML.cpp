@@ -1,6 +1,5 @@
 #include <mmImageXML.h>
-#include <mmBitmap.h>
-#include <mmPNG.h>
+#include <mmImageWIC.h>
 
 #include <algorithm>
 #include <vector>
@@ -74,10 +73,7 @@ bool mmFormats::mmImageXML::Read(mmString const & p_sFileName, mmImages::mmImage
 	mmImages::mmImageI * v_psImage = NULL;
 	if(v_sPixelsPath.empty()) {
 		std::auto_ptr<mmFormatI> v_psReader;
-		if(v_sPreviewExtension == L"bmp")
-			v_psReader.reset(new mmBitmap);
-		else if(v_sPreviewExtension == L"png")
-			v_psReader.reset(new mmPNG);
+		v_psReader.reset(CreateImageWIC());
 
 		if(! v_psReader->Read(v_sDirectory + L"\\" + v_sPreviewPath, p_psImageStructure, v_sImageName))
 			return false;
@@ -213,7 +209,9 @@ bool mmFormats::mmImageXML::Write(mmString const & p_sFileName, mmImages::mmImag
 			v_psPreviewImage->GetChannel(v_iC)->SetRows(0, v_iPreviewHeight, &v_sPreviewData[0]);
 		}
 
-		mmPNG().Write(v_sDataPath + L"\\0_preview.png", v_psPreviewImage);
+		std::auto_ptr<mmFormatI> v_psWIC(CreateImageWIC());
+
+		v_psWIC->Write(v_sDataPath + L"\\0_preview.png", v_psPreviewImage);
 		
 		if(::WriteFile(v_sFile, &v_sImageData[0], static_cast<DWORD>(v_sImageData.size() * sizeof(mmReal)), &v_iWrittenBytes, NULL) == FALSE || v_iWrittenBytes != static_cast<DWORD>(v_sImageData.size() * sizeof(mmReal)))
 			return false;

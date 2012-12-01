@@ -5,7 +5,7 @@
 
 #include <commands/mmCommand.h>
 #include <interfaces/mmIImages.h>
-#include <formats/mmIFormat.h>
+#include <interfaces/mmIFormat.h>
 
 namespace mmCommands {
 	class mmLoad : public mmCommand {

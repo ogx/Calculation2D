@@ -1,8 +1,6 @@
 #include <commands/mmLoad.h>
 
-#include <formats/mmBitmap.h>
-#include <formats/mmPNG.h>
-#include <formats/mmImageXML.h>
+#include <formats/mmMultiFormat.h>
 
 #include <mmStringUtilities.h>
 
@@ -12,9 +10,7 @@ mmCommands::mmLoad::mmLoad(mmImages::mmImageStructureI * const p_psImageStructur
 	m_sParams.push_back(mmParam(L"filename", mmParam::mmTypeFile, false));
 	m_sParams.push_back(mmParam(L"name", mmParam::mmTypeString, true));
 
-	m_sFormats.push_back(new mmFormats::mmBitmap);
-	m_sFormats.push_back(new mmFormats::mmPNG);
-	m_sFormats.push_back(new mmFormats::mmImageXML);
+	m_sFormats.push_back(new mmFormats::mmMultiFormat);
 
 	for(std::size_t v_iI = 0; v_iI < m_sFormats.size(); ++v_iI) {
 		std::list<mmString> v_sExtensions = m_sFormats[v_iI]->GetSupportedExensions();
@@ -47,9 +43,7 @@ mmCommands::mmSave::mmSave(mmImages::mmImageStructureI * const p_psImageStructur
 	m_sParams.push_back(mmParam(L"image", mmParam::mmTypeImage, false));
 	m_sParams.push_back(mmParam(L"filename", mmParam::mmTypeFile, false));
 
-	m_sFormats.push_back(new mmFormats::mmBitmap);
-	m_sFormats.push_back(new mmFormats::mmPNG);
-	m_sFormats.push_back(new mmFormats::mmImageXML);
+	m_sFormats.push_back(new mmFormats::mmMultiFormat);
 
 	for(std::size_t v_iI = 0; v_iI < m_sFormats.size(); ++v_iI) {
 		std::list<mmString> v_sExtensions = m_sFormats[v_iI]->GetSupportedExensions();

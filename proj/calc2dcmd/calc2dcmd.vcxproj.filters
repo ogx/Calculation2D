@@ -31,12 +31,6 @@
     <Filter Include="Source Files\Console">
       <UniqueIdentifier>{9265e5c1-9662-4c00-ab72-a0b6c2dbca2b}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\Formats">
-      <UniqueIdentifier>{3a0729e4-296a-4346-9d51-3bb28d50b613}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header Files\Formats">
-      <UniqueIdentifier>{2aa30f7c-8132-4781-9580-7a9a30ad8953}</UniqueIdentifier>
-    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="calc2dcmd.cpp">
@@ -78,15 +72,6 @@
     <ClCompile Include="src\console\mmClient.cpp">
       <Filter>Source Files\Console</Filter>
     </ClCompile>
-    <ClCompile Include="src\formats\mmBitmap.cpp">
-      <Filter>Source Files\Formats</Filter>
-    </ClCompile>
-    <ClCompile Include="src\formats\mmPNG.cpp">
-      <Filter>Source Files\Formats</Filter>
-    </ClCompile>
-    <ClCompile Include="src\formats\mmImageXML.cpp">
-      <Filter>Source Files\Formats</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\commands\mmCommand.h">
@@ -124,18 +109,6 @@
     </ClInclude>
     <ClInclude Include="include\console\mmClient.h">
       <Filter>Header Files\Console</Filter>
-    </ClInclude>
-    <ClInclude Include="include\formats\mmBitmap.h">
-      <Filter>Header Files\Formats</Filter>
-    </ClInclude>
-    <ClInclude Include="include\formats\mmIFormat.h">
-      <Filter>Header Files\Formats</Filter>
-    </ClInclude>
-    <ClInclude Include="include\formats\mmImageXML.h">
-      <Filter>Header Files\Formats</Filter>
-    </ClInclude>
-    <ClInclude Include="include\formats\mmPNG.h">
-      <Filter>Header Files\Formats</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
