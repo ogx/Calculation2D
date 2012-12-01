@@ -15,6 +15,8 @@ namespace mmFormats
 	EVEN_SMARTER(IWICBitmapDecoder);
 	EVEN_SMARTER(IWICBitmapFrameDecode);
 	EVEN_SMARTER(IWICFormatConverter);
+	EVEN_SMARTER(IWICComponentInfo);
+	EVEN_SMARTER(IWICPixelFormatInfo);
 
 	EVEN_SMARTER(IWICStream);
 	EVEN_SMARTER(IWICBitmapEncoder);
@@ -33,6 +35,7 @@ namespace mmFormats
 			unsigned char ucBPP;
 			// num of channels per pixel
 			unsigned char ucChannels;
+			bool bSwappedRBChannels;
 		};
 
 		ogxHelperWIC()
@@ -70,7 +73,8 @@ namespace mmFormats
 			IWICBitmapDecoderPtr v_psDecoder;
 			IWICBitmapFrameDecodePtr v_psFrame;
 			IWICFormatConverterPtr v_psConverter;
-			WICPixelFormatGUID v_sTargetFormat(GUID_WICPixelFormat32bppRGBA), v_sPixelFormat(GUID_WICPixelFormatUndefined);
+			WICPixelFormatGUID v_sTargetFormat(GUID_WICPixelFormat32bppBGRA), v_sPixelFormat(GUID_WICPixelFormatUndefined);
+			// NOTE: GUID_WICPixelFormat32bppRGBA conversion is missing on some platforms
 
 			HR_RET(m_psFactory->CreateDecoderFromFilename(p_sFilePath.c_str(), NULL, 
 				GENERIC_READ, WICDecodeMetadataCacheOnDemand, &v_psDecoder));
@@ -89,14 +93,26 @@ namespace mmFormats
 				v_psFrame, v_sTargetFormat, 
 				WICBitmapDitherTypeNone, NULL, 0.0, 
 				WICBitmapPaletteTypeCustom));
-				
-			v_uiStride = v_uiWidth*4;
+			
+			IWICComponentInfoPtr v_psComponentInfo;
+			IWICPixelFormatInfoPtr v_psFormatInfo;
+
+			HR_RET(m_psFactory->CreateComponentInfo(v_sTargetFormat, &v_psComponentInfo));
+
+			HR_RET(v_psComponentInfo->QueryInterface(&v_psFormatInfo));
+
+			UINT v_iChannelCount(0);
+			HR_RET(v_psFormatInfo->GetChannelCount(&v_iChannelCount));
+			// TODO: check BPP
+
+			v_uiStride = v_uiWidth*v_iChannelCount;
 			p_sImage.vBuffer.resize(v_uiHeight*v_uiStride);
 
 			HR_RET(v_psConverter->CopyPixels(NULL, v_uiStride, p_sImage.vBuffer.size(), &p_sImage.vBuffer.front()));
 			p_sImage.uiWidth = v_uiWidth;
 			p_sImage.uiHeight = v_uiHeight;
-			p_sImage.ucBPP = p_sImage.ucChannels = 4;
+			p_sImage.ucBPP = p_sImage.ucChannels = v_iChannelCount;
+			p_sImage.bSwappedRBChannels = true;
 
 			return true;
 		}
@@ -207,8 +223,10 @@ namespace mmFormats
 			{
 				for (mmUInt i = 0; i < v_uiPixelCount; ++i) 
 					v_prBuf[i] = 1.0/255.0*v_pcBuffer[c + i*v_ucChannels];
+				
+				mmUInt v_iTargetChannel = v_sImage.bSwappedRBChannels ? (2 == c ? 0 : (0 == c ? 2 : c)) : c;
 
-				v_psImage->GetChannel(c)->SetRows(0, v_sImage.uiHeight, v_prBuf);
+				v_psImage->GetChannel(v_iTargetChannel)->SetRows(0, v_sImage.uiHeight, v_prBuf);
 			}
 
 			return true;
