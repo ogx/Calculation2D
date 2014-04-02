@@ -2,6 +2,7 @@
 
 #include <map>
 #include <vector>
+#include <memory>
 
 #include <interfaces/mmIImages.h>
 #include <interfaces/mmISynchronize.h>
@@ -84,7 +85,7 @@ namespace mmImages {
 			/// Pointer exclusive lock object. Use to control access to class members in
 			/// multi-threaded implementation. 
 			////////////////////////////////////////////////////////////////////////////////
-			std::tr1::shared_ptr<mmSynchronize::mmExclusiveLockI> m_psThreadSynchEL;
+			std::auto_ptr<mmSynchronize::mmExclusiveLockI> m_psThreadSynchEL;
 
 			////////////////////////////////////////////////////////////////////////////////
 			/// Number of rows in single data block. Modify to control amount of data processed
