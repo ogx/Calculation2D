@@ -85,19 +85,19 @@ namespace mmFormats
 
 			HR_RET(m_psFactory->CreateFormatConverter(&v_psConverter));
 
-			BOOL v_bCanConvert(FALSE);
-			HR_RET(v_psConverter->CanConvert(v_sPixelFormat, v_sTargetFormat, &v_bCanConvert));
-			if (FALSE == v_bCanConvert) return false;
+			//BOOL v_bCanConvert(FALSE);
+			//HR_RET(v_psConverter->CanConvert(v_sPixelFormat, v_sTargetFormat, &v_bCanConvert));
+			//if (FALSE == v_bCanConvert) return false;
 
 			HR_RET(v_psConverter->Initialize(
-				v_psFrame, v_sTargetFormat, 
+				v_psFrame, /*v_sTargetFormat*/v_sPixelFormat, 
 				WICBitmapDitherTypeNone, NULL, 0.0, 
 				WICBitmapPaletteTypeCustom));
 			
 			IWICComponentInfoPtr v_psComponentInfo;
 			IWICPixelFormatInfoPtr v_psFormatInfo;
 
-			HR_RET(m_psFactory->CreateComponentInfo(v_sTargetFormat, &v_psComponentInfo));
+			HR_RET(m_psFactory->CreateComponentInfo(/*v_sTargetFormat*/v_sPixelFormat, &v_psComponentInfo));
 
 			HR_RET(v_psComponentInfo->QueryInterface(&v_psFormatInfo));
 
@@ -224,7 +224,7 @@ namespace mmFormats
 				for (mmUInt i = 0; i < v_uiPixelCount; ++i) 
 					v_prBuf[i] = 1.0/255.0*v_pcBuffer[c + i*v_ucChannels];
 				
-				mmUInt v_iTargetChannel = v_sImage.bSwappedRBChannels ? (2 == c ? 0 : (0 == c ? 2 : c)) : c;
+				mmUInt v_iTargetChannel = v_ucChannels > 2 ? (v_sImage.bSwappedRBChannels ? (2 == c ? 0 : (0 == c ? 2 : c)) : c) : c;
 
 				v_psImage->GetChannel(v_iTargetChannel)->SetRows(0, v_sImage.uiHeight, v_prBuf);
 			}

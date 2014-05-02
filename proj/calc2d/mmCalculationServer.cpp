@@ -218,6 +218,7 @@ Json::Value mmCalculationServer::ImageLabelToJSON(mmImages::mmImageI* const imag
 	image_json[L"name"] = image->GetName();
 	image_json[L"width"] = image->GetWidth();
 	image_json[L"height"] = image->GetHeight();
+	image_json[L"channels"] = (int) image->GetPixelType();
 	image_json[L"id"] = mmSerializer<mmID>::ToString(image->GetID());
 	image_json[L"layers"] = Json::Value(Json::arrayValue);
 	Json::Value& layers = image_json[L"layers"];
@@ -254,20 +255,20 @@ Json::Value mmCalculationServer::QueryImage( Json::Value& image_json )
 			mmReal* pixels = new mmReal[width*height*pixel_size];
 			int* out_buffer = new int[width*height];
 			std::fill(out_buffer, out_buffer + width*height, 0);
-			char dot = 0;
+			int dot = 0;
 
 			switch (pixel_type) {
 			case mmImages::mmImageI::mmP8 :
 				image->GetPixels(mmRect(0, 0, width, height), (mmPixel8*)pixels);
 				for (int i = 0; i < width*height; ++i) {
-					dot = (char)(pixels[i]*255);
-					out_buffer[i] = 0xFF000000 | dot << 16 | dot << 8 | dot;
+					dot = (int)(pixels[i]*255);
+					out_buffer[i] = dot << 24 | dot << 16 | dot << 8 | 0xFF;
 				}
 				break;
 			case mmImages::mmImageI::mmP24 :
 				image->GetPixels(mmRect(0, 0, width, height), (mmPixel24*)pixels);
 				for (int i = 0; i < width*height; ++i) {
-					out_buffer[i] = 0xFF000000 | (int)(pixels[3*i]*255) << 16 | (int)(pixels[3*i+1]*255) << 8 | (int)(pixels[3*i+2]*255);
+					out_buffer[i] = (int)(pixels[3*i]*255) << 24 | (int)(pixels[3*i+1]*255) << 16 | (int)(pixels[3*i+2]*255) << 8 | 0xFF;
 				}
 				break;
 			case mmImages::mmImageI::mmP32 :
