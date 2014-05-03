@@ -73,7 +73,7 @@ namespace mmFormats
 			IWICBitmapDecoderPtr v_psDecoder;
 			IWICBitmapFrameDecodePtr v_psFrame;
 			IWICFormatConverterPtr v_psConverter;
-			WICPixelFormatGUID v_sTargetFormat(GUID_WICPixelFormat32bppBGRA), v_sPixelFormat(GUID_WICPixelFormatUndefined);
+			WICPixelFormatGUID v_sPixelFormat(GUID_WICPixelFormatUndefined);
 			// NOTE: GUID_WICPixelFormat32bppRGBA conversion is missing on some platforms
 
 			HR_RET(m_psFactory->CreateDecoderFromFilename(p_sFilePath.c_str(), NULL, 
@@ -83,27 +83,39 @@ namespace mmFormats
 			HR_RET(v_psFrame->GetSize(&v_uiWidth, &v_uiHeight));
 			HR_RET(v_psFrame->GetPixelFormat(&v_sPixelFormat));
 
-			HR_RET(m_psFactory->CreateFormatConverter(&v_psConverter));
-
-			//BOOL v_bCanConvert(FALSE);
-			//HR_RET(v_psConverter->CanConvert(v_sPixelFormat, v_sTargetFormat, &v_bCanConvert));
-			//if (FALSE == v_bCanConvert) return false;
-
-			HR_RET(v_psConverter->Initialize(
-				v_psFrame, /*v_sTargetFormat*/v_sPixelFormat, 
-				WICBitmapDitherTypeNone, NULL, 0.0, 
-				WICBitmapPaletteTypeCustom));
-			
 			IWICComponentInfoPtr v_psComponentInfo;
 			IWICPixelFormatInfoPtr v_psFormatInfo;
 
-			HR_RET(m_psFactory->CreateComponentInfo(/*v_sTargetFormat*/v_sPixelFormat, &v_psComponentInfo));
+			HR_RET(m_psFactory->CreateComponentInfo(v_sPixelFormat, &v_psComponentInfo));
 
 			HR_RET(v_psComponentInfo->QueryInterface(&v_psFormatInfo));
 
-			UINT v_iChannelCount(0);
+			UINT v_iChannelCount(0), v_iBitsPerPixel(0);
 			HR_RET(v_psFormatInfo->GetChannelCount(&v_iChannelCount));
-			// TODO: check BPP
+			HR_RET(v_psFormatInfo->GetBitsPerPixel(&v_iBitsPerPixel));
+
+			WICPixelFormatGUID v_sTargetFormat(GUID_WICPixelFormat32bppBGRA);
+			switch (v_iChannelCount)
+			{
+				case 1: 
+					v_sTargetFormat = GUID_WICPixelFormat8bppGray; 
+					break;
+				case 3: 
+					v_sTargetFormat = GUID_WICPixelFormat24bppBGR; 
+					break;
+				default: 
+					v_sTargetFormat = GUID_WICPixelFormat32bppBGRA; 
+					break;
+			}
+			HR_RET(m_psFactory->CreateFormatConverter(&v_psConverter));
+			HR_RET(v_psConverter->Initialize(
+				v_psFrame, v_sTargetFormat,
+				WICBitmapDitherTypeNone, NULL, 0.0,
+				WICBitmapPaletteTypeCustom));
+
+			BOOL v_bCanConvert(FALSE);
+			HR_RET(v_psConverter->CanConvert(v_sPixelFormat, v_sTargetFormat, &v_bCanConvert));
+			if (FALSE == v_bCanConvert) return false;
 
 			v_uiStride = v_uiWidth*v_iChannelCount;
 			p_sImage.vBuffer.resize(v_uiHeight*v_uiStride);
