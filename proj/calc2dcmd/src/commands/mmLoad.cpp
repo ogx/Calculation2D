@@ -20,7 +20,7 @@ mmCommands::mmLoad::mmLoad(mmImages::mmImageStructureI * const p_psImageStructur
 }
 
 bool mmCommands::mmLoad::Run(std::wstring const & p_sName, std::vector<mmParam> const & p_sParams) {
-	mmString const v_sExtension = mmStringUtilities::MMStringToLower(p_sParams[0].sValue.substr(p_sParams[0].sValue.find_last_of(L'.') + 1));
+	mmString const v_sExtension = mmStringUtilities::MMStringToLower(p_sParams[0].sValue.substr(p_sParams[0].sValue.find_last_of(L'.')));
 	mmString const v_sName = (p_sParams.size() > 1 ? p_sParams[1].sValue : p_sParams[0].sValue.substr(p_sParams[0].sValue.find_last_of(L'\\') + 1));
 
 	std::map<mmString, mmFormats::mmFormatI*>::iterator v_sFormat;
@@ -58,7 +58,7 @@ bool mmCommands::mmSave::Run(std::wstring const & p_sName, std::vector<mmParam> 
 		m_sError = L"image not found";
 		return false;
 	}
-	mmString const v_sExtension = mmStringUtilities::MMStringToLower(p_sParams[1].sValue.substr(p_sParams[1].sValue.find_last_of(L'.') + 1));
+	mmString const v_sExtension = mmStringUtilities::MMStringToLower(p_sParams[1].sValue.substr(p_sParams[1].sValue.find_last_of(L'.')));
 
 	std::map<mmString, mmFormats::mmFormatI*>::iterator v_sFormat;
 	if((v_sFormat = m_sExtensions.find(v_sExtension)) == m_sExtensions.end()) {
