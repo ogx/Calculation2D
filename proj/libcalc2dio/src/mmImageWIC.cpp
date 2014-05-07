@@ -41,7 +41,7 @@ namespace mmFormats
 		ogxHelperWIC()
 		{
 			CoInitializeEx(NULL, COINIT_MULTITHREADED);
-			m_psFactory.CreateInstance(CLSID_WICImagingFactory);
+			m_psFactory.CreateInstance(CLSID_WICImagingFactory1);
 		}
 
 		~ogxHelperWIC() {
@@ -156,10 +156,13 @@ namespace mmFormats
 			{
 			case 1:
 				v_sPixelFormat = GUID_WICPixelFormat8bppGray;
+				break;
 			case 3:
 				v_sPixelFormat = GUID_WICPixelFormat24bppRGB;
+				break;
 			case 4:
 				v_sPixelFormat = GUID_WICPixelFormat32bppRGBA;
+				break;
 			}
 				
 			UINT v_uiStride = p_sImage.uiWidth*p_sImage.ucBPP;
