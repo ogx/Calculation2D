@@ -8,6 +8,10 @@
 #include <interfaces/mmISynchronize.h>
 #include <log/mmLogSender.h>
 #include <serialization/mmGenericParam.h>
+#include <math/mmMath.h>
+
+#undef min
+#undef max
 
 //******************************************************************************
 //******************************************************************************
@@ -24,6 +28,64 @@
 
 namespace mmImages {
 
+	template<typename pixel_t>
+	void DrawLine(mmImages::mmImageI * p_psImage, mmInt const p_iBeginX, mmInt const p_iBeginY, mmInt const p_iEndX, mmInt const p_iEndY, pixel_t const & p_sColor)
+	{
+		mmInt const v_iDeltaX = p_iEndX - p_iBeginX, v_iDeltaY = p_iEndY - p_iBeginY;
+		mmInt const v_iWidth = p_psImage->GetWidth();
+		mmInt const v_iMinX = std::min(p_iBeginX, p_iEndX), v_iMaxX = std::max(p_iBeginX, p_iEndX),
+					v_iMinY = std::min(p_iBeginY, p_iEndY), v_iMaxY = std::max(p_iBeginY, p_iEndY);
+
+		if(v_iDeltaX == 0 && v_iDeltaY == 0)
+		{
+			return;
+		}
+
+		pixel_t * v_prRows = new pixel_t[v_iWidth * (v_iMaxY - v_iMinY + 1)];
+		p_psImage->GetRows(v_iMinY, v_iMaxY - v_iMinY + 1, v_prRows);
+		if(::abs(v_iDeltaX) > ::abs(v_iDeltaY))
+		{
+			mmReal const v_rA = mmReal(v_iDeltaY) / mmReal(v_iDeltaX), v_rB = mmReal(p_iBeginY) - v_rA * mmReal(p_iBeginX);
+			for(mmInt v_iX = v_iMinX; v_iX <= v_iMaxX; ++v_iX)
+			{
+				mmInt const v_iY(v_rA * mmReal(v_iX) + v_rB);
+				v_prRows[(v_iY - v_iMinY) * v_iWidth + v_iX] = p_sColor;
+			}
+		}
+		else
+		{
+			mmReal const v_rA = mmReal(v_iDeltaX) / mmReal(v_iDeltaY), v_rB = mmReal(p_iBeginX) - v_rA * mmReal(p_iBeginY);
+			for(mmInt v_iY = v_iMinY; v_iY <= v_iMaxY; ++v_iY)
+			{
+				mmInt const v_iX(v_rA * mmReal(v_iY) + v_rB);
+				v_prRows[(v_iY - v_iMinY) * v_iWidth + v_iX] = p_sColor;
+			}
+		}
+		p_psImage->SetRows(v_iMinY, v_iMaxY - v_iMinY + 1, v_prRows);
+		delete [] v_prRows;
+	}
+
+	template<typename pixel_t>
+	void DrawDot(mmImages::mmImageI * p_psImage, mmInt const p_iX, mmInt const p_iY, mmInt const p_iRadius, pixel_t const & p_sColor)
+	{
+		mmInt const v_iMinX = std::max(p_iX - p_iRadius, 0), v_iMaxX = std::min<mmInt>(p_iX + p_iRadius, p_psImage->GetWidth() - 1), 
+					v_iMinY = std::max(p_iY - p_iRadius, 0), v_iMaxY = std::min<mmInt>(p_iY + p_iRadius, p_psImage->GetHeight() - 1);
+		mmInt const v_iWidth = p_psImage->GetWidth();
+		pixel_t * v_prRows = new pixel_t[v_iWidth * (v_iMaxY - v_iMinY + 1)];
+		p_psImage->GetRows(v_iMinY, (v_iMaxY - v_iMinY + 1), v_prRows);
+		for(mmInt v_iY = v_iMinY; v_iY <= v_iMaxY; ++v_iY)
+		{
+			for(mmInt v_iX = v_iMinX; v_iX <= v_iMaxX; ++v_iX)
+			{
+				if((v_iY - p_iY) * (v_iY - p_iY) + (v_iX - p_iX) * (v_iX - p_iX) < (p_iRadius) * (p_iRadius))
+				{
+					v_prRows[(v_iY - v_iMinY) * v_iWidth + v_iX] = p_sColor;
+				}
+			}
+		}
+		p_psImage->SetRows(v_iMinY, (v_iMaxY - v_iMinY + 1), v_prRows);
+		delete [] v_prRows;
+	}
 	// forward declarations
 	class mmCalcKernelI;
 	class mmCMParameter;

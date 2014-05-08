@@ -9,6 +9,9 @@ namespace mmFormats
 {
 
 #define HR_RET(X) {if (FAILED(X)) return false;}
+#ifndef CLSID_WICImagingFactory
+#define CLSID_WICImagingFactory CLSID_WICImagingFactory1
+#endif
 
 #define EVEN_SMARTER(X) _COM_SMARTPTR_TYPEDEF(X, __uuidof(X))
 	EVEN_SMARTER(IWICImagingFactory);
@@ -41,7 +44,7 @@ namespace mmFormats
 		ogxHelperWIC()
 		{
 			CoInitializeEx(NULL, COINIT_MULTITHREADED);
-			m_psFactory.CreateInstance(CLSID_WICImagingFactory1);
+			m_psFactory.CreateInstance(CLSID_WICImagingFactory);
 		}
 
 		~ogxHelperWIC() {
