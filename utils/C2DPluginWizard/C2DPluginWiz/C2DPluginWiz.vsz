@@ -1,10 +1,9 @@
 VSWIZARD 7.0
-Wizard=VsWizard.VsWizardEngine.9.0
+Wizard=VsWizard.VsWizardEngine.12.0
 
 Param="WIZARD_NAME = C2DPluginWiz"
-Param="RELATIVE_PATH = VCWizards\C2D"
-Param="WIZARD_ID = 502795"
+Param="ABSOLUTE_PATH = C:\workspace\C2D\C2DPluginWizard"
 Param="FALLBACK_LCID = 1033"
 Param="PLUGIN_BASE_NAME = C2DPlugin"
 Param="PLUGINS_DIR = plugins"
-Param="PROJECT_EXT = vcproj"
+Param="PROJECT_EXT = vcxproj"

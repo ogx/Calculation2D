@@ -3,7 +3,7 @@
 
 //JK rapid debugging
 function DebugTest(strMessage) {
-  //wizard.ReportError(strMessage);
+  wizard.ReportError(strMessage);
 }
 
 function OnFinish(selProj, selObj)
@@ -21,6 +21,8 @@ function OnFinish(selProj, selObj)
 
 	  var strProjectBaseName = wizard.FindSymbol('PLUGIN_BASE_NAME');
 	  var strPluginsDir = wizard.FindSymbol('PLUGINS_DIR');
+	  
+	  DebugTest(strPluginsDir);
 
 	  var strStudentSign = strStudentLastName + strStudentFirstName;
 	  strStudentSign = CreateSafeName(strStudentSign);
@@ -201,7 +203,7 @@ function CreateCustomProject(strProjectName, strProjectPath, strSolutionName, st
 	}
 }
 
-function AddFilters(proj)
+/* function AddFilters(proj)
 {
 	try
 	{
@@ -215,7 +217,7 @@ function AddFilters(proj)
 		throw e;
 	}
 }
-
+ */
 function AddConfig(proj, strProjectName)
 {
 	try
@@ -242,10 +244,10 @@ function AddConfig(proj, strProjectName)
 	}
 }
 
-function PchSettings(proj)
+/* function PchSettings(proj)
 {
 	// TODO: specify pch settings
-}
+} */
 
 function DelFile(fso, strWizTempFile)
 {

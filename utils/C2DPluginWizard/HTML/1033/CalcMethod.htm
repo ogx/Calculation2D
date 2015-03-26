@@ -6,20 +6,6 @@
 	<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=iso-8859-1">
 	<META HTTP-EQUIV="MSThemeCompatible" CONTENT="Yes">
 	<LINK ID="LINKURL" REL="stylesheet" HREF="../../1033/NewStyles.css">
-
-	<SYMBOL NAME='STUDENT_FIRSTNAME' TYPE=text VALUE='John'></SYMBOL>
-	<SYMBOL NAME='STUDENT_LASTNAME' TYPE=text VALUE='Doe'></SYMBOL>
-	<SYMBOL NAME='STUDENT_ID' TYPE=text VALUE='0'></SYMBOL>
-	<SYMBOL NAME='STUDENT_EMAIL' TYPE=text VALUE='email@example.com'></SYMBOL>
-	<SYMBOL NAME='STUDENT_GROUP' TYPE=text VALUE='other'></SYMBOL>
-	<SYMBOL NAME='STUDENT_PART' TYPE=select-one VALUE='all'></SYMBOL>
-	
-	<SYMBOL NAME='CALCMETHOD_NAME' TYPE=text VALUE='cmGeneric'></SYMBOL>
-	<SYMBOL NAME='CALCMETHOD_SHORT_NAME' TYPE=text VALUE='Generic method'></SYMBOL>
-	<SYMBOL NAME='CALCMETHOD_DESCRIPTION' TYPE=text VALUE='A generic calculation method'></SYMBOL>
-	<SYMBOL NAME='CALCMETHOD_CREATE' TYPE=checkbox VALUE=true></SYMBOL>
-	<SYMBOL NAME='CALCMETHOD_EXTEND' TYPE=checkbox VALUE=false></SYMBOL>
-	
 </HEAD>
 
 <BODY BGCOLOR="BUTTONFACE" TOPMARGIN="0" LEFTMARGIN="0" RIGHTMARGIN="0" BOTTOMMARGIN="0" ONLOAD="InitDocument(document);" ONKEYDOWN="OnKey();" ONKEYPRESS="OnPress();">
@@ -63,8 +49,8 @@
 	   </TD>
 	  
 	   <TD VALIGN="TOP" HEIGHT="65">
-		<H4 CLASS="HEAD" ID="HEAD">Welcome to C2DPlugin Project Wizard</H4>
-		<P CLASS="SUBHEAD" ID="SUBHEAD">This wizard helps students to create a Calculation2D plugin...</P>
+		<H4 CLASS="HEAD" ID="HEAD">New Calculation Method</H4>
+		<P CLASS="SUBHEAD" ID="SUBHEAD">Provide initial information about your new calculation method...</P>
 	   </TD>
 	  
 	   <TD VALIGN="TOP" HEIGHT="65" WIDTH="12">
@@ -89,7 +75,7 @@
 
   <!--OPEN OF NAVIGATION, CONTENT, AND BUTTON TABLES//-->
   <TR VALIGN="TOP">
-  
+
 	<TD CLASS="Three" VALIGN="TOP" HEIGHT="100%" WIDTH="100%">
 
 	   <!--OPEN OF NAVIGATION TABLE//-->
@@ -109,6 +95,19 @@
 
 	   	  <!--OPEN OF NAVIGATIONAL LINKS//-->
 
+
+			<DIV CLASS="LINK">
+			 <TABLE WIDTH="100%" HEIGHT="28" BORDER="0" CELLPADDING="0" CELLSPACING="0" CLASS="LINKTEXT">
+			  <TR VALIGN="MIDDLE">
+	  		   <TD WIDTH="162">
+				<SPAN CLASS="ACTIVELINK" ID="Default" TITLE="" onClick="Next(document, 'default.htm');" TABINDEX="1">Student information</SPAN>
+			   </TD>
+			   <TD WIDTH="4">
+				<IMG SRC="../../Images/spacer.gif" HEIGHT="1" WIDTH="4">
+			   </TD>
+			  </TR>
+			 </TABLE>
+			</DIV>
 
 		  	<DIV CLASS="LINKSELECTED">
 	 	   	 <SPAN CLASS="VERTLINE1">
@@ -134,21 +133,8 @@
 
 			 <TABLE WIDTH="160" HEIGHT="28" BORDER="0" CELLPADDING="0" CELLSPACING="0" CLASS="LINKTEXTSELECTED">
 			  <TR VALIGN="MIDDLE">
-			   <TD WIDTH="100%">
-				<SPAN ID="Default" TITLE="" onClick="Next(document, 'default.htm');" TABINDEX="1">Student information</SPAN>
-			   </TD>
-			   <TD WIDTH="4">
-				<IMG SRC="../../Images/spacer.gif" HEIGHT="1" WIDTH="4">
-			   </TD>
-			  </TR>
-			 </TABLE>
-			</DIV>
-
-			<DIV CLASS="LINK">
-			 <TABLE WIDTH="100%" HEIGHT="28" BORDER="0" CELLPADDING="0" CELLSPACING="0" CLASS="LINKTEXT">
-			  <TR VALIGN="MIDDLE">
-	  		   <TD WIDTH="100%">
-				<SPAN CLASS="ACTIVELINK" ID="CalcMethod" TITLE="" onClick="Next(document, 'CalcMethod.htm');" TABINDEX="1">Calculation method</SPAN>
+	  		   <TD WIDTH="162">
+				<SPAN ID="CalcMethod" TITLE="" onClick="Next(document, 'CalcMethod.htm');" TABINDEX="1">Calculation Method</SPAN>
 			   </TD>
 			   <TD WIDTH="4">
 				<IMG SRC="../../Images/spacer.gif" HEIGHT="1" WIDTH="4">
@@ -180,68 +166,62 @@
 		 <TR VALIGN="TOP">
 		  <TD HEIGHT="100%">
 	   	  <!--OPEN OF CONTENT//-->
-		  
-		  <TABLE CLASS="CONTENT" BORDER="0" CELLPADDING="0" CELLSPACING="10"  VALIGN="TOP">
+
+		  <TABLE CLASS="CONTENT" BORDER="0" CELLPADDING="0" CELLSPACING="10" VALIGN="TOP">
  			  <TR>
           <TD HEIGHT="20" COLSPAN="5">&nbsp;</TD>
         </TR>
         
         <TR>
   			  <TD ALIGN="RIGHT" COLSPAN="1">			  
-       			 <LABEL FOR="STUDENT_FIRSTNAME" ID="STUDENT_FIRSTNAME_LABEL"><U>N</U>ame:</LABEL>
+       			 <LABEL FOR="CALCMETHOD_NAME" ID="CALCMETHOD_NAME_LABEL">C<U>l</U>ass name:</LABEL>
        		</TD>
        		<TD COLSPAN="4">
-       			 <INPUT SIZE="40" ID="STUDENT_FIRSTNAME" ACCESSKEY="N" TITLE="Enter your first name" TYPE="text">
+       			 <INPUT SIZE="40" ID="CALCMETHOD_NAME" ACCESSKEY="L" TITLE="Choose your new calculation method name" TYPE="text">
+       	  </TD>
+       	</TR>
+
+        <TR>
+  			  <TD ALIGN="RIGHT" COLSPAN="1">			  
+       			 <LABEL FOR="CALCMETHOD_SHORT_NAME" ID="CALCMETHOD_SHORT_NAME_LABEL"><U>S</U>hort name:</LABEL>
+       		</TD>
+       		<TD COLSPAN="4">
+       			 <INPUT SIZE="40" ID="CALCMETHOD_SHORT_NAME" ACCESSKEY="S" TITLE="Short name to appear on method list" TYPE="text">
        	  </TD>
        	</TR>
        	     
         <TR>
   			  <TD ALIGN="RIGHT" COLSPAN="1">			  
-            <LABEL FOR="STUDENT_LASTNAME" ID="STUDENT_LASTNAME_LABEL"><U>S</U>urname:</LABEL>
+            <LABEL FOR="CALCMETHOD_DESCRIPTION" ID="CALCMETHOD_DESCRIPTION_LABEL"><U>D</U>escription:</LABEL>
        		</TD>
        		<TD COLSPAN="4">
-       			 <INPUT SIZE="40" ID="STUDENT_LASTNAME" ACCESSKEY="S" TITLE="Enter your last name" TYPE="text">
+       			 <INPUT SIZE="60" ID="CALCMETHOD_DESCRIPTION" ACCESSKEY="D" TITLE="Provide some description (don't use quotes or newline)" TYPE="text">
        	  </TD>
        	</TR>
-	  	
+
         <TR>
   			  <TD ALIGN="RIGHT" COLSPAN="1">			  
-            <LABEL FOR="STUDENT_EMAIL" ID="STUDENT_EMAIL_LABEL"><U>e</U>-mail:</LABEL>
+       			<INPUT CLASS="CheckBox" onPropertyChange="InitControls();" TYPE="checkbox" ID="CALCMETHOD_CREATE" ACCESSKEY="R" TITLE="Uncheck this if you don't want to add any methods automatically">
        		</TD>
        		<TD COLSPAN="4">
-       			 <INPUT SIZE="40" ID="STUDENT_EMAIL" ACCESSKEY="E" TITLE="Enter your email address (optional)" TYPE="text">
+            <LABEL FOR="CALCMETHOD_CREATE" ID="CALCMETHOD_CREATE_LABEL">C<U>r</U>eate method?</LABEL>
        	  </TD>
        	</TR>
-	  	
         <TR>
-  			  <TD ALIGN="RIGHT" COLSPAN="1">			             			   			  
-            <LABEL FOR="STUDENT_GROUP" TITLE="" ID="STUDENT_GROUP_LABEL" ><U>G</u>roup:</LABEL>
-          </TD>
-          <TD COLSPAN="4">
-            <INPUT ID="STUDENT_GROUP" SIZE="6" ACCESSKEY="G" TITLE="Select your student group (choose 'other' if doesn't apply)">
-			    </TD>  
-        </TR>  
+  			  <TD ALIGN="RIGHT" COLSPAN="1">			  
+       			<INPUT CLASS="CheckBox" TYPE="checkbox" ID="CALCMETHOD_EXTEND" ACCESSKEY="U" TITLE="Tick to use ForEachImage kernel operations">
+       		</TD>
+       		<TD COLSPAN="4">
+            <LABEL FOR="CALCMETHOD_EXTEND" ID="CALCMETHOD_EXTEND_LABEL"><U>U</U>se extended functionality?</LABEL>
+       	  </TD>
+       	</TR>
+       	
+	  		
  		  	 
         <TR>
-  			  <TD ALIGN="RIGHT" COLSPAN="1">			             			   			  
-            <LABEL FOR="STUDENT_PART" TITLE="" ID="STUDENT_Part_LABEL" ><U>P</u>art:</LABEL>
-          </TD>
-          <TD COLSPAN="4">
-            <SELECT ID="STUDENT_PART" SIZE="6" ACCESSKEY="P" TITLE="The number of project task (choose 'all' if doesn't apply)">
-              <OPTION VALUE="" disabled="disabled">-------------------</OPTION>
-              <OPTION VALUE="all" SELECTED>all</OPTION>
-              <OPTION VALUE="I">I</OPTION>
-              <OPTION VALUE="II">II</OPTION>
-              <OPTION VALUE="III">III</OPTION>
-              <OPTION VALUE="IV">IV</OPTION>
-            </SELECT>
-			    </TD>  
-        </TR>  
- 		  	 
-        <TR>
-          <TD HEIGHT="50%" COLSPAN="5">&nbsp;</TD>
+          <TD HEIGHT="55%" COLSPAN="5">&nbsp;</TD>
         </TR>
-      
+
 		 	</TABLE>
 			
 	   	  <!--CLOSE OF CONTENT//-->
@@ -316,7 +296,6 @@
 
 
 </BODY>
-</HTML>
 
 <script src="gui_logic.js"></script>
 
@@ -331,14 +310,9 @@ tab_array[1] = CalcMethod;
 function InitDocument(document)
 {
 	setDirection();
-
-
+	
 	if (window.external.FindSymbol('DOCUMENT_FIRST_LOAD'))
 	{
-		var L_WizardDialogTitle_Text = "C2DPlugin Wizard";
-		window.external.AddSymbol("WIZARD_DIALOG_TITLE", L_WizardDialogTitle_Text);
-
-		VerifyCalculation2DDir();
 		// This function sets the default symbols based 
 		// on the values specified in the SYMBOL tags above
 		//
@@ -352,18 +326,28 @@ function InitDocument(document)
 }
 
 // Validate input
-function ValidateStudentInfo() 
-{
+function ValidateMethodInfo() {
   var bValid = true;
   var L_ErrMsg_Text = "Unknown error";
 
-  if (STUDENT_FIRSTNAME.value == "") {
-    L_ErrMsg_Text = "First name missing";
+  if (CALCMETHOD_NAME.value == "") {
+    L_ErrMsg_Text = "Class name missing";
     bValid = false;
   }
 
-  else if (STUDENT_LASTNAME.value == "") {
-    L_ErrMsg_Text = "Last name missing";
+  else if (
+    CALCMETHOD_SHORT_NAME.value.indexOf("\"") > -1 ||
+    CALCMETHOD_SHORT_NAME.value.indexOf("\n") > -1) {
+
+    L_ErrMsg_Text = "Invalid characters in short name";
+    bValid = false;
+  }
+
+  else if (
+    CALCMETHOD_DESCRIPTION.value.indexOf("\"") > -1 ||
+    CALCMETHOD_DESCRIPTION.value.indexOf("\n") > -1) {
+
+    L_ErrMsg_Text = "Invalid characters in description";
     bValid = false;
   }
 
@@ -373,23 +357,35 @@ function ValidateStudentInfo()
   return bValid;
 }
 
+function InitControls() {
+
+  bEnable = !CALCMETHOD_CREATE.checked;
+
+  CALCMETHOD_NAME.disabled = bEnable;
+  CALCMETHOD_SHORT_NAME.disabled = bEnable;
+  CALCMETHOD_DESCRIPTION.disabled = bEnable;
+
+  CALCMETHOD_EXTEND.disabled = bEnable;
+}
 
 // If the wizard has more than 1 page, this 
 // function will browse to the page specified
 //
-function Next(document, linkto) {
-  if (ValidateStudentInfo())
+function Next(document, linkto)
+{
+  if(ValidateMethodInfo())
 	window.external.Next(document, linkto);
 }
 
-// perform input validation before finishing
+// This is an example of a function which
+// gets called when the user clicks on 'Finish'
 //
 function OnFinish(document)
 {
   if (!VerifyCalculation2DDir()) return VS_E_WIZCANCEL;
 
-  if (ValidateStudentInfo())
-  OnWizFinish(document);
+  if (ValidateMethodInfo())
+	OnWizFinish(document);
 }
 
 </SCRIPT>
@@ -399,3 +395,5 @@ function OnFinish(document)
   document.scripts("INCLUDE_SCRIPT").src = window.external.FindSymbol("SCRIPT_COMMON_PATH") + "/Script.js";
   document.scripts("INCLUDE_COMMON").src = window.external.FindSymbol("SCRIPT_COMMON_PATH") + "/Common.js";
 </SCRIPT>
+
+</HTML>
